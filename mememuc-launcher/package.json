@@ -1,0 +1,18 @@
+{
+	"name": "mememuc-launcher",
+	"private": true,
+	"version": "1.0.0",
+	"description": "",
+	"type": "module",
+	"scripts": {
+		"start": "concurrently \"npm run start --prefix ../client\"",
+		"dev": "concurrently \"npm run dev --prefix ../client\"",
+		"installall": "npm install && cd ../client && npm install"
+	},
+	"keywords": [],
+	"author": "LMU Mediainformatics Group",
+	"license": "ISC",
+	"dependencies": {
+		"concurrently": "^7.5.0"
+	}
+}
