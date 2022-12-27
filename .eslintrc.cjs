@@ -1,9 +1,9 @@
 module.exports = {
-	"root": true,
+	root: true,
 	extends: [
 		"eslint:recommended",
 	],
-	"rules": {
+	rules: {
 		"indent": ["error", "tab"],
 		"no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
 		"no-trailing-spaces": "error",
