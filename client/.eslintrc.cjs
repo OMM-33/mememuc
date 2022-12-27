@@ -1,18 +1,18 @@
 /* eslint-env node */
 
 module.exports = {
-	"env": {
+	env: {
 		"browser": true,
 		"es2021": true,
 	},
 	extends: [
 		"plugin:svelte/recommended",
 	],
-	"parserOptions": {
-		"ecmaVersion": "latest",
-		"sourceType": "module",
+	parserOptions: {
+		ecmaVersion: "latest",
+		sourceType: "module",
 	},
-	"rules": {
+	rules: {
 		"svelte/valid-compile": ["error", { "ignoreWarnings": true }],
 		"svelte/no-dom-manipulating": "error",
 		"svelte/no-dupe-on-directives": "error",
@@ -39,10 +39,10 @@ module.exports = {
 		"svelte/shorthand-directive": "warn",
 		"svelte/spaced-html-comment": "warn",
 	},
-	"overrides": [
+	overrides: [
 		{
-			"files": ["*.svelte"],
-			"rules": {
+			files: ["*.svelte"],
+			rules: {
 				"indent": "off",
 				"svelte/indent": ["error", { "indent": "tab" }],
 				"no-self-assign": "off",
