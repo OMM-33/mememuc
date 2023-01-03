@@ -16,15 +16,20 @@
 	const fitMap = {
 		0: "contain",
 		1: "cover",
-		2: "fill",
+		2: "100% 100%",
 	};
 </script>
 
 <Transformable bind:origin bind:angle bind:size {...$$restProps} on:changeselect>
-	<img
+	<!--
+		html2canvas (used for rendering) currently doesn't support object-fit,
+		but it supports the similar properties on a CSS background-image:
+	-->
+	<div
+		class="image"
 		tabindex="0"
-		src={options.src}
-		style:object-fit={fitMap[options.fit]}
+		style:background-image="url('{options.src}')"
+		style:background-size={fitMap[options.fit]}
 		style:--scale-flip={options.flip ? -1 : 1}
 	/>
 	<svelte:fragment slot="options">
@@ -43,11 +48,11 @@
 </Transformable>
 
 <style lang="postcss">
-	img {
-		display: block;
+	.image {
 		width: 100%;
 		height: 100%;
-		object-fit: cover;
+		background-position: center;
+		background-repeat: no-repeat;
 		transform: scaleX(var(--scale-flip));
 
 		user-select: none;
