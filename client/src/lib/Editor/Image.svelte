@@ -1,11 +1,15 @@
 <script>
 	import { getUID } from "../../util";
 	import Transformable from "./Transformable.svelte";
+	import DefaultOptions from "./DefaultOptions.svelte";
 
 	export let origin;
 	export let angle;
 	export let size;
 	export let options;
+
+	export let isFirst;
+	export let isLast;
 
 	const uid = getUID();
 
@@ -16,7 +20,7 @@
 	};
 </script>
 
-<Transformable bind:origin bind:angle bind:size {...$$restProps}>
+<Transformable bind:origin bind:angle bind:size {...$$restProps} on:changeselect>
 	<img
 		tabindex="0"
 		src={options.src}
@@ -34,6 +38,7 @@
 			<label for="option-flip-{uid}">flip</label>
 			<input type="checkbox" id="option-flip-{uid}" bind:checked={options.flip} />
 		</div>
+		<DefaultOptions on:delete on:moveZ {isFirst} {isLast} />
 	</svelte:fragment>
 </Transformable>
 
@@ -47,5 +52,7 @@
 
 		user-select: none;
 		pointer-events: none;
+
+		&:focus, &:focus-visible { outline: none; }
 	}
 </style>

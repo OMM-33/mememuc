@@ -4,12 +4,18 @@
 	import Image from "./Image.svelte";
 
 	import html2canvas from "html2canvas";
+	import { createEventDispatcher } from "svelte";
+	import { arrayMove } from "../../util";
+
+	const dispatch = createEventDispatcher();
 
 	let canvasEl;
 	const canvasSize = [null, null];
+	let selectedLayerID = null;
 
-	const meme = {
+	export const meme = {
 		background: "https://i.imgur.com/Yu7x5MV.jpeg",
+		nextLayerID: 0,
 		layers: [],
 	};
 
@@ -23,7 +29,7 @@
 				},
 			},
 			image: {
-				origin: [0.5, 0.5], angle: 0, size: [0.25, 0.25],
+				origin: [0.5, 0.5], angle: 0, size: [0.33, 0.33],
 				options: {
 					src: "https://i.imgur.com/T8Hhkur.jpeg",
 					fit: 0,
@@ -31,7 +37,21 @@
 				},
 			},
 		}[type];
-		meme.layers.push({ type, ...layer });
+		meme.layers.push({ id: meme.nextLayerID++, type, ...layer });
+		meme.layers = meme.layers;
+	};
+
+	const deleteLayer = (index) => {
+		meme.layers.splice(index, 1);
+		meme.layers = meme.layers;
+		meme.nextLayerID--;
+	};
+
+	const moveLayer = (index, moveBy) => {
+		const newIndex = index + moveBy;
+		if (newIndex < 0 || newIndex >= meme.layers.length) return;
+
+		arrayMove(meme.layers, index, newIndex);
 		meme.layers = meme.layers;
 	};
 
@@ -40,10 +60,11 @@
 	};
 
 	const render = async () => {
+		selectedLayerID = null; // just to make sure we never have controls on a render
 		const canvas = await html2canvas(canvasEl, { useCORS: true, logging: true, scale: 1 });
-		const html = `<body style="margin: 0"><iframe style="inset: 0; border: none; width: 100%; height: 100%" src="${canvas.toDataURL("png")}"></iframe></body>`;
-		const win = window.open();
-		win.document.write(html);
+		dispatch("render", {
+			dataURL: canvas.toDataURL("png"),
+		});
 	};
 </script>
 
@@ -55,7 +76,7 @@
 		bind:clientHeight={canvasSize[1]}
 	>
 		<img src={meme.background} />
-		{#each meme.layers as layer}
+		{#each meme.layers as layer, i (layer.id)}
 			<svelte:component
 				this={{ text: Text, image: Image }[layer.type]}
 				bind:origin={layer.origin}
@@ -63,14 +84,20 @@
 				bind:size={layer.size}
 				bind:options={layer.options}
 				{canvasSize}
+				isFirst={i === 0}
+				isLast={i === meme.layers.length - 1}
+				isSelected={layer.id === selectedLayerID}
+				on:changeselect={({ detail: doSelect }) => selectedLayerID = doSelect ? layer.id : null}
+				on:delete={() => deleteLayer(i)}
+				on:moveZ={({ detail: moveBy }) => moveLayer(i, moveBy)}
 			/>
 		{/each}
 	</div>
 </div>
-<Button on:click={() => addLayer("text")}>Add Textfield</Button>
-<Button on:click={() => addLayer("image")}>Add Image</Button>
-<Button on:click={clear}>Clear</Button>
-<Button on:click={render}>Render</Button>
+<Button on:click={() => addLayer("text")}>📝 Add Textfield</Button>
+<Button on:click={() => addLayer("image")}>🖼️ Add Image</Button>
+<Button on:click={clear}>❌ Clear Canvas</Button>
+<Button on:click={render}>🧮 Render</Button>
 
 <style>
 	.editor {

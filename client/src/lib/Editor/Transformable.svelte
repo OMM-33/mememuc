@@ -1,20 +1,25 @@
 <script>
 	import { clamp, snap } from "../../util";
-	import { onMount, onDestroy } from "svelte";
+	import { onMount, onDestroy, createEventDispatcher } from "svelte";
 
 	import TransformableCursor from "./TransformableCursor.svelte";
+
+	const dispatch = createEventDispatcher();
 
 	export let origin = [0, 0];
 	export let angle = 0;
 	export let size = [0, 0];
+
+	export let isSelected = false;
 	export let canvasSize;
 
 	/** @type {null | { mode: "origin" | "angle" | "size", dir?: "n" | "ne" | "e" | "se" | "s" | "sw" | "w" | "nw", axis?: "ns" | "ew" | "nesw" | "nwse" }} */
 	let drag = null;
 	let pointerPos = [null, null];
 	let el;
+	let elContent;
 	/** @type {null | DOMRect} */
-	let elRect = null;
+	let elContentRect = null;
 
 	const dirToTurn = dir => {
 		return {
@@ -51,7 +56,7 @@
 	const onDragMove = ({ clientX, clientY }) => {
 		const movement = [clientX - pointerPos[0], clientY - pointerPos[1]];
 		pointerPos = [clientX, clientY];
-		elRect = el.getBoundingClientRect();
+		elContentRect = elContent.getBoundingClientRect();
 
 		switch (drag.mode) {
 			case "origin": {
@@ -60,7 +65,7 @@
 				break;
 			}
 			case "angle": {
-				const center = [elRect.x + elRect.width / 2, elRect.y + elRect.height / 2];
+				const center = [elContentRect.x + elContentRect.width / 2, elContentRect.y + elContentRect.height / 2];
 				const offset = pointerPos.map((coord, i) => coord - center[i]);
 				const frac = (Math.atan2(offset[1], offset[0]) / Math.PI / 2 + 0.25 + 1) % 1;
 				angle = snap(frac, 1 / 64);
@@ -78,7 +83,7 @@
 				const cos = Math.cos(angleRadians);
 				const sin = Math.sin(angleRadians);
 				const aspectRatio = canvasSize[0] / canvasSize[1];
-				const mins = [64 / canvasSize[0], 64 / canvasSize[1]];
+				const mins = [32 / canvasSize[0], 32 / canvasSize[1]];
 				const maxs = [1.25, 1.25];
 				const initialSize = [...size];
 
@@ -128,7 +133,7 @@
 	};
 
 	onMount(() => {
-		elRect = el.getBoundingClientRect();
+		elContentRect = elContent.getBoundingClientRect();
 	});
 
 	onDestroy(() => {
@@ -140,20 +145,32 @@
 
 <div
 	class="transformable {drag ? `dragging-${drag.mode}` : ""}"
+	class:selected={isSelected}
 	class:dragging={drag}
-	tabindex="-1"
 	style:--origin-x="{origin[0] * 100}%"
 	style:--origin-y="{origin[1] * 100}%"
 	style:--angle="{angle}turn"
 	style:--size-x="{size[0] * 100}%"
 	style:--size-y="{size[1] * 100}%"
+	tabindex="-1"
+	bind:this={el}
+	on:focusin={() => dispatch("changeselect", true)}
+	on:focusout={({ relatedTarget }) => {
+		if (!el.contains(relatedTarget))dispatch("changeselect", false);
+	}}
 >
-	<div
-		class="content"
-		bind:this={el}
-	>
-		<div class="controls">
-			<div class="control origin" on:pointerdown={(event) => onDragStart(event, { mode: "origin" })} />
+	<div class="controls">
+		{#if $$slots.options}
+			<div
+				class="control options"
+				style:--box-height="{elContentRect?.height}px"
+				style:--box-width="{elContentRect?.width}px"
+			>
+				<slot name="options" />
+			</div>
+		{/if}
+		<div class="controls-rotated">
+			<div class="control origin" />
 			<div class="control angle" on:pointerdown={(event) => onDragStart(event, { mode: "angle" })} />
 			{#each ["n", "ne", "e", "se", "s", "sw", "w", "nw"] as dir}
 				<div
@@ -163,17 +180,18 @@
 				/>
 			{/each}
 		</div>
+	</div>
+	<div
+		class="content"
+		bind:this={elContent}
+	>
+		<!--
+			We want the actual visible controls to be displayed above the content
+			while the content should be interactable in front of this drag handle (the background).
+		-->
+		<div class="origin-drag-handle" on:pointerdown={(event) => onDragStart(event, { mode: "origin" })} />
 		<slot />
 	</div>
-	{#if $$slots.options}
-		<div
-			class="options"
-			style:--box-height="{elRect?.height}px"
-			style:--box-width="{elRect?.width}px"
-		>
-			<slot name="options" />
-		</div>
-	{/if}
 </div>
 
 <TransformableCursor {drag} />
@@ -183,49 +201,64 @@
 		--padding: 16px;
 		--padding-half: calc(var(--padding) / 2);
 		--border-thickness: 2px;
+	}
 
+	/* We can't transform the parent, because these must be in different stacking contexts: */
+	.content, .controls {
 		position: absolute;
 		left: var(--origin-x);
 		top: var(--origin-y);
-		transform: translate(-50%, -50%);
 		width: var(--size-x);
 		height: var(--size-y);
+	}
 
-		.content {
-			transform: rotate(var(--angle));
-			padding: var(--padding);
-			height: 100%;
-		}
+	.content {
+		transform: translate(-50%, -50%) rotate(var(--angle));
 
-		&:focus, &:focus-within {
-			z-index: 1;
-			.content::before {
-				content: '';
-				position: absolute;
-				inset: calc(var(--padding-half) - var(--border-thickness) / 2);
-				border: var(--border-thickness) solid var(--c-accent);
-				pointer-events: none;
-				z-index: -1;
-			}
-		}
+		padding: var(--padding);
 	}
 
 	.controls {
+		transform: translate(-50%, -50%);
+
+		z-index: 1;
+		pointer-events: none;
+	}
+
+	.controls-rotated {
+		transform: rotate(var(--angle));
+
 		position: absolute;
 		inset: 0;
-		z-index: -1;
 	}
 
 	.control {
 		position: absolute;
+
+		pointer-events: auto;
 	}
 
-	.origin {
+	.control.origin {
 		inset: 0;
+		pointer-events: none;
+
+		&::before {
+			content: '';
+			position: absolute;
+			inset: calc(var(--padding-half) - var(--border-thickness) / 2);
+			border: var(--border-thickness) solid var(--c-accent);
+			pointer-events: none;
+		}
+	}
+	.origin-drag-handle {
+		position: absolute;
+		inset: 0;
+
+		z-index: -1;
 		cursor: move;
 	}
 
-	.angle {
+	.control.angle {
 		--length: 12px;
 		--offset: 20px;
 		width: var(--length);
@@ -253,7 +286,7 @@
 		}
 	}
 
-	.size {
+	.control.size {
 		--length: 12px;
 		--inset: calc(var(--padding-half) - var(--length) / 2);
 		width: var(--length);
@@ -271,18 +304,15 @@
 		&.sw { bottom: var(--inset); left: var(--inset); }
 	}
 
-	.dragging .control {
-		cursor: inherit;
-	}
-
-	.options {
-		position: absolute;
-		bottom: 50%;
+	.control.options {
 		left: 50%;
-		transform: translate(-50%, calc(var(--box-height) / -2));
+		top: 50%;
+		transform:
+			translate(-50%, -100%)
+			translateY(calc(var(--box-height) / -2))
+			translateY(-40px);
 
 		display: flex;
-		margin-bottom: 40px;
 		background-color: var(--c-white);
 		padding: 1em;
 		border-radius: 4px;
@@ -294,7 +324,14 @@
 		}
 	}
 
-	.transformable:not(:focus).transformable:not(:focus-within) {
-		.control, .options { display: none; }
+	.dragging .control,
+	.dragging .origin-drag-handle {
+		cursor: inherit;
+	}
+
+	.transformable:not(.selected) {
+		.control {
+			display: none;
+		}
 	}
 </style>

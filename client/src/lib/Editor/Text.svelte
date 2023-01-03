@@ -1,10 +1,14 @@
 <script>
 	import Transformable from "./Transformable.svelte";
+	import DefaultOptions from "./DefaultOptions.svelte";
 
 	export let origin;
 	export let angle;
 	export let size;
 	export let options;
+
+	export let isFirst;
+	export let isLast;
 
 	const alignMap = {
 		0: "left",
@@ -27,7 +31,7 @@
 	};
 </script>
 
-<Transformable bind:origin bind:angle bind:size {...$$restProps}>
+<Transformable bind:origin bind:angle bind:size {...$$restProps} on:changeselect>
 	<div
 		contenteditable
 		class="text"
@@ -50,6 +54,7 @@
 			<option value={1}>center</option>
 			<option value={2}>right</option>
 		</select>
+		<DefaultOptions on:delete on:moveZ {isFirst} {isLast} />
 	</svelte:fragment>
 </Transformable>
 
