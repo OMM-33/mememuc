@@ -43,7 +43,7 @@
 			<label for="option-flip-{uid}">flip</label>
 			<input type="checkbox" id="option-flip-{uid}" bind:checked={options.flip} />
 		</div>
-		<DefaultOptions on:delete on:moveZ {isFirst} {isLast} />
+		<DefaultOptions on:moveZ on:duplicate on:delete {isFirst} {isLast} />
 	</svelte:fragment>
 </Transformable>
 

@@ -41,17 +41,24 @@
 		meme.layers = meme.layers;
 	};
 
+	const moveLayer = (index, moveBy) => {
+		const newIndex = index + moveBy;
+		if (newIndex < 0 || newIndex >= meme.layers.length) return;
+
+		arrayMove(meme.layers, index, newIndex);
+		meme.layers = meme.layers;
+	};
+
 	const deleteLayer = (index) => {
 		meme.layers.splice(index, 1);
 		meme.layers = meme.layers;
 		meme.nextLayerID--;
 	};
 
-	const moveLayer = (index, moveBy) => {
-		const newIndex = index + moveBy;
-		if (newIndex < 0 || newIndex >= meme.layers.length) return;
-
-		arrayMove(meme.layers, index, newIndex);
+	const duplicateLayer = (index) => {
+		// Deep clone layer using JSON parsing for now...
+		const layer = { ...JSON.parse(JSON.stringify(meme.layers[index])), id: meme.nextLayerID++ };
+		meme.layers.push(layer);
 		meme.layers = meme.layers;
 	};
 
@@ -88,8 +95,9 @@
 				isLast={i === meme.layers.length - 1}
 				isSelected={layer.id === selectedLayerID}
 				on:changeselect={({ detail: doSelect }) => selectedLayerID = doSelect ? layer.id : null}
-				on:delete={() => deleteLayer(i)}
 				on:moveZ={({ detail: moveBy }) => moveLayer(i, moveBy)}
+				on:duplicate={() => duplicateLayer(i)}
+				on:delete={() => deleteLayer(i)}
 			/>
 		{/each}
 	</div>

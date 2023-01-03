@@ -14,6 +14,9 @@
 <button on:click={() => dispatch("moveZ", -1)} disabled={isFirst}>
 	🔽
 </button>
+<button on:click={() => dispatch("duplicate")}>
+	📋
+</button>
 <button on:click={() => dispatch("delete")}>
 	🗑️
 </button>

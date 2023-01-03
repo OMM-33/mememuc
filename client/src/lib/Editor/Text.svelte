@@ -42,9 +42,8 @@
 		on:drop={e => e.preventDefault()}
 		on:dragover={e => e.preventDefault()}
 		on:paste={onPaste}
-	>
-		{options.text}
-	</div>
+		bind:innerHTML={options.text}
+	/>
 	<svelte:fragment slot="options">
 		<input type="number" size="4" bind:value={options.font.size} />
 		<input type="color" bind:value={options.font.color} />
@@ -54,7 +53,7 @@
 			<option value={1}>center</option>
 			<option value={2}>right</option>
 		</select>
-		<DefaultOptions on:delete on:moveZ {isFirst} {isLast} />
+		<DefaultOptions on:moveZ on:duplicate on:delete {isFirst} {isLast} />
 	</svelte:fragment>
 </Transformable>
 
