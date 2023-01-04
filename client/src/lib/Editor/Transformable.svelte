@@ -156,9 +156,22 @@
 	bind:this={el}
 	on:focusin={() => dispatch("changeselect", true)}
 	on:focusout={({ relatedTarget }) => {
-		if (!el.contains(relatedTarget))dispatch("changeselect", false);
+		if (!el.contains(relatedTarget)) dispatch("changeselect", false);
 	}}
 >
+	<!--
+		We want the actual visible controls to be displayed above the content
+		while the content should be interactable in front of this drag handle (the background).
+	-->
+	<div class="origin-drag-handle" on:pointerdown={(event) => onDragStart(event, { mode: "origin" })} />
+	<div class="content-clip-box">
+		<div
+			class="content"
+			bind:this={elContent}
+		>
+			<slot />
+		</div>
+	</div>
 	<div class="controls">
 		{#if $$slots.options}
 			<div
@@ -181,17 +194,6 @@
 			{/each}
 		</div>
 	</div>
-	<div
-		class="content"
-		bind:this={elContent}
-	>
-		<!--
-			We want the actual visible controls to be displayed above the content
-			while the content should be interactable in front of this drag handle (the background).
-		-->
-		<div class="origin-drag-handle" on:pointerdown={(event) => onDragStart(event, { mode: "origin" })} />
-		<slot />
-	</div>
 </div>
 
 <TransformableCursor {drag} />
@@ -201,10 +203,22 @@
 		--padding: 16px;
 		--padding-half: calc(var(--padding) / 2);
 		--border-thickness: 2px;
+
+		position: absolute;
+		inset: 0;
+
+		pointer-events: none;
+	}
+
+	.content-clip-box {
+		position: absolute;
+		inset: 0;
+		/* Using overflow: hidden will try to move clipped text elements into the bounds all the time: */
+		clip-path: border-box;
 	}
 
 	/* We can't transform the parent, because these must be in different stacking contexts: */
-	.content, .controls {
+	.content, .controls, .origin-drag-handle {
 		position: absolute;
 		left: var(--origin-x);
 		top: var(--origin-y);
@@ -212,17 +226,27 @@
 		height: var(--size-y);
 	}
 
-	.content {
+	.content, .origin-drag-handle {
 		transform: translate(-50%, -50%) rotate(var(--angle));
+	}
 
+	.origin-drag-handle {
+		pointer-events: auto;
+		cursor: move;
+	}
+
+	.content {
 		padding: var(--padding);
+
+		& > :global(*) {
+			pointer-events: auto;
+		}
 	}
 
 	.controls {
 		transform: translate(-50%, -50%);
 
 		z-index: 1;
-		pointer-events: none;
 	}
 
 	.controls-rotated {
@@ -249,13 +273,6 @@
 			border: var(--border-thickness) solid var(--c-accent);
 			pointer-events: none;
 		}
-	}
-	.origin-drag-handle {
-		position: absolute;
-		inset: 0;
-
-		z-index: -1;
-		cursor: move;
 	}
 
 	.control.angle {
@@ -330,6 +347,8 @@
 	}
 
 	.transformable:not(.selected) {
+		overflow: hidden;
+
 		.control {
 			display: none;
 		}
