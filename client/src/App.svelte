@@ -4,14 +4,7 @@
 	import Navigation from "./lib/Navigation.svelte";
 </script>
 
-<Navigation />
 <main>
+	<Navigation />
 	<Router {routes} />
 </main>
-
-<style>
-	main {
-		max-width: 1200px;
-		margin: 0 auto;
-	}
-</style>
