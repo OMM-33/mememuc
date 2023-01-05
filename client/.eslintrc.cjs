@@ -22,7 +22,8 @@ module.exports = {
 		"svelte/no-reactive-functions": "error",
 		"svelte/no-reactive-literals": "error",
 		"svelte/no-useless-mustaches": "warn",
-		"svelte/prefer-destructured-store-props": "warn",
+		// Disable because this currently fires for special $$ variables also...
+		// "svelte/prefer-destructured-store-props": "warn",
 		"svelte/require-optimized-style-attribute": "warn",
 
 		"svelte/derived-has-same-inputs-outputs": "error",
