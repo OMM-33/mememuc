@@ -10,7 +10,7 @@
 		<a href="#/user/" data-sc="profile">My Profile</a>
 	</div>
 	<div class="right">
-		<Button element="a" href="#/login" data-sc="login">Log In</Button>
+		<Button element="a" href="#/login" data-sc="login">Login</Button>
 		<Button element="a" href="#/signup" data-sc="sign up" variant="primary">Sign Up</Button>
 	</div>
 </nav>
