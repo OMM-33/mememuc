@@ -10,7 +10,7 @@
 		<a href="#/user/">My Profile</a>
 	</div>
 	<div class="right">
-		<Button element="a" href="#/login">Log In</Button>
+		<Button element="a" href="#/login">Login</Button>
 		<Button element="a" href="#/signup" variant="primary">Sign Up</Button>
 	</div>
 </nav>
