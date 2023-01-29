@@ -57,7 +57,7 @@
 	</svelte:fragment>
 </Transformable>
 
-<style lang="postcss">
+<style>
 	.text {
 		overflow: hidden;
 		height: 100%;
@@ -66,7 +66,9 @@
 		-webkit-text-stroke: 0.03125em var(--color-stroke);
 		letter-spacing: 0.03125em;
 		line-height: 1;
-
-		&:focus, &:focus-visible { outline: none; }
+	}
+	.text:focus,
+	.text:focus-visible {
+		outline: none;
 	}
 </style>

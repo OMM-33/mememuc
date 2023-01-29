@@ -16,7 +16,7 @@
 </nav>
 
 
-<style lang="postcss">
+<style>
 	nav {
 		position: sticky;
 		width: 100%;
@@ -28,13 +28,11 @@
 
 		background-color: var(--c-white-light);
 		box-shadow: 0 0 2em rgba(0, 0, 0, 0.2);
-
-		> div {
-			display: flex;
-			&.left { gap: 1em; }
-			&.right { gap: 0.5em; }
-		}
 	}
+
+	nav > div { display: flex; }
+	nav > div.left { gap: 1em; }
+	nav > div.right { gap: 0.5em; }
 
 	.title {
 		color: inherit;

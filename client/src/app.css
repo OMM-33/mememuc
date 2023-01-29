@@ -47,9 +47,7 @@ a {
 	text-decoration: inherit;
 	font-weight: 500;
 	color: var(--c-link);
-
-	&:hover,
-	&:focus {
-		color: var(--c-link-hover);
-	}
+}
+a:hover, a:focus {
+	color: var(--c-link-hover);
 }

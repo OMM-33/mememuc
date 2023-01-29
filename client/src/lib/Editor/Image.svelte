@@ -47,7 +47,7 @@
 	</svelte:fragment>
 </Transformable>
 
-<style lang="postcss">
+<style>
 	.image {
 		width: 100%;
 		height: 100%;
@@ -57,7 +57,9 @@
 
 		user-select: none;
 		pointer-events: none;
-
-		&:focus, &:focus-visible { outline: none; }
+	}
+	.image:focus,
+	.image:focus-visible {
+		outline: none;
 	}
 </style>

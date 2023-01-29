@@ -198,7 +198,7 @@
 
 <TransformableCursor {drag} />
 
-<style lang="postcss">
+<style>
 	.transformable {
 		--padding: 16px;
 		--padding-half: calc(var(--padding) / 2);
@@ -237,10 +237,9 @@
 
 	.content {
 		padding: var(--padding);
-
-		& > :global(*) {
-			pointer-events: auto;
-		}
+	}
+	.content > :global(*) {
+		pointer-events: auto;
 	}
 
 	.controls {
@@ -265,14 +264,13 @@
 	.control.origin {
 		inset: 0;
 		pointer-events: none;
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: calc(var(--padding-half) - var(--border-thickness) / 2);
-			border: var(--border-thickness) solid var(--c-accent);
-			pointer-events: none;
-		}
+	}
+	.control.origin::before {
+		content: '';
+		position: absolute;
+		inset: calc(var(--padding-half) - var(--border-thickness) / 2);
+		border: var(--border-thickness) solid var(--c-accent);
+		pointer-events: none;
 	}
 
 	.control.angle {
@@ -291,16 +289,15 @@
 		justify-content: center;
 
 		cursor: grab;
-
-		&::before {
-			content: '';
-			position: absolute;
-			z-index: -1;
-			top: 50%;
-			background-color: var(--c-accent);
-			width: 2px;
-			height: calc(var(--length) / 2 + var(--offset));
-		}
+	}
+	.control.angle::before {
+		content: '';
+		position: absolute;
+		z-index: -1;
+		top: 50%;
+		background-color: var(--c-accent);
+		width: 2px;
+		height: calc(var(--length) / 2 + var(--offset));
 	}
 
 	.control.size {
@@ -311,15 +308,15 @@
 		background-color: var(--c-accent);
 		border: 2px solid var(--c-white);
 
-		&.n { top: var(--inset); left: 50%; transform: translateX(-50%); }
-		&.e { top: 50%; right: var(--inset); transform: translateY(-50%); }
-		&.s { bottom: var(--inset); left: 50%; transform: translateX(-50%); }
-		&.w { top: 50%; left: var(--inset); transform: translateY(-50%); }
-		&.ne { top: var(--inset); right: var(--inset); }
-		&.nw { top: var(--inset); left: var(--inset); }
-		&.se { bottom: var(--inset); right: var(--inset); }
-		&.sw { bottom: var(--inset); left: var(--inset); }
 	}
+	.control.size.n { top: var(--inset); left: 50%; transform: translateX(-50%); }
+	.control.size.e { top: 50%; right: var(--inset); transform: translateY(-50%); }
+	.control.size.s { bottom: var(--inset); left: 50%; transform: translateX(-50%); }
+	.control.size.w { top: 50%; left: var(--inset); transform: translateY(-50%); }
+	.control.size.ne { top: var(--inset); right: var(--inset); }
+	.control.size.nw { top: var(--inset); left: var(--inset); }
+	.control.size.se { bottom: var(--inset); right: var(--inset); }
+	.control.size.sw { bottom: var(--inset); left: var(--inset); }
 
 	.control.options {
 		left: 50%;
@@ -335,10 +332,9 @@
 		border-radius: 4px;
 		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 		gap: 0.5em;
-
-		.dragging-angle & {
-			transition: transform ease 100ms;
-		}
+	}
+	.dragging-angle .control.options {
+		transition: transform ease 100ms;
 	}
 
 	.dragging .control,
@@ -348,9 +344,8 @@
 
 	.transformable:not(.selected) {
 		overflow: hidden;
-
-		.control {
-			display: none;
-		}
+	}
+	.transformable:not(.selected) .control {
+		display: none;
 	}
 </style>

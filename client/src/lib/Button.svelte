@@ -15,7 +15,7 @@
 	<slot />
 </svelte:element>
 
-<style lang="postcss">
+<style>
 	.button {
 		display: inline-block;
 		appearance: none;
@@ -29,14 +29,14 @@
 		background-color: var(--c-white-dark);
 		transition: border-color 300ms;
 		color: var(--c-black);
+	}
 
-		&.primary {
-			background-color: var(--c-accent);
-			color: var(--c-white);
-		}
+	.button.primary {
+		background-color: var(--c-accent);
+		color: var(--c-white);
+	}
 
-		&:hover {
-			border-color: var(--c-link-hover);
-		}
+	.button:hover {
+		border-color: var(--c-link-hover);
 	}
 </style>
