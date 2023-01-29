@@ -6,19 +6,29 @@
 	let resultOverlayOpen = false;
 </script>
 
-<h1>Editor</h1>
-<Editor
-	on:render={({ detail: { dataURL } }) => {
-		resultDataURL = dataURL;
-		resultOverlayOpen = true;
-	}}
-/>
+<div class="editor">
+	<h1>Editor</h1>
+	<Editor
+		on:render={({ detail: { dataURL } }) => {
+			resultDataURL = dataURL;
+			resultOverlayOpen = true;
+		}}
+	/>
+</div>
+
 <Overlay bind:open={resultOverlayOpen}>
-	<img src={resultDataURL} alt="Render Result" />
+	<img class="render-result" src={resultDataURL} alt="Render Result" />
 </Overlay>
 
 <style>
-	img {
+	.editor {
+		flex-grow: 1;
+
+		display: flex;
+		flex-direction: column;
+	}
+
+	.render-result {
 		display: block;
 	}
 </style>

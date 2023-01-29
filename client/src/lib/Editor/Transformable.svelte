@@ -1,6 +1,6 @@
 <script>
 	import { clamp, snap } from "../../util";
-	import { onMount, onDestroy, createEventDispatcher } from "svelte";
+	import { onDestroy, createEventDispatcher } from "svelte";
 
 	import TransformableCursor from "./TransformableCursor.svelte";
 
@@ -132,13 +132,11 @@
 		toggleDragListeners(false);
 	};
 
-	onMount(() => {
-		elContentRect = elContent.getBoundingClientRect();
-	});
-
 	onDestroy(() => {
 		toggleDragListeners(false);
 	});
+
+	$: if (canvasSize && elContent) elContentRect = elContent.getBoundingClientRect();
 
 	$: origin = origin.map(coord => clamp(coord, 0.0, 1.0));
 </script>
