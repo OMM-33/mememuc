@@ -1,11 +1,27 @@
 :root {
-	--c-black: #242424;
-	--c-white-light: white;
-	--c-white: whitesmoke;
-	--c-white-dark: #e2e2e2;
-	--c-accent: #26B784;
-	--c-link: #646cff;
-	--c-link-hover: #747bff;
+	--c-black-h: 0;
+	--c-black-s: 0%;
+	--c-black-l: 14%;
+	--c-black-hsl: var(--c-black-h), var(--c-black-s), var(--c-black-l);
+	--c-black: hsl(var(--c-black-hsl));
+
+	--c-white-h: 0;
+	--c-white-s: 0%;
+	--c-white-l: 96%;
+	--c-white-hsl: var(--c-white-h), var(--c-white-s), var(--c-white-l);
+	--c-white: hsl(var(--c-white-hsl));
+
+	--c-accent-h: 160;
+	--c-accent-s: 66%;
+	--c-accent-l: 44%;
+	--c-accent-hsl: var(--c-accent-h), var(--c-accent-s), var(--c-accent-l);
+	--c-accent: hsl(var(--c-accent-hsl));
+
+	--c-link-h: 237;
+	--c-link-s: 100%;
+	--c-link-l: 70%;
+	--c-link-hsl: var(--c-link-h), var(--c-link-s), var(--c-link-l);
+	--c-link: hsl(var(--c-link-hsl));
 
 	font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir,
 		segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto,
@@ -61,5 +77,5 @@ a {
 	color: var(--c-link);
 }
 a:hover, a:focus {
-	color: var(--c-link-hover);
+	color: hsl(var(--c-link-h), var(--c-link-s), calc(var(--c-link-l) + 8%));
 }
