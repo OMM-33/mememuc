@@ -26,7 +26,7 @@
 		font-family: inherit;
 		font-size: 1em;
 		font-weight: 500;
-		background-color: var(--c-white-dark);
+		background-color: hsl(var(--c-white-h), var(--c-white-s), calc(var(--c-white-l) - 8%));
 		transition: border-color 300ms;
 		color: var(--c-black);
 	}
@@ -37,6 +37,6 @@
 	}
 
 	.button:hover {
-		border-color: var(--c-link-hover);
+		border-color: var(--c-link);
 	}
 </style>

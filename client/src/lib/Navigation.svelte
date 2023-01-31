@@ -26,7 +26,7 @@
 		align-items: center;
 		padding: 0.5em;
 
-		background-color: var(--c-white-light);
+		background-color: hsl(var(--c-white-h), var(--c-white-s), calc(var(--c-white-l) + 5%));
 		box-shadow: 0 0 2em rgba(0, 0, 0, 0.2);
 	}
 
