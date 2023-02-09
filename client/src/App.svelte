@@ -11,7 +11,16 @@
 
 <style>
 	main {
+		flex-grow: 1;
+
+		width: 100%;
 		max-width: 1200px;
-		margin: 0 auto;
+		padding: 1em;
+
+		display: flex;
+		flex-direction: column;
+	}
+	main :global(> *) {
+		flex-shrink: 0;
 	}
 </style>
