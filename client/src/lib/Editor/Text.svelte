@@ -62,7 +62,7 @@
 		overflow: hidden;
 		height: 100%;
 
-		font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+		font-family: var(--font-meme);
 		-webkit-text-stroke: 0.03125em var(--color-stroke);
 		letter-spacing: 0.03125em;
 		line-height: 1;
