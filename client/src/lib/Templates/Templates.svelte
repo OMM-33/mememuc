@@ -1,13 +1,15 @@
 <script>
 	import { createEventDispatcher } from "svelte";
 
-	import Button from "./Button.svelte";
+	import Button from "../Button.svelte";
+	import Upload from "./Upload/Upload.svelte";
 
 	const dispatch = createEventDispatcher();
 
+	let uploadOpen = false;
 	let color = "#ffffff";
 
-	const templates = [{
+	let templates = [{
 		src: "https://i.imgur.com/Yu7x5MV.jpeg",
 	}, {
 		src: "https://i.imgur.com/MiECrGi.jpeg",
@@ -26,6 +28,12 @@
 	}, {
 		src: "https://i.imgur.com/hPzefau.jpeg",
 	}];
+
+	const onAddTemplate = ({ detail: { src } }) => {
+		templates.push({ src });
+		templates = templates;
+		uploadOpen = false;
+	};
 
 	const pickColor = (() => {
 		const input = document.createElement("input");
@@ -60,9 +68,11 @@
 		{/each}
 	</div>
 	<div class="actions">
-		<Button>Add</Button>
+		<Button on:click={() => uploadOpen = true}>➕ Add</Button>
 	</div>
 </div>
+
+<Upload bind:open={uploadOpen} on:new={onAddTemplate} />
 
 <style>
 	.templates {
@@ -88,6 +98,8 @@
 		background: none;
 		padding: 0;
 		margin: 0;
+
+		background: repeating-conic-gradient(whitesmoke 0% 25%, white 0% 50%) 50% / 20px 20px
 	}
 
 	.template-actions {

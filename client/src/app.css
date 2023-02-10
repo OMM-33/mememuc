@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=block');
+
 :root {
 	--c-black-h: 0;
 	--c-black-s: 0%;
@@ -17,11 +19,19 @@
 	--c-accent-hsl: var(--c-accent-h), var(--c-accent-s), var(--c-accent-l);
 	--c-accent: hsl(var(--c-accent-hsl));
 
+	--c-error-h: 352;
+	--c-error-s: 66%;
+	--c-error-l: 44%;
+	--c-error-hsl: var(--c-error-h), var(--c-error-s), var(--c-error-l);
+	--c-error: hsl(var(--c-error-hsl));
+
 	--c-link-h: 237;
 	--c-link-s: 100%;
 	--c-link-l: 70%;
 	--c-link-hsl: var(--c-link-h), var(--c-link-s), var(--c-link-l);
 	--c-link: hsl(var(--c-link-hsl));
+
+	--font-meme: 'Anton', Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 
 	font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir,
 		segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto,

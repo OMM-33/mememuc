@@ -14,9 +14,21 @@ export const arrayMove = (array, from, to) => {
 };
 
 export const getImageDimensions = async (src) => {
-	return new Promise(resolve => {
+	return new Promise((resolve, reject) => {
 		const img = new Image();
 		img.onload = () => resolve([img.width, img.height]);
+		img.onerror = reject;
+
 		img.src = src;
+	});
+};
+
+export const fileToDataURL = async (file) => {
+	const reader = new FileReader();
+	return new Promise((resolve, reject) => {
+		reader.onload = () => resolve(reader.result);
+		reader.onerror = reject;
+
+		reader.readAsDataURL(file);
 	});
 };

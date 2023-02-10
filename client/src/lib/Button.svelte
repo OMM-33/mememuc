@@ -1,12 +1,15 @@
 <script>
 	export let element = "button";
+	/** @type {"default" | "primary"} */
 	export let variant = "default";
+	/** @type {"default" | "tab"} */
+	export let shape = "default";
 	export let type = "button";
 </script>
 
 <svelte:element
 	this={element}
-	class={`button ${variant}`}
+	class={`button shape-${shape} ${variant}`}
 	{type}
 	{variant}
 	{...$$restProps}
@@ -31,12 +34,23 @@
 		color: var(--c-black);
 	}
 
+	.button.shape-tab {
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+		border-bottom: none;
+	}
+
 	.button.primary {
 		background-color: var(--c-accent);
 		color: var(--c-white);
 	}
 
-	.button:hover {
+	.button:hover:not(:disabled),
+	.button:focus:not(:disabled) {
 		border-color: var(--c-link);
+	}
+
+	.button:disabled {
+		opacity: 0.5;
 	}
 </style>

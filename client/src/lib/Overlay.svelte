@@ -24,5 +24,6 @@
 		background-color: rgba(0, 0, 0, 0.75);
 		display: grid;
 		place-content: center;
+		z-index: 100;
 	}
 </style>

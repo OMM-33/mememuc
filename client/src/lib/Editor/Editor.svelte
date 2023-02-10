@@ -77,7 +77,7 @@
 </div>
 <div class="controls">
 	<Button on:click={() => $meme.addLayer("text")}>📝 Add Text</Button>
-	<Button on:click={$meme.clear}>❌ Clear Canvas</Button>
+	<Button on:click={() => $meme.clear()}>❌ Clear Canvas</Button>
 	<Button on:click={render}>🧮 Render</Button>
 </div>
 

@@ -2,7 +2,7 @@
 	import { getImageDimensions } from "../util";
 	import Meme from "../models/Meme";
 
-	import MemeTemplates from "../lib/MemeTemplates.svelte";
+	import Templates from "../lib/Templates/Templates.svelte";
 	import Editor from "../lib/Editor/Editor.svelte";
 	import Overlay from "../lib/Overlay.svelte";
 
@@ -28,7 +28,7 @@
 </script>
 
 <div class="editor">
-	<MemeTemplates
+	<Templates
 		on:add-image={({ detail: background }) => $meme.addLayer("image", { src: background.image })}
 		on:change-background={onChangeBackground}
 	/>
