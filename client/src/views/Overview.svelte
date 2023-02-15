@@ -32,7 +32,7 @@
 <style>
 	.grid{
 		display: grid;
-		grid-template-columns:auto auto auto;
+		grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 		justify-content: space-between;
 	}
 </style>
