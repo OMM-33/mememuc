@@ -3,8 +3,10 @@
 	export let views = 3;
 	export let comments = 2;
 	export let image;
+	export let title;
 </script>
 <div class="container">
+	<p id="title"> {title}</p>
 	<div style:background-image="url('{image}')" class="image" />
 	<div class="info"><span>⬆️{upvotes} </span><span class="middle">👁️{views}</span><span class="right">🗨️ {comments}</span>
 	</div>
@@ -36,5 +38,11 @@
 		border: 1px solid black;
 
 		}
+	#title{
+		text-align: center;
+		font-size: 1.2em;
+		font-weight: bold;
+
+	}
 
 </style>
