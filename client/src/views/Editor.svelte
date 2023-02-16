@@ -1,42 +1,45 @@
 <script>
-	import { getImageDimensions } from "../util";
 	import Meme from "../models/Meme";
 
+	import Overlay from "../lib/Overlay.svelte";
 	import Templates from "../lib/Templates/Templates.svelte";
 	import Editor from "../lib/Editor/Editor.svelte";
-	import Overlay from "../lib/Overlay.svelte";
+	import RenderResult from "../lib/Editor/RenderResult.svelte";
 
-	let resultDataURL = null;
 	let resultOverlayOpen = false;
 
 	let meme = new Meme();
 
-	const onChangeBackground = async ({ detail: background }) => {
-		if (background.image) {
-			$meme.size = await getImageDimensions(background.image);
-			$meme.background.image = background.image;
-		} else if (background.color) {
-			$meme.background.color = background.color;
-			$meme.background.image = null;
+	const onAddLayer = ({ detail: { media } }) => {
+		$meme.addLayer("image", { media });
+	};
+
+	const onChangeBackground = async ({ detail: { color, media } }) => {
+		if (media) {
+			([$meme.width, $meme.height] = await media.dimensions);
+			$meme.background.media = media;
+		} else if (color) {
+			$meme.background.color = color;
+			$meme.background.media = null;
 		}
 	};
 
-	const onRender = ({ detail: { dataURL } }) => {
-		resultDataURL = dataURL;
+	const onRender = ({ detail: { blob } }) => {
+		$meme.updateBlob(blob);
 		resultOverlayOpen = true;
 	};
 </script>
 
 <div class="editor">
+	<Editor bind:meme on:render={onRender} />
 	<Templates
-		on:add-image={({ detail: background }) => $meme.addLayer("image", { src: background.image })}
+		on:add-layer={onAddLayer}
 		on:change-background={onChangeBackground}
 	/>
-	<Editor bind:meme on:render={onRender} />
 </div>
 
-<Overlay bind:open={resultOverlayOpen}>
-	<img class="render-result" src={resultDataURL} alt="Render Result" />
+<Overlay bind:open={resultOverlayOpen} backgroundclose>
+	<RenderResult {meme} close={() => resultOverlayOpen = false} />
 </Overlay>
 
 <style>
@@ -46,9 +49,5 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1em;
-	}
-
-	.render-result {
-		display: block;
 	}
 </style>

@@ -1,6 +1,9 @@
 <script>
 	import { createEventDispatcher } from "svelte";
 
+	import { templates } from "../../stores";
+	import Media from "../../models/Media";
+
 	import Button from "../Button.svelte";
 	import Upload from "./Upload/Upload.svelte";
 
@@ -9,29 +12,9 @@
 	let uploadOpen = false;
 	let color = "#ffffff";
 
-	let templates = [{
-		src: "https://i.imgur.com/Yu7x5MV.jpeg",
-	}, {
-		src: "https://i.imgur.com/MiECrGi.jpeg",
-	}, {
-		src: "https://i.imgur.com/1ns9fsG.jpeg",
-	}, {
-		src: "https://i.imgur.com/OQ2z11V.jpeg",
-	}, {
-		src: "https://i.imgur.com/sIzQ1s9.jpeg",
-	}, {
-		src: "https://i.imgur.com/32IxU4l.jpeg",
-	}, {
-		src: "https://i.imgur.com/q2MbxIR.jpeg",
-	}, {
-		src: "https://i.imgur.com/vdoRUMd.jpeg",
-	}, {
-		src: "https://i.imgur.com/hPzefau.jpeg",
-	}];
-
-	const onAddTemplate = ({ detail: { src } }) => {
-		templates.push({ src });
-		templates = templates;
+	const onAddTemplate = ({ detail: mediaProps }) => {
+		$templates.push(new Media(mediaProps));
+		$templates = $templates;
 		uploadOpen = false;
 	};
 
@@ -57,12 +40,12 @@
 				<Button on:click={async () => color = await pickColor()}>🎨 Change color</Button>
 			</div>
 		</button>
-		{#each templates as { src }}
+		{#each $templates as template}
 			<button class="template image">
-				<img {src} />
+				<img src={template.src} />
 				<div class="template-actions">
-					<Button on:click={() => dispatch("change-background", { image: src })}>🔁 Swap template</Button>
-					<Button on:click={() => dispatch("add-image", { image: src })}>🖼️ Place in canvas</Button>
+					<Button on:click={() => dispatch("change-background", { media: template })}>🔁 Swap template</Button>
+					<Button on:click={() => dispatch("add-layer", { media: template })}>🖼️ Place in canvas</Button>
 				</div>
 			</button>
 		{/each}

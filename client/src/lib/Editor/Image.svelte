@@ -28,12 +28,12 @@
 	<div
 		class="image"
 		tabindex="0"
-		style:background-image="url('{options.src}')"
+		style:background-image="url('{options.media.src}')"
 		style:background-size={fitMap[options.fit]}
 		style:--scale-flip={options.flip ? -1 : 1}
 	/>
 	<svelte:fragment slot="options">
-		<input type="text" bind:value={options.src} />
+		<input type="text" bind:value={options.media.src} />
 		<select bind:value={options.fit}>
 			<option value={0}>contain</option>
 			<option value={1}>cover</option>

@@ -23,12 +23,63 @@ export const getImageDimensions = async (src) => {
 	});
 };
 
-export const fileToDataURL = async (file) => {
+// When using this function, make sure it cannot be solved using URL.createObjectURL(file) instead.
+export const blobToDataURL = async (blob) => {
 	const reader = new FileReader();
 	return new Promise((resolve, reject) => {
 		reader.onload = () => resolve(reader.result);
-		reader.onerror = reject;
+		reader.onerror = () => reject(reader.error);
+		reader.onabort = reject;
 
-		reader.readAsDataURL(file);
+		reader.readAsDataURL(blob);
 	});
+};
+
+/**
+ * Compress an image to a JPEG with maximum file-size target via semi-smart trial and error.
+ * @param {string} src valid image source
+ * @param {number} bytes maximum file size
+ * @param {string} type output MIME type
+ * @param {number} qualityResolution step size of quality in-/decrease to find an adequate file-size
+ * @returns {Promise<Blob>}
+ **/
+export const compressImage = async (src, bytes, type = "image/jpeg", qualityResolution = 0.01) => {
+	const canvas = document.createElement("canvas");
+	const context = canvas.getContext("2d");
+
+	const img = await new Promise((resolve, reject) => {
+		const img = new Image();
+		img.onload = () => resolve(img);
+		img.onerror = reject;
+
+		img.src = src;
+	});
+
+	canvas.width = img.width;
+	canvas.height = img.height;
+	context.drawImage(img, 0, 0);
+
+	const getBlobForQuality = quality => {
+		return new Promise(resolve => canvas.toBlob(resolve, type, quality));
+	};
+
+	let quality = 0.5;
+	let step = quality / 2;
+	let blob;
+	// First do a sort of binary search to find a roughly adequate quality.
+	do {
+		blob = await getBlobForQuality(quality);
+
+		quality += blob.size < bytes ? step : -step;
+		step /= 2;
+	} while (step > qualityResolution);
+
+	quality += step;
+
+	// Search for an "exact" match along the resolution.
+	do {
+		blob = await getBlobForQuality(quality);
+		quality -= qualityResolution;
+	} while (blob.size > bytes && quality > qualityResolution);
+	return blob;
 };

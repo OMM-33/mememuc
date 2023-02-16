@@ -9,12 +9,16 @@
 	const canvas = document.createElement("canvas");
 	const context = canvas.getContext("2d");
 
-	const onSnapshot = () => {
+	const onSnapshot = async () => {
 		canvas.width = videoEl.videoWidth;
 		canvas.height = videoEl.videoHeight;
 		context.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-		const src = canvas.toDataURL("image/jpeg");
-		onNew({ src });
+		try {
+			const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg"));
+			onNew({ blob });
+		} catch (error) {
+			onError(error);
+		}
 	};
 
 	onMount(async () => {

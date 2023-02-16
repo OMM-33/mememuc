@@ -9,9 +9,13 @@
 	let context;
 	let canvasOrigin = [null, null];
 
-	const onSave = () => {
-		const src = canvasEl.toDataURL("image/png");
-		onNew({ src });
+	const onSave = async () => {
+		try {
+			const blob = await new Promise(resolve => canvasEl.toBlob(resolve, "image/png"));
+			onNew({ blob });
+		} catch (error) {
+			onError(error);
+		}
 	};
 
 	const onPointerdown = ({ clientX, clientY }) => {

@@ -1,7 +1,7 @@
 <script>
 	import { createEventDispatcher } from "svelte";
-	import { wait } from "../../util";
 	import html2canvas from "html2canvas";
+	import { wait } from "../../util";
 
 	import Button from "../Button.svelte";
 	import Text from "./Text.svelte";
@@ -14,11 +14,11 @@
 	const canvasSize = [null, null];
 	let selectedLayerID = null;
 
-	/** @type {Meme} */
 	export let meme = null;
 
 	const onResize = ({ detail: change }) => {
-		$meme.size = $meme.size.map((coord, i) => Math.max(64, coord + change[i]));
+		$meme.width = Math.max(64, $meme.width + change[0]);
+		$meme.height = Math.max(64, $meme.height + change[1]);
 	};
 
 	const onLayerDelete = (index) => {
@@ -33,26 +33,31 @@
 		selectedLayerID = null;
 		await wait(0);
 
-		const canvas = await html2canvas(renderEl, { useCORS: true, logging: true, scale: 1 });
-		dispatch("render", {
-			dataURL: canvas.toDataURL("png"),
-		});
+		const canvas = await html2canvas(renderEl, { useCORS: true, logging: false, scale: 1 });
+		const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+
+		dispatch("render", { blob });
 	};
 </script>
 
-<div class="editor" resize>
+<div class="controls">
+	<Button on:click={() => $meme.addLayer("text")}>📝 Add Text</Button>
+	<Button on:click={() => $meme.clear()}>❌ Clear Canvas</Button>
+	<Button variant="primary" on:click={render}>🧮 Generate Meme</Button>
+</div>
+<div class="editor">
 	<div
 		class="canvas"
 		bind:clientWidth={canvasSize[0]}
 		bind:clientHeight={canvasSize[1]}
-		style:width="{$meme.size[0]}px"
-		style:height="{$meme.size[1]}px"
+		style:width="{$meme.width}px"
+		style:height="{$meme.height}px"
 	>
 		<div class="render" bind:this={renderEl}>
 			<div
 				class="background"
 				style:background-color={$meme.background.color}
-				style:background-image="url('{$meme.background.image}')"
+				style:background-image="url('{$meme.background.media?.src}')"
 			/>
 			{#each $meme.layers as layer, i (layer.id)}
 				<svelte:component
@@ -74,11 +79,6 @@
 		</div>
 		<Resizer on:resize={onResize} />
 	</div>
-</div>
-<div class="controls">
-	<Button on:click={() => $meme.addLayer("text")}>📝 Add Text</Button>
-	<Button on:click={() => $meme.clear()}>❌ Clear Canvas</Button>
-	<Button on:click={render}>🧮 Render</Button>
 </div>
 
 <style>
@@ -114,6 +114,9 @@
 	}
 
 	.controls {
-		margin-top: 1em;
+		flex-shrink: 0;
+
+		display: flex;
+		gap: 0.5em;
 	}
 </style>

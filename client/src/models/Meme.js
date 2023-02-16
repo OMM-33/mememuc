@@ -1,16 +1,15 @@
-import Reactive from "./Reactive";
+import Media from "./Media";
 
 import { arrayMove } from "../util";
 
-export default class Meme extends Reactive {
-	constructor({ background, size, layers } = {}) {
-		super();
+export default class Meme extends Media {
+	constructor({ background, layers, blob, src } = {}) {
+		super({ blob, src, width: 512, height: 512 });
 
 		this.background = background || {
-			image: null,
+			media: null,
 			color: "#ffffff",
 		};
-		this.size = size || [512, 512];
 		this.nextLayerID = 0;
 		this.layers = layers || [];
 	}
@@ -27,7 +26,7 @@ export default class Meme extends Reactive {
 			image: () => ({
 				origin: [0.5, 0.5], angle: 0, size: [0.33, 0.33],
 				options: {
-					src: data.src,
+					media: data.media,
 					fit: 0,
 					flip: false,
 				},
