@@ -17,6 +17,7 @@
 	{/each}
 </div>
 
+
 <style>
 	.grid {
 		display: grid;
