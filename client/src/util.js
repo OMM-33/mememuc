@@ -84,3 +84,5 @@ export const compressImage = async (src, bytes, type = "image/jpeg", qualityReso
 	} while (blob.size > bytes && quality > qualityResolution);
 	return blob;
 };
+
+export const mimeToFileType = mime => mime.split("/").at(-1).toUpperCase();

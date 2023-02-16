@@ -4,11 +4,11 @@
 	import Overlay from "../lib/Overlay.svelte";
 	import Templates from "../lib/Templates/Templates.svelte";
 	import Editor from "../lib/Editor/Editor.svelte";
-	import RenderResult from "../lib/Editor/RenderResult.svelte";
+	import Result from "../lib/Editor/Result/Result.svelte";
 
 	let resultOverlayOpen = false;
 
-	let meme = new Meme();
+	let meme = new Meme({ width: 320, height: 320 });
 
 	const onAddLayer = ({ detail: { media } }) => {
 		$meme.addLayer("image", { media });
@@ -39,7 +39,7 @@
 </div>
 
 <Overlay bind:open={resultOverlayOpen} backgroundclose>
-	<RenderResult {meme} close={() => resultOverlayOpen = false} />
+	<Result {meme} close={{ func: () => resultOverlayOpen = false }} />
 </Overlay>
 
 <style>

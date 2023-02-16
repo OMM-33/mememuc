@@ -1,18 +1,19 @@
 <script>
-	import { onDestroy, onMount } from "svelte";
-	import prettyBytes from "pretty-bytes";
+	import { onDestroy, onMount, createEventDispatcher } from "svelte";
+	import { compressImage, mimeToFileType } from "../../../util";
+	import Media from "../../../models/Media";
 
-	import { compressImage, getUID } from "../../util";
-	import Media from "../../models/Media";
-	import Button from "../Button.svelte";
-	import Card from "../Card.svelte";
+	import Button from "../../Button.svelte";
+	import Card from "../../Card.svelte";
+	import Footer from "./Footer.svelte";
 
 	export let meme;
-	export let compressedMedia = null;
 	export let close;
 
-	const uid = getUID();
+	const dispatch = createEventDispatcher();
+
 	const target = { kb: 0, types: ["image/jpeg", "image/webp"], type: "image/jpeg" };
+	let compressedMedia = null;
 
 	$: media = compressedMedia || $meme;
 
@@ -30,10 +31,8 @@
 		compressedMedia?.destroy();
 	};
 
-	const mimeToFileType = mime => mime.split("/").at(-1).toUpperCase();
-
 	onMount(() => {
-		target.kb = Math.floor(media?.blob.size / 1000 / 8);
+		target.kb = Math.ceil(media?.blob.size / 1000 / 8);
 	});
 
 	onDestroy(() => {
@@ -41,14 +40,15 @@
 	});
 </script>
 
-<Card {close}>
+<Card {close} scroll>
 	<h3 slot="header" style:margin="0">Generated Meme</h3>
 	<div class="content">
 		<img src={media.src} />
 		<div class="controls">
 			<div class="row">
-				<Button variant="primary" style="flex-grow: 1">✔️ Save in Profile</Button>
-				<Button>📲 Share</Button>
+				<Button variant="primary" style="flex-grow: 1" on:click={() => dispatch("save")}>
+					✔️ Save in Profile
+				</Button>
 			</div>
 			<div class="row">
 				<div>
@@ -60,33 +60,29 @@
 					{:else}
 						<Button on:click={restoreUncompressed}>🗜️ Restore uncompressed</Button>
 					{/if}
-					<input
-						type="number"
-						id="compress-kb-{uid}"
-						size="6"
-						min="0"
-						max="10000"
-						bind:value={target.kb}
-					/>
-					<label for="compress-kb-{uid}">kB</label>
-					as
-					<select bind:value={target.type}>
-						{#each target.types as type}
-							<option value={type}>{mimeToFileType(type)}</option>
-						{/each}
-					</select>
+					<label>
+						<input
+							type="number"
+							size="6"
+							min="0"
+							max="10000"
+							bind:value={target.kb}
+						/>
+						kB
+					</label>
+					<label>
+						as
+						<select bind:value={target.type}>
+							{#each target.types as type}
+								<option value={type}>{mimeToFileType(type)}</option>
+							{/each}
+						</select>
+					</label>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="metadata" slot="footer">
-		<div class="filetype">
-			🖼️ {mimeToFileType(media.blob.type)}
-		</div>
-		<div class="size">
-			💾 {prettyBytes(media.blob.size)}
-		</div>
-	</div>
+	<Footer slot="footer" type={media.blob.type} size={media.blob.size} />
 </Card>
 
 <style>
@@ -115,16 +111,9 @@
 		gap: 0.5em;
 	}
 
-	.metadata {
-		width: 100%;
-		display: flex;
-		justify-content: flex-end;
-		gap: 1.5em;
-	}
-
 	img {
 		flex-grow: 1;
-		height: 0;
+		height: 128px;
 		object-fit: contain;
 	}
 </style>

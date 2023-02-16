@@ -5,7 +5,7 @@ import Reactive from "./Reactive";
 export default class Media extends Reactive {
 	constructor({ src, blob, width, height } = {}) {
 		super();
-		/** @type {string} */
+		/** @type {string?} */
 		this.src = src || blob && URL.createObjectURL(blob);
 		/** @type {Blob?} */
 		this.blob = blob;
@@ -14,7 +14,7 @@ export default class Media extends Reactive {
 		/** @type {number} */
 		this.height = height ?? 0;
 
-		if (width === undefined && height === undefined) {
+		if (width === undefined && height === undefined && this.src) {
 			this.dimensions = this.computeDimensions();
 		} else {
 			this.dimensions = Promise.resolve([this.width, this.height]);
