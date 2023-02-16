@@ -1,9 +1,9 @@
 <script>
-	export let element = "button";
 	/** @type {"default" | "primary"} */
 	export let variant = "default";
 	/** @type {"default" | "tab"} */
 	export let shape = "default";
+	export let element = "button";
 	export let type = "button";
 </script>
 
@@ -20,18 +20,23 @@
 
 <style>
 	.button {
+		--border-color: var(--c-link);
+
 		display: inline-block;
 		appearance: none;
 
-		border-radius: 8px;
+		border-radius: 0.5em;
 		border: 2px solid transparent;
 		padding: 0.5em 1em;
 		font-family: inherit;
 		font-size: 1em;
 		font-weight: 500;
+		line-height: inherit;
 		background-color: hsl(var(--c-white-h), var(--c-white-s), calc(var(--c-white-l) - 8%));
 		transition: border-color 300ms;
 		color: var(--c-black);
+
+		cursor: default;
 	}
 
 	.button.shape-tab {
@@ -41,13 +46,14 @@
 	}
 
 	.button.primary {
+		--border-color: hsl(var(--c-accent-h), var(--c-accent-s), calc(var(--c-accent-l) - 25%));
 		background-color: var(--c-accent);
 		color: var(--c-white);
 	}
 
 	.button:hover:not(:disabled),
 	.button:focus:not(:disabled) {
-		border-color: var(--c-link);
+		border-color: var(--border-color);
 	}
 
 	.button:disabled {
