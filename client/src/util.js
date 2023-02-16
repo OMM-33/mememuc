@@ -70,7 +70,8 @@ export const compressImage = async (src, bytes, type = "image/jpeg", qualityReso
 	do {
 		blob = await getBlobForQuality(quality);
 
-		quality += blob.size < bytes ? step : -step;
+		// TIL: https://twitter.com/mhevery/status/1626002464469323777
+		quality += blob.size < bytes ? step : 0 - step;
 		step /= 2;
 	} while (step > qualityResolution);
 
