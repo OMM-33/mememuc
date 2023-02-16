@@ -13,3 +13,5 @@ export const templates = writable([
 	"https://i.imgur.com/vdoRUMd.jpeg",
 	"https://i.imgur.com/hPzefau.jpeg",
 ].map(src => new Media({ src })));
+
+export const memes = writable([]);

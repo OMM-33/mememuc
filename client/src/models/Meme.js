@@ -2,16 +2,38 @@ import Media from "./Media";
 
 import { arrayMove } from "../util";
 
-export default class Meme extends Media {
-	constructor({ background, layers, blob, src } = {}) {
-		super({ blob, src, width: 512, height: 512 });
+export const privacyLevels = [
+	{ id: "public", label: "Public", icon:"🌐", description: "Post to public overview" },
+	{ id: "unlisted", label: "Unlisted", icon:"🔓", description: "Do not post to public overview" },
+	{ id: "private", label: "Private (Draft)", icon:"🔒", description: "Can only be viewed by you" },
+];
 
-		this.background = background || {
-			media: null,
-			color: "#ffffff",
-		};
-		this.nextLayerID = 0;
-		this.layers = layers || [];
+export default class Meme extends Media {
+	constructor({
+		title = "",
+		description = "",
+		privacy = "public",
+		background = { media: null, color: "#ffffff" },
+		layers = [],
+		blob,
+		src,
+		width,
+		height,
+	} = {}) {
+
+		super({ blob, src, width, height });
+
+		/** @type {string} */
+		this.title = title;
+		/** @type {string} */
+		this.description = description;
+		/** @type {"private" | "unlisted" | "public"} */
+		this.privacy = privacy;
+
+		this.background = background;
+		this.layers = layers;
+		/** @type {number} */
+		this.nextLayerID = this.layers.length;
 	}
 
 	addLayer(type, data) {

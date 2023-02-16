@@ -34,7 +34,7 @@
 </script>
 
 <Overlay bind:open>
-	<Card close={() => open = false}>
+	<Card close={{ func: () => open = false }}>
 		<h3 slot="header" style:margin="0">Add a template</h3>
 		<div class="upload">
 			<Tabs {tabs} on:change={() => error = null} />
