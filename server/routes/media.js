@@ -3,7 +3,7 @@
 const express = require('express')
 const router = express.Router()
 // Import our database
-const database = require('../database');
+const database = require('../database')
 
 
 // Get a list of media, limited by parameters and sorted accordingly.
@@ -12,20 +12,20 @@ const database = require('../database');
 // See also database.js > listMedia()
 router.get('/list', async (req, res) => {
     try {
-        const media = await database.listMedia();
-        res.status(200).json(media);
+        const media = await database.listMedia()
+        res.status(200).json(media)
     } catch (err) {
-        res.status(500).json({ message: 'Error listing files: ' + err.message });
+        res.status(500).json({ message: 'Error listing files: ' + err.message })
     }
-});
+})
 
 // Get the media
 router.get('/:id', async (req, res) => {
     console.log('Getting file with id: ' + req.params.id)
     try {
-        database.getMediaById(req.params.id, res);
+        database.getMediaById(req.params.id, res)
     } catch (err) {
-        res.status(500).json({ message: 'Error sending file: ' + err });
+        res.status(500).json({ message: 'Error sending file: ' + err })
     }
 })
 
@@ -40,8 +40,8 @@ router.get('/', (req, res) => {
 // The file upload is handled as middleware *before* the main route handler function (i.e. (req, res) => {...}).
 // This way all necessary preprocessing can be handled before we want interact to interact with the file itself.
 router.post('/', database.upload.single('mediaFile'), (req, res) => {
-    res.status(201).json({ message: 'File uploaded successfully' });
-});
+    res.status(201).json({ message: 'File uploaded successfully' })
+})
 
 // Update media
 router.put('/:id', (req, res) => {
