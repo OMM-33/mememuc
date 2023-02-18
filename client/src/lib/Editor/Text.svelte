@@ -42,7 +42,7 @@
 		on:drop={e => e.preventDefault()}
 		on:dragover={e => e.preventDefault()}
 		on:paste={onPaste}
-		bind:innerHTML={options.text}
+		bind:innerHTML={options.html}
 	/>
 	<svelte:fragment slot="options">
 		<input type="number" size="4" bind:value={options.font.size} />
@@ -65,7 +65,7 @@
 		font-family: var(--font-meme);
 		-webkit-text-stroke: 0.03125em var(--color-stroke);
 		letter-spacing: 0.03125em;
-		line-height: 1;
+		line-height: 1.1;
 	}
 	.text:focus,
 	.text:focus-visible {

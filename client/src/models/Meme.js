@@ -1,7 +1,8 @@
 import Media from "./Media";
 
-import { arrayMove } from "../util";
+import { arrayMove, stripHTML } from "../util";
 import { buildURL, jsonHeaders } from "../api";
+import { tts } from "../speech";
 
 export const privacyLevels = [
 	{ id: "public", label: "Public", icon:"🌐", description: "Post to public overview" },
@@ -50,7 +51,7 @@ export default class Meme extends Media {
 			text: () => ({
 				origin: [0.5, 0.5], angle: 0, size: [0.75, 0.25],
 				options: {
-					text: "[text]",
+					html: "[text]",
 					font: { size: 64, color: "#ffffff", colorStroke: "#000000", align: 1 },
 				},
 			}),
@@ -100,6 +101,23 @@ export default class Meme extends Media {
 
 		this.score += this.vote - prevVote;
 		this.notify();
+	}
+
+	/** @param {"title" | "description" | "captions"} attribute */
+	tts(attribute) {
+		switch (attribute) {
+			case "title":
+				return tts(this.title);
+			case "description":
+				return tts(this.description);
+			case "captions": {
+				const captions = this.layers
+					.filter(l => l.type === "text")
+					.map(l => stripHTML(l.options.html.replaceAll("</div>", "\n")));
+				captions.forEach(text => tts(text));
+				return;
+			}
+		}
 	}
 
 	/**
