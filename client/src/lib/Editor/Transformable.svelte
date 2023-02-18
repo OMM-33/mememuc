@@ -325,6 +325,7 @@
 			translateY(-40px);
 
 		display: flex;
+		align-items: center;
 		background-color: var(--c-white);
 		padding: 1em;
 		border-radius: 4px;

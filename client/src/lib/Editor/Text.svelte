@@ -1,6 +1,7 @@
 <script>
 	import Transformable from "./Transformable.svelte";
 	import DefaultOptions from "./DefaultOptions.svelte";
+	import SpeechInput from "../SpeechInput.svelte";
 
 	export let origin;
 	export let angle;
@@ -45,6 +46,7 @@
 		bind:innerHTML={options.html}
 	/>
 	<svelte:fragment slot="options">
+		<SpeechInput bind:value={options.html} />
 		<input type="number" size="4" bind:value={options.font.size} />
 		<input type="color" bind:value={options.font.color} />
 		<input type="color" bind:value={options.font.colorStroke} />
