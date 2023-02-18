@@ -19,9 +19,10 @@ router.get('/list', async (req, res) => {
     }
 })
 
-// Get the media
+// Get the media with the specified id (if it exists)
+// TODO: Auth (isPublic || isAdmin || isCreator)
 router.get('/:id', async (req, res) => {
-    console.log('Getting file with id: ' + req.params.id)
+    console.log('Getting file with id: ' + req.params.id) // Debugging
     try {
         database.getMediaById(req.params.id, res)
     } catch (err) {
@@ -36,21 +37,24 @@ router.get('/', (req, res) => {
 })
 
 
-// Save uploaded media to database
+// Upload a media file and save it to the database
 // The file upload is handled as middleware *before* the main route handler function (i.e. (req, res) => {...}).
-// This way all necessary preprocessing can be handled before we want interact to interact with the file itself.
+// This way all necessary preprocessing can be handled before further interaction with the file itself.
 router.post('/', database.upload.single('mediaFile'), (req, res) => {
     res.status(201).json({ message: 'File uploaded successfully' })
 })
 
 // Update media
+// TODO
 router.put('/:id', (req, res) => {
 
 })
 
-// Delete media
+// Delete the media file with the specified id (if it exists)
+// TODO: Auth (isAdmin || isCreator)
+// TODO: Usage check (If still used replace w/ placeholder in all used places) 
 router.delete('/:id', (req, res) => {
-
+    database.deleteMediaById(req.params.id, res)
 })
 
 module.exports = router
