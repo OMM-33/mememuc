@@ -10,18 +10,17 @@ export const privacyLevels = [
 
 export default class Meme extends Media {
 	constructor({
+		id, src, blob, width, height,
 		title = "",
 		description = "",
 		privacy = "public",
+		views = 0,
+		score = 0,
+		commentCount = 0,
 		background = { media: null, color: "#ffffff" },
 		layers = [],
-		blob,
-		src,
-		width,
-		height,
 	} = {}) {
-
-		super({ blob, src, width, height });
+		super({ id, src, blob, width, height });
 
 		/** @type {string} */
 		this.title = title;
@@ -29,6 +28,12 @@ export default class Meme extends Media {
 		this.description = description;
 		/** @type {"private" | "unlisted" | "public"} */
 		this.privacy = privacy;
+		/** @type {number} */
+		this.views = views;
+		/** @type {number} */
+		this.score = score;
+		/** @type {number} */
+		this.commentCount = commentCount;
 
 		this.background = background;
 		this.layers = layers;

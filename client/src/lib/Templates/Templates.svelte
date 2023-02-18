@@ -1,7 +1,7 @@
 <script>
 	import { createEventDispatcher } from "svelte";
 
-	import { templates } from "../../stores";
+	import { templates } from "../../cache";
 	import Media from "../../models/Media";
 
 	import Button from "../Button.svelte";
@@ -13,7 +13,9 @@
 	let color = "#ffffff";
 
 	const onAddTemplate = ({ detail: mediaProps }) => {
-		$templates.push(new Media(mediaProps));
+		// ID should be provided by the server later on of course:
+		const id = Math.max(...$templates.keys()) + 1;
+		$templates.set(String(id + 1), new Media({ ...mediaProps, id }));
 		$templates = $templates;
 		uploadOpen = false;
 	};
@@ -40,7 +42,7 @@
 				<Button on:click={async () => color = await pickColor()}>🎨 Change color</Button>
 			</div>
 		</button>
-		{#each $templates as template}
+		{#each [...$templates.values()] as template}
 			<button class="template image">
 				<img src={template.src} />
 				<div class="template-actions">

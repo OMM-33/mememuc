@@ -3,8 +3,10 @@ import { getImageDimensions } from "../util";
 import Reactive from "./Reactive";
 
 export default class Media extends Reactive {
-	constructor({ src, blob, width, height } = {}) {
+	constructor({ id, src, blob, width, height } = {}) {
 		super();
+		/** @type {string?} */
+		this.id = id;
 		/** @type {string?} */
 		this.src = src || blob && URL.createObjectURL(blob);
 		/** @type {Blob?} */
