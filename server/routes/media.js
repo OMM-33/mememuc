@@ -36,18 +36,11 @@ router.get('/', (req, res) => {
     res.send('Overview of media API')
 })
 
-
 // Upload a media file and save it to the database
 // The file upload is handled as middleware *before* the main route handler function (i.e. (req, res) => {...}).
 // This way all necessary preprocessing can be handled before further interaction with the file itself.
 router.post('/', database.upload.single('mediaFile'), (req, res) => {
     res.status(201).json({ message: 'File uploaded successfully' })
-})
-
-// Update media
-// TODO
-router.put('/:id', (req, res) => {
-
 })
 
 // Delete the media file with the specified id (if it exists)
@@ -56,5 +49,11 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
     database.deleteMediaById(req.params.id, res)
 })
+
+// Update media
+// TODO (necessary?)
+// router.put('/:id', (req, res) => {
+
+// })
 
 module.exports = router
