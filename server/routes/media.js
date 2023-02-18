@@ -5,31 +5,35 @@ const router = express.Router()
 // Import our database
 const database = require('../database');
 
-// Get specific media
-router.get('/files/:id', async (req, res) => {
-    console.log('Getting file with id: ' + req.params.id)
-    try {
-        database.sendFileById(req.params.id, res);
-    } catch (err) {
-        res.status(500).json({ message: 'Error sending file: ' + err });
-    }
-})
 
-// Get a list of media, constrained by parameters
-router.get('/', async (req, res) => {
-    console.log('Lisiting all files')
+// Get a list of media, limited by parameters and sorted accordingly.
+// TODO: Limiting parameters
+// TODO: Sorting
+// See also database.js > listMedia()
+router.get('/list', async (req, res) => {
     try {
-        const files = await database.getAllFiles();
-        res.status(200).json(files);
+        const media = await database.listMedia();
+        res.status(200).json(media);
     } catch (err) {
         res.status(500).json({ message: 'Error listing files: ' + err.message });
     }
 });
 
-// // Get command overview
-// router.get('/', (req, res) => {
-//     res.send('Overview of media API')
-// })
+// Get the media
+router.get('/:id', async (req, res) => {
+    console.log('Getting file with id: ' + req.params.id)
+    try {
+        database.getMediaById(req.params.id, res);
+    } catch (err) {
+        res.status(500).json({ message: 'Error sending file: ' + err });
+    }
+})
+
+// Get command overview
+// TODO: Actually implement an overview
+router.get('/', (req, res) => {
+    res.send('Overview of media API')
+})
 
 
 // Save uploaded media to database
@@ -48,6 +52,5 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
 
 })
-
 
 module.exports = router
