@@ -33,7 +33,6 @@
 		style:--scale-flip={options.flip ? -1 : 1}
 	/>
 	<svelte:fragment slot="options">
-		<input type="text" bind:value={options.media.src} />
 		<select bind:value={options.fit}>
 			<option value={0}>contain</option>
 			<option value={1}>cover</option>

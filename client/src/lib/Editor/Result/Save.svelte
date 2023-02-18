@@ -9,6 +9,7 @@
 	import Card from "../../Card.svelte";
 	import Footer from "./Footer.svelte";
 	import Loading from "../../Loading.svelte";
+	import SpeechInput from "../../SpeechInput.svelte";
 
 	export let meme;
 	export let back;
@@ -55,10 +56,13 @@
 			<form on:submit|preventDefault={onSave}>
 				<div class="title">
 					<h4>Title</h4>
-					<input type="text" required minlength="8" bind:value={$meme.title} />
+					<div class="row">
+						<input type="text" style:flex-grow="1" bind:value={$meme.title} />
+						<SpeechInput bind:value={$meme.title} data-sc="title" />
+					</div>
 				</div>
 				<div class="row" style:flex-grow="3">
-					<fieldset>
+					<fieldset style:margin-bottom="auto">
 						<legend>Visibility</legend>
 						{#each privacyLevels as { id, label, icon }}
 							<div>
@@ -77,7 +81,10 @@
 					<img src={$meme.src} />
 				</div>
 				<div class="description" style:flex-grow="2">
-					<h4>Add a Description</h4>
+					<div class="row" style:margin-bottom="0.5em">
+						<h4 style:margin-top="auto" style:flex-grow="1">Add a Description</h4>
+						<SpeechInput bind:valueAppend={$meme.description} />
+					</div>
 					<textarea bind:value={$meme.description} />
 				</div>
 				<div class="row">
@@ -121,7 +128,6 @@
 
 	.row {
 		display: flex;
-		align-items: flex-start;
 		gap: 0.5em;
 	}
 

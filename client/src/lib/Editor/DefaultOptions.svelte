@@ -1,5 +1,6 @@
 <script>
 	import { createEventDispatcher } from "svelte";
+	import Button from "../Button.svelte";
 
 	const dispatch = createEventDispatcher();
 
@@ -8,21 +9,21 @@
 </script>
 
 |
-<button on:click={() => dispatch("moveZ", 1)} disabled={isLast}>
-	<span>🔼</span>
-</button>
-<button on:click={() => dispatch("moveZ", -1)} disabled={isFirst}>
-	<span>🔽</span>
-</button>
-<button on:click={() => dispatch("duplicate")}>
+<Button on:click={() => dispatch("moveZ", 1)} disabled={isLast}>
+	<span class:disabled={isLast}>🔼</span>
+</Button>
+<Button on:click={() => dispatch("moveZ", -1)} disabled={isFirst}>
+	<span class:disabled={isFirst}>🔽</span>
+</Button>
+<Button on:click={() => dispatch("duplicate")}>
 	<span>📋</span>
-</button>
-<button on:click={() => dispatch("delete")}>
+</Button>
+<Button on:click={() => dispatch("delete")}>
 	<span>🗑️</span>
-</button>
+</Button>
 
 <style>
-	button:disabled span {
+	.disabled {
 		filter: grayscale(1) brightness(1.5);
 	}
 </style>
