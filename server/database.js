@@ -13,7 +13,7 @@ const multer = require('multer') // See https://github.com/expressjs/multer
 const {GridFsStorage} = require('multer-gridfs-storage') // See https://www.npmjs.com/package/multer-gridfs-storage
 
 // This allows us to access the type of ObjectId as provided by mongoose like any other datatype.
-const { ObjectId } = mongoose.Types;
+const { ObjectId } = mongoose.Types
 
 // Initialize Mongoose and connect to the MongoDB database as specified in the .env file (if it is specified).
 if(!process.env.DATABASE_URL){
@@ -28,12 +28,12 @@ const connection = mongoose.connection
 connection.on('error', (e) => console.error(e))
 
 // Upon successful database connection inform console and initialize the GridFS bucket.
-let gfs;
+let gfs
 connection.once('open', () => {
     console.log('Connected to database.')
     gfs = new mongoose.mongo.GridFSBucket(connection.db, {
         bucketName: process.env.GRIDFS_MEDIABUCKET
-    });
+    })
 })
 
 // Create the GridFS storage engine for multer.
@@ -43,12 +43,12 @@ const storage = new GridFsStorage({
         return {
             filename: file.originalname, // As a name just pick the original filename
             bucketName: process.env.GRIDFS_MEDIABUCKET // The bucket we specified in our .env file
-        };
+        }
     }
-});
+})
 
 // Initialize multer with the above defined GridFS storage engine
-const upload = multer({ storage });
+const upload = multer({ storage })
 
 // %%%%%%%%%%%%%
 // % Functions %
@@ -56,22 +56,44 @@ const upload = multer({ storage });
 // Below are all the functions required to interact with the database.
 // These will then be exposed via exports and available to the API endpoints.
 
-async function getAllFiles() {
-    const files = await gfs.find().toArray();
-    return files;
+//     %%%%%%%%%%%%%%%%%%%%
+// ... % for media access %
+//     %%%%%%%%%%%%%%%%%%%%
+
+// Function that lists all media objects in the GridFS bucket, that fit the given parameters, in the given order.
+// No parameters means list ALL media objects. Future TODO: Limit max objects returned per request and offer follow up requests (like pages).
+// TODO: Limiting parameters
+// TODO: Sorting
+async function listMedia() {
+    const files = await gfs.find().toArray()
+    return files
 }
 
-async function sendFileById(id, res) {
-    const file = await gfs.find({_id: ObjectId(id)}).toArray();
-  
-    if (!file || file.length === 0) {
-          return res.status(404).json({ message: "File not found" });
-    }
-  
-    const readStream = gfs.openDownloadStream(ObjectId(id));
-    res.set("Content-Type", file[0].contentType);
-    res.set("Content-Disposition", `attachment; filename="${file[0].filename}"`);
-    readStream.pipe(res);
+// Function that fetches one media object from the GridFS bucket as specified by its unique ID and sends it to the client.
+// This ID can be found by searching the media database (instead of the GridFS bucket) or is saved wherever the media is used (e.g. within a meme).
+async function getMediaById(id, res) {
+    // Lookup media id in GridFS bucket and handle the (first) result directly in lambda callback
+    await gfs.find({_id: ObjectId(id)}).next((err, media) => {
+        if (err) { 
+            // Error handling
+            console.error('Failed retrieving media from GridFS, due to:\n' + err)
+            res.status(500).send('Internal Server Error')
+        } else if (!media) {
+            // No media with this id was found
+            res.status(404).send('Media Not Found')
+        } else {
+            // Media successfully found. Send it to client.
+            // First set appropriate MIME type (e.g. image/jpeg or video/mp4)
+            res.set('Content-Type', media.contentType)
+            // The content disposition header tells the browser whether to display the file or to directly download it:
+            // 'inline' = display, 'attachment' = download 
+            // With the part starting with the semicolon we also give the media file its original name again (otherwise it will be the id)
+            res.set('Content-Disposition', `inline; filename = "${media.filename}`)
+            // Then open a download stream for the media file and pipe it to the response (as a writeable stream).
+            gfs.openDownloadStream(media._id).pipe(res)
+        }
+    })
+
 }
 
 // %%%%%%%%%%%
@@ -81,6 +103,6 @@ async function sendFileById(id, res) {
 // Everything else: functions for database interaction as described above
 module.exports = {
   upload,
-  getAllFiles,
-  sendFileById
-};
+  listMedia,
+  getMediaById
+}
