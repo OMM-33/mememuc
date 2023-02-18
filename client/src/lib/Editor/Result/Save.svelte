@@ -3,7 +3,7 @@
 	import { getUID, compressImage } from "../../../util";
 
 	import { privacyLevels } from "../../../models/Meme";
-	import { memes } from "../../../stores";
+	import { memes } from "../../../cache";
 	import Button from "../../Button.svelte";
 	import Card from "../../Card.svelte";
 	import Footer from "./Footer.svelte";
@@ -33,6 +33,17 @@
 		uncompressedBlob;
 		$meme.updateBlob(uncompressedBlob);
 	});
+
+	const onSave = () => {
+		let id = $meme.id;
+		// ID should be provided by the server later on of course:
+		if (id === undefined) {
+			id = Math.max(...$memes.keys()) + 1;
+			$meme.id = id;
+		}
+		$memes.set(String(id + 1), $meme);
+		close.func();
+	};
 </script>
 
 <Card close={back} scroll>
@@ -70,7 +81,7 @@
 				<Button
 					variant="primary"
 					style="flex-grow: 1"
-					on:click={() => $memes.push($meme) && close.func()}
+					on:click={onSave}
 				>
 					✔️ Save & Upload
 				</Button>

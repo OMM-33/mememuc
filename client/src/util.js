@@ -86,3 +86,23 @@ export const compressImage = async (src, bytes, type = "image/jpeg", qualityReso
 };
 
 export const mimeToFileType = mime => mime.split("/").at(-1).toUpperCase();
+
+export const getPlaceholderText = wordCount => {
+	const words = ["conductor", "edge", "train", "troop", "aisle", "recommendation", "credibility", "word", "guilt", "construct", "chop", "disco", "computing", "vegetarian", "law", "variant", "feedback", "scrape", "hole", "me", "metal", "lend", "personality", "cinema", "look", "category", "comfortable", "gem", "diplomatic", "discourage", "like", "embrace", "cater", "exchange", "muscle", "gas", "contempt", "show", "still", "tin", "week", "provision", "jet", "factor", "regard", "heart", "effective", "executive", "outlet", "girlfriend", "victory", "brake", "cathedral", "concert", "pair", "like", "wonder", "consider", "proportion", "crude", "admit", "form", "temperature", "advertising", "free", "medal", "chimney", "expect", "mushroom", "concede", "option", "poll", "discriminate", "board", "earthflax", "policy", "marble", "burial", "threat", "public", "sell", "affair", "implicit", "leader", "wait", "wood", "do", "graphic", "feather", "metal", "gun", "linear", "leadership", "chimpanzee", "salad", "pen", "reasonable", "attack", "directory", "infect"];
+	const result = [];
+	do {
+		const slice = shuffleArray(words).slice(0, wordCount);
+		result.push(...slice);
+		wordCount -= slice.length;
+	} while (wordCount > 0);
+	return result.join(" ");
+};
+
+/** Shuffles an array **in place**. */
+export const shuffleArray = array => {
+	for (let i = array.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[array[i], array[j]] = [array[j], array[i]];
+	}
+	return array;
+};
