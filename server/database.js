@@ -100,7 +100,27 @@ async function getMediaById(id, res) {
             gfs.openDownloadStream(media._id).pipe(res)
         }
     })
+}
 
+// Function that deletes one media object from the GridFS bucket as specified by its unique ID.
+// This ID can be found by searching the media database (instead of the GridFS bucket) or is saved wherever the media is used (e.g. within a meme).
+async function deleteMediaById(id, res) {
+    // Convert id string to ObjectId if possible
+    let oid
+    try { oid = ObjectId(id) }
+    catch (err) {
+        res.status(400).send(`ObjectId "${id}" is not valid. It must be a string of 12 bytes or a string of 24 hex characters or an integer.`)
+        return
+    }
+    // Try deleting the file and send success or error response according to if it succeeds.
+    try {
+        await gfs.delete(oid)
+        console.log(`Media file ${id} deleted from GridFS bucket.`)
+        res.status(200).send(`Media file ${id} successfully deleted.`)
+    } catch (err) {
+        console.error(`Error deleting media file ${id} from GridFS: ${err.message}`);
+        res.status(400).send(err.message)
+    }
 }
 
 // %%%%%%%%%%%
@@ -111,5 +131,6 @@ async function getMediaById(id, res) {
 module.exports = {
   upload,
   listMedia,
-  getMediaById
+  getMediaById,
+  deleteMediaById
 }
