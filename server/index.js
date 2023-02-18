@@ -25,7 +25,7 @@ app.use(express.json())
 // Route to return the upload.html file, that allows us to test the file upload to the server.
 app.get('/uploadtest',function(req, res){
     res.sendFile(__dirname + '/testing/upload.html')
-});
+})
 
 // In order to keep this tidy we keep all of our API routes in separate files.
 const memeRoutes = require('./routes/memes')
@@ -38,8 +38,8 @@ app.use('/api', apiRoutes)
 
 // If none of the above routes fit, send a 404
 app.use(function(req,res){
-    res.status(404).send('Route Not Found');
-});
+    res.status(404).send('Route Not Found')
+})
 
 
 // %%%%%%%%%%%%%%%%
