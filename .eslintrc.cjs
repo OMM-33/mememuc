@@ -4,7 +4,7 @@ module.exports = {
 		"eslint:recommended",
 	],
 	rules: {
-		"indent": ["error", "tab"],
+		"indent": ["error", "tab", { "SwitchCase": 1 }],
 		"no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
 		"no-trailing-spaces": "error",
 		"eol-last": ["error", "always"],
