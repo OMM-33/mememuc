@@ -72,8 +72,15 @@ async function listMedia() {
 // Function that fetches one media object from the GridFS bucket as specified by its unique ID and sends it to the client.
 // This ID can be found by searching the media database (instead of the GridFS bucket) or is saved wherever the media is used (e.g. within a meme).
 async function getMediaById(id, res) {
+    // Convert id string to ObjectId if possible
+    let oid
+    try { oid = ObjectId(id) }
+    catch (err) {
+        res.status(400).send(`ObjectId "${id}" is not valid. It must be a string of 12 bytes or a string of 24 hex characters or an integer.`)
+        return
+    }
     // Lookup media id in GridFS bucket and handle the (first) result directly in lambda callback
-    await gfs.find({_id: ObjectId(id)}).next((err, media) => {
+    await gfs.find({_id: oid}).next((err, media) => {
         if (err) { 
             // Error handling
             console.error('Failed retrieving media from GridFS, due to:\n' + err)
