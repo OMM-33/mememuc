@@ -12,7 +12,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	const target = { kb: 0, types: ["image/jpeg", "image/webp"], type: "image/jpeg" };
+	const target = { kb: 0, type: "image/jpeg", types: ["image/jpeg", "image/webp"] };
 	let compressedMedia = null;
 
 	$: media = compressedMedia || $meme;
@@ -46,19 +46,24 @@
 		<img src={media.src} />
 		<div class="controls">
 			<div class="row">
-				<Button variant="primary" style="flex-grow: 1" on:click={() => dispatch("save")}>
+				<Button
+					variant="primary"
+					style="flex-grow: 1"
+					on:click={() => dispatch("save")}
+					data-sc="save"
+				>
 					✔️ {media.id ? "Update in Profile" : "Save in Profile"}
 				</Button>
 			</div>
 			<div class="row">
 				<div>
-					<Button element="a" href={media.src} download="meme">📥 Download</Button>
+					<Button element="a" href={media.src} download="meme" data-sc="download">📥 Download</Button>
 				</div>
 				<div>
 					{#if !compressedMedia}
-						<Button on:click={compress}>🗜️ Compress</Button>
+						<Button on:click={compress} data-sc="compress">🗜️ Compress</Button>
 					{:else}
-						<Button on:click={restoreUncompressed}>🗜️ Restore uncompressed</Button>
+						<Button on:click={restoreUncompressed} data-sc="restore">🗜️ Restore uncompressed</Button>
 					{/if}
 					<label>
 						<input

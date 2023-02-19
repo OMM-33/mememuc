@@ -24,6 +24,7 @@
 	"dependencies": {
 		"html2canvas": "^1.4.1",
 		"pretty-bytes": "^6.1.0",
-		"svelte-spa-router": "^3.3.0"
+		"svelte-spa-router": "^3.3.0",
+		"tippy.js": "^6.3.7"
 	}
 }

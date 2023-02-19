@@ -20,24 +20,59 @@
 			});
 		};
 	})();
+
+	let focusIndex = -1;
+	const onFocus = index => {
+		focusIndex = index;
+	};
+	const onBlur = index => {
+		if (focusIndex === index) focusIndex = -1;
+	};
 </script>
 
 <div class="templates">
 	<h3>Templates</h3>
 	<div class="images">
-		<button class="template color">
-			<div class="color" style:background-color={color} />
+		<button
+			class="template color"
+			data-sc="choose color"
+			on:focusin={() => onFocus(0)}
+			on:focusout={() => onBlur(0)}
+		>
+			<div class="color-rect" style:background-color={color} />
 			<div class="template-actions">
-				<Button on:click={() => dispatch("change-background", { color })}>🔁 Swap template</Button>
-				<Button on:click={async () => color = await pickColor()}>🎨 Change color</Button>
+				<Button
+					on:click={() => dispatch("change-background", { color })}
+					data-sc={focusIndex === 0 ? "swap" : undefined}
+				>
+					🔁 Swap template
+				</Button>
+				<Button on:click={async () => color = await pickColor()}>
+					🎨 Change color
+				</Button>
 			</div>
 		</button>
-		{#each [...$templates.values()] as template}
-			<button class="template image">
+		{#each [...$templates.values()] as template, i}
+			<button
+				class="template image"
+				data-sc="choose {i + 1}"
+				on:focusin={() => onFocus(i + 1)}
+				on:focusout={() => onBlur(i + 1)}
+			>
 				<img src={template.src} />
 				<div class="template-actions">
-					<Button on:click={() => dispatch("change-background", { media: template })}>🔁 Swap template</Button>
-					<Button on:click={() => dispatch("add-layer", { media: template })}>🖼️ Place in canvas</Button>
+					<Button
+						on:click={() => dispatch("change-background", { media: template })}
+						data-sc={focusIndex === i + 1 ? "swap" : undefined}
+					>
+						🔁 Swap template
+					</Button>
+					<Button
+						on:click={() => dispatch("add-layer", { media: template })}
+						data-sc={focusIndex === i + 1 ? "place" : undefined}
+					>
+						🖼️ Place layer
+					</Button>
 				</div>
 			</button>
 		{/each}
@@ -101,7 +136,7 @@
 		transition: opacity 300ms ease;
 	}
 
-	img, .color {
+	img, .color-rect {
 		display: block;
 		width: 100%;
 		height: 100%;

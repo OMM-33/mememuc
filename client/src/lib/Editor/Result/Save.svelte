@@ -83,7 +83,7 @@
 				<div class="description" style:flex-grow="2">
 					<div class="row" style:margin-bottom="0.5em">
 						<h4 style:margin-top="auto" style:flex-grow="1">Add a Description</h4>
-						<SpeechInput bind:valueAppend={$meme.description} />
+						<SpeechInput bind:valueAppend={$meme.description} data-sc="title" />
 					</div>
 					<textarea bind:value={$meme.description} />
 				</div>

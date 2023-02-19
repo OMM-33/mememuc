@@ -41,9 +41,15 @@
 </script>
 
 <div class="controls">
-	<Button on:click={() => $meme.addLayer("text")}>📝 Add Text</Button>
-	<Button on:click={() => $meme.clear()}>❌ Clear Canvas</Button>
-	<Button variant="primary" on:click={render}>🧮 {$meme.id ? "Save Changes" : "Generate Meme"}</Button>
+	<Button on:click={() => $meme.addLayer("text")} data-sc="text">
+		📝 Add Text
+	</Button>
+	<Button on:click={() => $meme.clear()} data-sc="clear">
+		❌ Clear Canvas
+	</Button>
+	<Button variant="primary" on:click={render} data-sc="generate">
+		🧮 {$meme.id ? "Save Changes" : "Generate Meme"}
+	</Button>
 </div>
 <div class="editor">
 	<div
