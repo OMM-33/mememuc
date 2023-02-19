@@ -32,7 +32,7 @@
 		padding: 0.5em 1em;
 		font-family: inherit;
 		font-size: 1em;
-		font-weight: 500;
+		font-weight: 600;
 		line-height: inherit;
 		background-color: hsl(var(--c-white-h), var(--c-white-s), calc(var(--c-white-l) - 8%));
 		transition: border-color 300ms;

@@ -5,13 +5,13 @@
 <nav>
 	<div class="left">
 		<a href="#/" class="title"><b>MemeMuc</b></a>
-		<a href="#/">Overview</a>
-		<a href="#/meme/edit">Create</a>
-		<a href="#/user/">My Profile</a>
+		<a href="#/" data-sc="overview">Overview</a>
+		<a href="#/meme/edit" data-sc="create">Create</a>
+		<a href="#/user/" data-sc="profile">My Profile</a>
 	</div>
 	<div class="right">
-		<Button element="a" href="#/login">Log In</Button>
-		<Button element="a" href="#/signup" variant="primary">Sign Up</Button>
+		<Button element="a" href="#/login" data-sc="login">Log In</Button>
+		<Button element="a" href="#/signup" data-sc="sign up" variant="primary">Sign Up</Button>
 	</div>
 </nav>
 
@@ -31,7 +31,7 @@
 	}
 
 	nav > div { display: flex; }
-	nav > div.left { gap: 1em; }
+	nav > div.left { gap: 1.5em; }
 	nav > div.right { gap: 0.5em; }
 
 	.title {

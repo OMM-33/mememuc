@@ -44,7 +44,7 @@
 </script>
 
 {#if SpeechRecognition}
-	<Button on:click={() => running ? recognition.stop() : recognition.start()}>
+	<Button on:click={() => running ? recognition.stop() : recognition.start()} {...$$restProps}>
 		{running ? "🔴" : "🎙️"}
 	</Button>
 {/if}
