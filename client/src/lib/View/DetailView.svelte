@@ -5,6 +5,7 @@
 	export let views;
 	export let comments;
 	export let title;
+	export let clicked;
 	let myComment;
 	function submit(){
 		comments.push({ name:"Ines",text:myComment });
@@ -12,10 +13,12 @@
 		myComment = "";
 
 	}
-
-
+	function nextImage(){
+		clicked = false;
+	}
 
 </script>
+
 <div id="container">
 	<p id="title">{title}</p>
 	<div id="Middle">
@@ -41,11 +44,14 @@
 	<p>Upvotes: {upvotes}</p>
 	<p>Views: {views}</p>
 </div>
+<div id="slideshow">
+	<button id="left">👈</button>
+	<button id="right" on:click={nextImage}>👉</button>
+</div>
+
 <style>
 	#middle{
 		height: auto;
-	}
-	#container{
 	}
 	#image{
 		width:50vw;
@@ -81,4 +87,24 @@
 		margin-top: 55vh;
 		color:white
 	}
+	#slideshow{
+		flex-direction: row;
+font-size: 2em;
+	}
+	#right{
+
+		float:right;
+		background-color: transparent;
+		border:none;
+		font-size: 1.5em;
+		cursor: pointer;
+	}
+	#left{
+		float: left;
+		background-color: transparent;
+		border:none;
+		font-size: 1.5em;
+		cursor: pointer;
+	}
+
 </style>
