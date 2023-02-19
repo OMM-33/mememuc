@@ -1,13 +1,14 @@
 <script>
 	import { memes } from "../cache";
 
-	import Frame from "../lib/Overview/Frame.svelte";
+	import Frame from "../lib/View/Frame.svelte";
 </script>
 
 <h1>Overview </h1>
 <div class="grid">
 	{#each [...$memes.values()] as $meme}
 		<Frame
+			id={$meme.id}
 			title={$meme.title}
 			image={$meme.src}
 			upvotes={$meme.score}

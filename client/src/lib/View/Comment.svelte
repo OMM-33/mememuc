@@ -20,4 +20,5 @@
 		font-weight: bold;
 		background-color: #26ba89;
 	}
+
 </style>

@@ -19,6 +19,7 @@ export default class Meme extends Media {
 		commentCount = 0,
 		background = { media: null, color: "#ffffff" },
 		layers = [],
+		comments =[],
 	} = {}) {
 		super({ id, src, blob, width, height });
 
@@ -39,6 +40,9 @@ export default class Meme extends Media {
 		this.layers = layers;
 		/** @type {number} */
 		this.nextLayerID = this.layers.length;
+
+		/**@type {array} */
+		this.comments = comments;
 	}
 
 	addLayer(type, data) {
