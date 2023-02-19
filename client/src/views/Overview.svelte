@@ -24,4 +24,23 @@
 		grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 		justify-content: space-between;
 	}
+	#slideshow{
+		flex-direction: row;
+font-size: 2em;
+	}
+	#right{
+
+		float:right;
+	}
+	#left{
+		float: left;
+	}
+	button{
+		background-color: transparent;
+		border: none;
+		text-decoration: none;
+		font-size: 1em;
+		cursor: pointer;
+	}
+
 </style>
