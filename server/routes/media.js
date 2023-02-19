@@ -41,6 +41,7 @@ router.get('/', (req, res) => {
 // This way all necessary preprocessing can be handled before further interaction with the file itself.
 router.post('/', database.upload.single('mediaFile'), (req, res) => {
     res.status(201).json({ message: 'File uploaded successfully' })
+    //TODO return URL und id
 })
 
 // Delete the media file with the specified id (if it exists)

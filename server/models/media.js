@@ -9,7 +9,7 @@ const mediaSchema = new mongoose.Schema({
         required: false
     },
     // Unique identifier of this media object's creator
-    creator: {
+    creatorID: {
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
@@ -33,10 +33,11 @@ const mediaSchema = new mongoose.Schema({
         }
     },
     // Whether this media object is visible to everyone or only the creator
-    isPublic: {
-        type: Boolean,
+    privacy: {
+        type: String,
+        enum: ['private', 'unlisted', 'public'],
         required: true,
-        default: true
+        default: 'public'
     },
     // Whether this media object should be available as a meme template (upon which a meme can be created) instead of just importable into an existing meme
     isTemplate: {
