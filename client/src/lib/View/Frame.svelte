@@ -8,18 +8,19 @@
 	export let clicked;
 
 	function handleUpvote(){
-		upvotes++;
-		upvoted = true;
+		if(!upvoted){
+			upvotes++;
+			upvoted = true;
+		}
 	}
 	function details(){
 		views++;
-		console.log('Viewed: '+views);
 		clicked = true;}
 </script>
 <div class="container">
 	<p id="title">{title}</p>
 	<button style:background-image="url('{image}')" id="image" on:click={details} />
-	<div class="info"><button id="upvoteButton" on:click|once={handleUpvote} class:upvoted={upvoted === true}> ⬆️ {upvotes}</button><span class="views">👁️ {views}</span><span class="comments">🗨️ {comments}</span>
+	<div class="info"><button id="upvoteButton" on:click={handleUpvote} class:upvoted={upvoted === true}> ⬆️ {upvotes}</button><span class="views">👁️ {views}</span><span class="comments">🗨️ {comments}</span>
 	</div>
 </div>
 
@@ -70,7 +71,6 @@
   cursor: pointer;
  }
  .upvoted{
-  cursor: pointer;
   background-color:rgb(196, 192, 192);
 }
 </style>
