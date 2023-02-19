@@ -1,5 +1,5 @@
 <script>
-	import { fileToDataURL, getImageDimensions } from "../../../util";
+	import { getImageDimensions } from "../../../util";
 	import Button from "../../Button.svelte";
 
 	export let onNew, onError;
@@ -14,9 +14,8 @@
 				return;
 			}
 			const response = await fetch(url);
-			const file = await response.blob();
-			const src = await fileToDataURL(file);
-			onNew({ src });
+			const blob = await response.blob();
+			onNew({ blob, width: dimensions[0], height: dimensions[1] });
 		} catch (error) {
 			onError(error.type ? "Invalid image." : error);
 		}

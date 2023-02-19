@@ -1,18 +1,44 @@
-import Reactive from "./Reactive";
+import Media from "./Media";
 
 import { arrayMove } from "../util";
 
-export default class Meme extends Reactive {
-	constructor({ background, size, layers } = {}) {
-		super();
+export const privacyLevels = [
+	{ id: "public", label: "Public", icon:"🌐", description: "Post to public overview" },
+	{ id: "unlisted", label: "Unlisted", icon:"🔓", description: "Do not post to public overview" },
+	{ id: "private", label: "Private (Draft)", icon:"🔒", description: "Can only be viewed by you" },
+];
 
-		this.background = background || {
-			image: null,
-			color: "#ffffff",
-		};
-		this.size = size || [512, 512];
-		this.nextLayerID = 0;
-		this.layers = layers || [];
+export default class Meme extends Media {
+	constructor({
+		id, src, blob, width, height,
+		title = "",
+		description = "",
+		privacy = "public",
+		views = 0,
+		score = 0,
+		commentCount = 0,
+		background = { media: null, color: "#ffffff" },
+		layers = [],
+	} = {}) {
+		super({ id, src, blob, width, height });
+
+		/** @type {string} */
+		this.title = title;
+		/** @type {string} */
+		this.description = description;
+		/** @type {"private" | "unlisted" | "public"} */
+		this.privacy = privacy;
+		/** @type {number} */
+		this.views = views;
+		/** @type {number} */
+		this.score = score;
+		/** @type {number} */
+		this.commentCount = commentCount;
+
+		this.background = background;
+		this.layers = layers;
+		/** @type {number} */
+		this.nextLayerID = this.layers.length;
 	}
 
 	addLayer(type, data) {
@@ -27,7 +53,7 @@ export default class Meme extends Reactive {
 			image: () => ({
 				origin: [0.5, 0.5], angle: 0, size: [0.33, 0.33],
 				options: {
-					src: data.src,
+					media: data.media,
 					fit: 0,
 					flip: false,
 				},

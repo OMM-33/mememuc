@@ -1,5 +1,5 @@
 <script>
-	import { fileToDataURL, getImageDimensions } from "../../../util";
+	import { getImageDimensions } from "../../../util";
 	import Button from "../../Button.svelte";
 
 	export let onNew, onError;
@@ -14,16 +14,19 @@
 	};
 
 	const onUpload = async () => {
+		/** @type {File} */
 		// eslint-disable-next-line svelte/no-dom-manipulating
 		const file = inputEl.files[0];
 		try {
-			const src = await fileToDataURL(file);
-			const dimensions = await getImageDimensions(src);
+			const tempURL = URL.createObjectURL(file);
+			const dimensions = await getImageDimensions(tempURL);
+			URL.revokeObjectURL(tempURL);
+
 			if (dimensions[0] < 1 || dimensions[1] < 1) {
 				onError("Image has no pixel data.");
 				return;
 			}
-			onNew({ src });
+			onNew({ blob: file, width: dimensions[0], height: dimensions[1] });
 		} catch (error) {
 			onError("Invalid image.");
 		}

@@ -10,6 +10,7 @@
 	import ImgFlip from "./ImgFlip.svelte";
 	import Camera from "./Camera.svelte";
 	import Draw from "./Draw.svelte";
+	import Card from "../../Card.svelte";
 
 	const dispatch = createEventDispatcher();
 
@@ -33,22 +34,25 @@
 </script>
 
 <Overlay bind:open>
-	<div class="upload">
-		<Tabs {tabs} on:change={() => error = null} />
-		<Error {error} />
-	</div>
+	<Card close={{ func: () => open = false }}>
+		<h3 slot="header" style:margin="0">Add a template</h3>
+		<div class="upload">
+			<Tabs {tabs} on:change={() => error = null} />
+			<Error {error} />
+		</div>
+	</Card>
 </Overlay>
 
 <style>
 	.upload {
-		background-color: var(--c-white);
-		width: min(800px, 90vw);
-		height: min(800px, 80vh);
-		padding: 1em;
-
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
+
+		height: 800px;
+		width: 800px;
+		max-width: 100%;
+		max-height: 100%;
 	}
 
 	.upload :global(> *:first-child) {
