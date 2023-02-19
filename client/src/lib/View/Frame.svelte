@@ -4,9 +4,10 @@
 	export let comments = 2;
 	export let image;
 	export let title;
-	export let upvoted;
-	export let clicked;
+	export let id;
 
+	let upvoted;
+	const link = "#/meme/" + id;
 	function handleUpvote(){
 		if(!upvoted){
 			upvotes++;
@@ -15,12 +16,12 @@
 	}
 	function details(){
 		views++;
-		clicked = true;}
+	}
 </script>
 <div class="container">
 	<p id="title">{title}</p>
-	<button style:background-image="url('{image}')" id="image" on:click={details} />
-	<div class="info"><button id="upvoteButton" on:click={handleUpvote} class:upvoted={upvoted === true}> ⬆️ {upvotes}</button><span class="views">👁️ {views}</span><span class="comments">🗨️ {comments}</span>
+	<button style:background-image="url('{image}')" id="image"  />
+	<div class="info"><a href={link} on:click={details}>Single View </a><button id="upvoteButton" on:click={handleUpvote} class:upvoted={upvoted === true}> ⬆️ {upvotes}</button><span class="views">👁️ {views}</span><span class="comments">🗨️ {comments}</span>
 	</div>
 </div>
 
