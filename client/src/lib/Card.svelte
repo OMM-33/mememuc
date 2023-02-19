@@ -1,18 +1,19 @@
 <script>
 	import Button from "./Button.svelte";
 
-	/** @type {() => void?} */
-	export let close = undefined;
+	/** @type {{ func?: () => void, label?: string }} */
+	export let close = { func: undefined, label: undefined };
 	export let scroll = false;
+
 </script>
 
 <div class="card">
 	{#if $$slots.header || close}
 		<div class="header">
 			<slot name="header" />
-			{#if close}
+			{#if close.func}
 				<div class="close-button">
-					<Button aria-label="close" on:click={close}>❌</Button>
+					<Button aria-label="close" on:click={close.func}>{close.label || "❌"}</Button>
 				</div>
 			{/if}
 		</div>
