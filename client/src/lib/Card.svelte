@@ -8,7 +8,7 @@
 </script>
 
 <div class="card">
-	{#if $$slots.header || close}
+	{#if $$slots.header || close.func}
 		<div class="header">
 			<slot name="header" />
 			{#if close.func}
@@ -39,7 +39,7 @@
 
 	border-radius: 0.5em;
 	background-color: var(--c-white);
-	box-shadow: 0 0 1em 0 hsl(var(--c-black-hsl), 0.5);
+	box-shadow: 0 0 2em 0 hsl(var(--c-black-hsl), 0.1);
 }
 
 .body {
