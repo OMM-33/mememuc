@@ -13,7 +13,10 @@
 	let commentText;
 
 	function submitComment() {
-		$meme.comments.push({ name: "Ines", text: commentText });
+		const text = commentText.trim();
+		if (text === "") return;
+
+		$meme.comments.push({ name: "Ines", text });
 		$meme.comments = $meme.comments; // reactivity...
 		commentText = "";
 	}
@@ -47,9 +50,31 @@
 		<img src={$meme.src} />
 
 		<div class="details">
-			<div>Upvotes: {$meme.score}</div>
-			<div>Views: {$meme.views}</div>
-			<div>Created by: ???</div>
+			<div class="score">
+				<Button
+					variant={$meme.vote === 1 && "primary"}
+					rounded={["tl", "bl"]}
+					on:click={() => $meme.toggleVote(1)}
+				>
+					<span class="vote up">🔼</span>
+				</Button>
+				<Button element="div" variant="noninteractive" rounded={[]}>
+					❤️ Score: {$meme.score}
+				</Button>
+				<Button
+					variant={$meme.vote === -1 && "primary"}
+					rounded={["tr", "br"]}
+					on:click={() => $meme.toggleVote(-1)}
+				>
+					<span class="vote down">🔽</span>
+				</Button>
+			</div>
+			<Button element="div" variant="noninteractive">
+				👁️ Views: {$meme.views}
+			</Button>
+			<Button element="div" variant="noninteractive" style="margin-left: auto">
+				👤 [CREATOR]
+			</Button>
 		</div>
 		<div class="description">
 			{$meme.description}
@@ -99,6 +124,18 @@
 	.details {
 		display: flex;
 		gap: 2em;
+		padding: 1em 0;
+	}
+
+	.score {
+		display: flex;
+	}
+
+	.vote.up {
+		filter: grayscale() sepia(1) saturate(8);
+	}
+	.vote.down {
+		filter: grayscale() sepia(1) saturate(6) hue-rotate(180deg);
 	}
 
 	.description {
