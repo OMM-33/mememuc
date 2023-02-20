@@ -80,6 +80,23 @@ async function listMemes() {
     return await Meme.find()
 }
 
+// Function that fetches one meme from the database as specified by its unique ID and sends it to the client.
+// This ID can be found separately by searching the meme database or is returned upon saving a meme.
+async function getMemeById(id, res) {
+    // Convert id string to ObjectId if possible
+    let oid
+    try { oid = ObjectId(id) }
+    catch (err) {
+        res.status(400).send(`ObjectId "${id}" is not valid. It must be a string of 12 bytes or a string of 24 hex characters or an integer.`)
+        return
+    }
+    
+    console.log('got here')
+    // Lookup meme id in database and return it. Error handling is to be done whereever called!
+    return await Meme.findById(oid)
+    
+}
+
 // This will throw an error if validation fails! We catch this during routing in order to return it to the client for debugging their request.
 async function saveMeme(mediaID, title, description, creatorID, updateDate, privacy, background, layers) {
     let schemaLayers = []
@@ -106,9 +123,9 @@ async function saveMeme(mediaID, title, description, creatorID, updateDate, priv
 }
 
 // The same as saveMeme, but with server-side rendering of the meme. Should only be used for the API.
-async function createMeme() {
-    // TODO
-}
+// async function createMeme() {
+//     // TODO
+// }
 
 //     %%%%%%%%%%%%%%%%%%%%
 // ... % for media access %
@@ -184,6 +201,7 @@ async function deleteMediaById(id, res) {
 module.exports = {
   upload,
   listMemes,
+  getMemeById,
   saveMeme,
   listMedia,
   getMediaById,
