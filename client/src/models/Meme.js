@@ -19,7 +19,7 @@ export default class Meme extends Media {
 		commentCount = 0,
 		background = { media: null, color: "#ffffff" },
 		layers = [],
-		comments =[],
+		comments = [],
 	} = {}) {
 		super({ id, src, blob, width, height });
 
