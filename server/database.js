@@ -82,6 +82,7 @@ async function listMemes() {
     }
 }
 
+// This will throw an error if validation fails! We catch this during routing in order to return it to the client for debugging their request.
 async function saveMeme(mediaID, title, description, creatorID, updateDate, privacy, background, layers) {
     let schemaLayers = []
     
@@ -104,13 +105,6 @@ async function saveMeme(mediaID, title, description, creatorID, updateDate, priv
 
     const newMeme = await meme.save()
     return newMeme
-    // try {
-    //     const newMeme = await meme.save()
-    //     return newMeme
-    // } catch (err) {
-    //     console.error(err)
-    //     return err
-    // }
 }
 
 // The same as saveMeme, but with server-side rendering of the meme. Should only be used for the API.
