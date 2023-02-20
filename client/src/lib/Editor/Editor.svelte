@@ -103,7 +103,9 @@
 		position: relative;
 		margin: 1em;
 		border: 1px solid var(--c-black);
+		box-sizing: content-box;
 	}
+	.canvas :global(> *) { box-sizing: border-box; }
 
 	.render {
 		position: absolute;
