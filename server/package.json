@@ -4,13 +4,14 @@
   "description": "Backend REST API server for the group 33 implementation of mememuc during WS 2022/23",
   "main": "index.js",
   "scripts": {
-		"start": "node index.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.18.2",
     "mongoose": "^6.8.3",
     "multer": "^1.4.5-lts.1",
