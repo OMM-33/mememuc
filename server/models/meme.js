@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 // Import other schemas that are used within this one.
 const {voteSchema} = require('./vote')
-const {mediaSchema} = require('./media')
 const {layerSchema} = require('./layer')
 const {commentSchema} = require('./comment')
 
@@ -61,8 +60,8 @@ const memeSchema = new mongoose.Schema({
         default: []
     },
     background: {
-        media: {
-            type: mediaSchema,
+        mediaSource: {
+            type: String,
             required: false
         },
         color: {

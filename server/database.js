@@ -17,7 +17,7 @@ const { ObjectId } = mongoose.Types
 
 // Import our mongoose schemas
 const Meme = require('./models/meme')
-const Media = require('./models/media')
+const {Layer} = require('./models/layer')
 // const Layer = require('./models/layer')
 // const Comment = require('./models/comment')
 // const Vote = require('./models/vote')
@@ -83,6 +83,14 @@ async function listMemes() {
 }
 
 async function saveMeme(mediaID, title, description, creatorID, updateDate, privacy, background, layers) {
+    let schemaLayers = []
+    
+    for (let i=0; i<layers.length; i++) {
+        let layer = layers[i]
+        const schemaLayer = new Layer(layer)
+        schemaLayers.push(schemaLayer)
+    }
+
     const meme = new Meme({
         mediaID,
         title,
@@ -91,8 +99,18 @@ async function saveMeme(mediaID, title, description, creatorID, updateDate, priv
         updateDate,
         privacy,
         background,
-        layers
+        schemaLayers
     })
+
+    const newMeme = await meme.save()
+    return newMeme
+    // try {
+    //     const newMeme = await meme.save()
+    //     return newMeme
+    // } catch (err) {
+    //     console.error(err)
+    //     return err
+    // }
 }
 
 // The same as saveMeme, but with server-side rendering of the meme. Should only be used for the API.
