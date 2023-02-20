@@ -1,15 +1,17 @@
 <script>
-	/** @type {"default" | "primary"} */
+	/** @type {"default" | "primary" | "noninteractive"} */
 	export let variant = "default";
 	/** @type {"default" | "tab"} */
 	export let shape = "default";
 	export let element = "button";
 	export let type = "button";
+	/** @type {("tl" | "tr" | "bl" | "br")[]} */
+	export let rounded = ["tl", "tr", "bl", "br"];
 </script>
 
 <svelte:element
 	this={element}
-	class={`button shape-${shape} ${variant}`}
+	class={`button shape-${shape} ${variant} ${rounded.join(" ")}`}
 	{type}
 	{variant}
 	{...$$restProps}
@@ -21,11 +23,11 @@
 <style>
 	.button {
 		--border-color: var(--c-link);
+		--border-radius: 0.5em;
 
 		display: inline-block;
 		appearance: none;
 
-		border-radius: 0.5em;
 		border: 2px solid transparent;
 		padding: 0.5em 1em;
 		font-family: inherit;
@@ -38,6 +40,10 @@
 
 		cursor: default;
 	}
+	.button.tl { border-top-left-radius: 0.5em; }
+	.button.tr { border-top-right-radius: 0.5em; }
+	.button.bl { border-bottom-left-radius: 0.5em; }
+	.button.br { border-bottom-right-radius: 0.5em; }
 
 	.button.shape-tab {
 		border-bottom-left-radius: 0;
@@ -49,6 +55,14 @@
 		--border-color: hsl(var(--c-accent-h), var(--c-accent-s), calc(var(--c-accent-l) - 25%));
 		background-color: var(--c-accent);
 		color: var(--c-white);
+	}
+
+	.button.noninteractive {
+		background-color: var(--c-white-bright);
+	}
+	.button.noninteractive:hover,
+	.button.noninteractive:focus {
+		--border-color: transparent;
 	}
 
 	.button:hover:not(:disabled),

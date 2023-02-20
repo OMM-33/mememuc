@@ -16,7 +16,8 @@ export default class Meme extends Media {
 		privacy = "public",
 		views = 0,
 		score = 0,
-		commentCount = 0,
+		vote = 0,
+		comments = [],
 		background = { media: null, color: "#ffffff" },
 		layers = [],
 	} = {}) {
@@ -32,8 +33,10 @@ export default class Meme extends Media {
 		this.views = views;
 		/** @type {number} */
 		this.score = score;
-		/** @type {number} */
-		this.commentCount = commentCount;
+		/** @type {-1 | 0 | 1} */
+		this.vote = vote;
+		/**@type {array} */
+		this.comments = comments;
 
 		this.background = background;
 		this.layers = layers;
@@ -86,6 +89,16 @@ export default class Meme extends Media {
 
 	clear() {
 		this.layers = [];
+		this.notify();
+	}
+
+	/** @param {-1 | 0 | 1} vote */
+	toggleVote(vote) {
+		const prevVote = this.vote;
+		if (prevVote === vote) this.vote = 0;
+		else this.vote = (vote >= 0) ? 1 : -1;
+
+		this.score += this.vote - prevVote;
 		this.notify();
 	}
 }
