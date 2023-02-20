@@ -8,6 +8,9 @@ export const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
 export const snap = (value, step) => Math.round(value / step) * step;
 
+// In JS the % operator is remainder and not modulo.
+export const mod = (a, b) => ((a % b) + b) % b;
+
 export const arrayMove = (array, from, to) => {
 	const item = array.splice(from, 1)[0];
 	array.splice(to, 0, item);

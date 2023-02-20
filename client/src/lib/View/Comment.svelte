@@ -3,14 +3,21 @@
 	export let text;
 </script>
 
-<div style:background-color="white">
-	<p id="name" style:font-weight="bold" style:background-color="#26ba89">{name}</p>
-	<p id="text">{text}</p>
+<div class="comment">
+	<div class="name">{name}</div>
+	<div class="text">{text}</div>
 </div>
 <style>
-
-	p{
-		padding-left: 3%;
+	.comment {
+		background-color: var(--c-white-bright);
 	}
 
+	.name {
+		font-weight: 600;
+		background-color: var(--c-accent);
+		padding: 0.25em 1em;
+	}
+	.text {
+		padding: 1em;
+	}
 </style>

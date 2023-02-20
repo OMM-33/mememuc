@@ -1,104 +1,120 @@
 <script>
-	import Comment from "../lib/View/Comment.svelte";
+	import { push } from "svelte-spa-router";
+	import { mod } from "../util";
 	import { memes } from "../cache";
-	import { push } from 'svelte-spa-router'
+
+	import Button from "../lib/Button.svelte";
+	import Comment from "../lib/View/Comment.svelte";
+
 	export let params = {};
-	let id = params.id;
 
+	$: meme = $memes.get(params.id);
 
-	let myComment;
+	let commentText;
 
-
-	function submit(){
-		$memes.get(id).comments.push({ name:"Ines",text:myComment });
-		$memes.get(id).comments =  $memes.get(id).comments; //für reaktivität von svelte
-		myComment = "";
-
-	}
-	function nextImage(){
-		console.log("Next");
-		if(id < $memes.size - 1){
-			id = String(parseInt(id) + 1);
-		}
-		else{
-			id = "0";
-		}
-		push("#/meme/" + id);
-	}
-	function lastImage(){
-		if(id > 0){
-			id = String(parseInt(id) - 1);
-		}
-		else{
-			id = String($memes.size - 1);
-		}
-		push("#/meme/" + id);
-
+	function submitComment() {
+		$meme.comments.push({ name: "Ines", text: commentText });
+		$meme.comments = $meme.comments; // reactivity...
+		commentText = "";
 	}
 
+	function switchMeme(offset) {
+		const targetID = String(mod(Number($meme.id) + offset, $memes.size));
+		push(`/meme/${targetID}`);
+	}
+	function switchMemeRandom() {
+		const otherIDs = [...$memes.keys()].filter(id => id !== $meme.id);
+		const targetID = otherIDs[Math.floor(Math.random() * otherIDs.length)];
+		push(`/meme/${targetID}`);
+	}
 </script>
-<div  class="flexbox">
-	<button class="nextbefore" on:click={lastImage}>👈</button>
-	<button class="nextbefore" on:click={nextImage}>👉</button>
-</div>
 
-<div>
-	<h1 class="title">{$memes.get(id).title}</h1>
-	<div class="flexbox">
-		<div style:background-image="url('{$memes.get(id).src}')" class="meme"  />
-		<div style:padding-left="">
-			<h2> Comments</h2>
-			<div class="comments">
-				{#each  $memes.get(id).comments as comment}
-					<Comment text={comment.text} name={comment.name} />
+<div class="meme">
+	<div class="slideshow">
+		<Button on:click={() => switchMeme(-1)}>
+			<span class="pointing-hand">👈</span>
+		</Button>
+		<Button on:click={switchMemeRandom}>
+			🎲
+		</Button>
+		<Button on:click={() => switchMeme(1)}>
+			<span class="pointing-hand">👉</span>
+		</Button>
+	</div>
 
-				{/each}
-			</div>
-			<textarea bind:value={myComment} />
-			<button on:click={submit}>Submit</button>
+	<div class="content">
+		<h1>{$meme.title}</h1>
+		<img src={$meme.src} />
 
+		<div class="details">
+			<div>Upvotes: {$meme.score}</div>
+			<div>Views: {$meme.views}</div>
+			<div>Created by: ???</div>
+		</div>
+		<div class="description">
+			{$meme.description}
 		</div>
 	</div>
 
-</div>
-<div>
-	<p>Details</p>
-	<p>Description: {$memes.get(id).description}</p>
-	<p>Upvotes: {$memes.get(id).upvotes}</p>
-	<p>Views: {$memes.get(id).views}</p>
+	<div class="comment-section">
+		<h2>Comments</h2>
+		<div class="comments">
+			{#each $meme.comments as comment}
+				<Comment text={comment.text} name={comment.name} />
+			{/each}
+		</div>
+		<h3>Post a comment</h3>
+		<textarea bind:value={commentText} />
+		<Button on:click={submitComment}>Post Comment</Button>
+	</div>
 </div>
 
 
 <style>
-	.flexbox{
+	.slideshow {
 		display: flex;
-		flex-direction: row;
 		justify-content: space-between;
+		font-size: 1.5em;
 	}
-	.meme{
-		width:50vw;
-		height: 50vh;
-		background-size: contain;
-		background-repeat: no-repeat;
-		background-position: center;
+	.slideshow .pointing-hand {
+		/* This emoji is kind of weirdly aligned... (on Windows at least) */
+		vertical-align: 20%;
+		line-height: 1;
+	}
+
+	.meme {
+		display: flex;
+		flex-direction: column;
+		gap: 2em;
+	}
+	img {
+		display: block;
+		width: 100%;
+		max-height: 70vh;
+		object-fit: contain;
 		background-color: #F2F9F2;
 		border: 1px solid black;
-		justify-self: center;
-		float:left
-	}
-	.comments{
-
-		overflow-y: auto;
-		overflow-x: hidden;
-		max-height: 41.5vh;
-		width: 30vw;
-	}
-	.nextbefore{
-		background-color: transparent;
-		border:none;
-		font-size: 2em;
-		cursor: pointer;
-
 	}
 
+	.details {
+		display: flex;
+		gap: 2em;
+	}
+
+	.description {
+		margin-top: 1em;
+	}
+
+	.comments {
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
+	}
+
+	textarea {
+		font: inherit;
+		resize: none;
+		width: 100%;
+		height: 8em;
+	}
 </style>
