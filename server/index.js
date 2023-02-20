@@ -4,6 +4,8 @@ require('dotenv').config()
 
 // Express framework for routing and middleware https://expressjs.com/
 const express = require('express')
+// cors is a middleware that can be used to enable CORS with various options. https://www.npmjs.com/package/cors
+const cors = require('cors')
 
 //Initialize Express
 const app = express()
@@ -14,9 +16,14 @@ const app = express()
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Middleware describes code that runs "in the middle" between every request to and response from the server.
 
+// Enable All CORS Requests (ref: https://expressjs.com/en/resources/middleware/cors.html)
+app.use(cors())
+
 // This lets our server accept JSON as the element of a request body.
 app.use(express.json())
 
+// ToDo: Middleware to Access-Control-Allow-Origin: http://localhost:3000/
+// Access-Control-Allow-Origin: *
 
 // %%%%%%%%%%%
 // % Routing %
