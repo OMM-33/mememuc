@@ -23,14 +23,17 @@ const {Layer} = require('./models/layer')
 // const Vote = require('./models/vote')
 // const User = require('./models/user')
 
+// Use this line if you want to use the memory database instead of the persistent local database. (Needed for final submission.)
+process.env.DATABASE_URL = process.env.MEMORY_DATABASE_URL
+
 // Initialize Mongoose and connect to the MongoDB database as specified in the .env file (if it is specified).
 if(!process.env.DATABASE_URL){
     console.error("No environment variable DATABASE_URL specified in .env file. Please add the URL of your MongoDB database for this project to file ./.env. Exiting...")
     process.exit()
 }
-// Switch these databases depending on your preference
-// mongoose.connect(process.env.DATABASE_URL) // Persistent Database
-mongoose.connect(process.env.MEMORY_DATABASE_URL) // Non-persistent Memory Database
+
+mongoose.connect(process.env.DATABASE_URL) // Persistent Database
+// mongoose.connect(process.env.MEMORY_DATABASE_URL) // Non-persistent Memory Database
 // Save the connection for future access.
 const connection = mongoose.connection
 
