@@ -37,7 +37,6 @@ const memesDefault = new Map([
 	return [id, new Meme({
 		id,
 		src,
-		ransomItem: "ines",
 		title: getPlaceholderText(3 + Math.floor(Math.random() * 7)),
 		views: Math.floor(Math.random() * 250),
 		score: Math.floor(Math.random() * 100),

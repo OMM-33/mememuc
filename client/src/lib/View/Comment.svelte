@@ -3,22 +3,14 @@
 	export let text;
 </script>
 
-<div id="background">
-	<p id="name">{name}</p>
+<div style:background-color="white">
+	<p id="name" style:font-weight="bold" style:background-color="#26ba89">{name}</p>
 	<p id="text">{text}</p>
 </div>
-
 <style>
-	#background{
-		background-color: white;
-	}
+
 	p{
-		color: black;
 		padding-left: 3%;
-	}
-	#name{
-		font-weight: bold;
-		background-color: #26ba89;
 	}
 
 </style>
