@@ -10,6 +10,7 @@ Production:
 | [Mongoose](https://mongoosejs.com/) | Wrapper library for interaction with MongoDB with a schema-based data modeling approach, with built-in type casting, validation, query building and more |
 | [Multer](https://github.com/expressjs/multer) | Multer is a node.js middleware for handling multipart/form-data, which is primarily used for uploading files. It is written on top of busboy for maximum efficiency. |
 | [multer-gridfs-storage](https://github.com/devconcept/multer-gridfs-storage) | GridFS storage engine for Multer to store uploaded files directly to MongoDb. Due to [this issue](https://github.com/devconcept/multer-gridfs-storage/issues/490) we use a currently unapproved Pull Request version of the official npm version (see package.json) that fixes this issue. In the future this change should be rolled back as soon as the issue is addressed in the main project. Until then the dependency needs to be manually updated. Downgrading the dependency led to security vulnerabilities, which is why we decided against it. |
+| [cors](https://www.npmjs.com/package/cors) | cors is a middleware that can be used to enable CORS with various options. |
 
 Additionally during development:
 | Name & Link | Description |
