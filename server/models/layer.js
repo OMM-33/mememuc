@@ -45,8 +45,8 @@ const layerSchema = new mongoose.Schema({
         max: 1
     },
     options: {
-        mediaID: {
-            type: mongoose.Schema.Types.ObjectId,
+        mediaSource: {
+            type: String,
             required: false
         },
         fit: {
@@ -96,4 +96,10 @@ const layerSchema = new mongoose.Schema({
 })
 
 // module.exports = mongoose.model('Layer', layerSchema)
-module.exports = layerSchema
+// module.exports = layerSchema
+
+Layer = mongoose.model('Layer', layerSchema)
+module.exports = {
+    Layer,
+    layerSchema
+}
