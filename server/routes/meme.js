@@ -17,9 +17,27 @@ router.get('/list', async (req, res) => {
     }
 })
 
-// Get one meme
-router.get('/:id', (req, res) => {
-    // ToDo
+// Get the meme with the specified id (if it exists)
+// TODO: Auth (privacy || isAdmin || isCreator)
+router.get('/:id', async (req, res) => {
+    console.log('Getting meme with id: ' + req.params.id) // Debugging
+    let meme
+    try {
+        meme = await database.getMemeById(req.params.id, res)
+    } catch (err) {
+        console.error('Failed retrieving meme from database, due to:\n' + err)
+        res.status(500).send('Internal Server Error: ' + err.message)
+    }
+    if (!meme) {
+        // No meme with this id was found
+        res.status(404).send('Meme Not Found')
+    } else {
+        // Meme successfully found. Return it for further handling.
+        console.log('This meme was found:\n' + meme)
+        
+        
+        res.json(meme) // ToDo: Format again according to client affordances before sending.
+    }
 })
 
 // Get command overview
