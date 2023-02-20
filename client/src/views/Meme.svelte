@@ -1,87 +1,73 @@
 <script>
 	import Comment from "../lib/View/Comment.svelte";
 	import { memes } from "../cache";
+	import { push } from 'svelte-spa-router'
 	export let params = {};
-	let image;
-	let upvotes;
-	let views;
-	let comments;
-	let title;
-	let myComment;
-	let description;
 	let id = params.id;
-	let meme = $memes.get(id);
+	const meme = $memes.get(id);
 
-	update();
+	const image = $meme.src;
+	const upvotes = $meme.score;
+	const views = $meme.views;
+	const title = $meme.title;
+	const description = $meme.description;
+
+	let myComment;
 
 
 	function submit(){
-		comments.push({ name:"Ines",text:myComment });
-		comments = comments; //für reaktivität von svelte
+		$meme.comments.push({ name:"Ines",text:myComment });
+		$meme.comments = $meme.comments; //für reaktivität von svelte
 		myComment = "";
 
 	}
 	function nextImage(){
+		console.log("Next");
 		if(id < $memes.size - 1){
 			id = String(parseInt(id) + 1);
-			meme = $memes.get(id);
 		}
 		else{
-			id= '0';
-			meme = $memes.get('0');
+			id = "0";
 		}
-		update();
+		push("#/meme/" + id);
 	}
 	function lastImage(){
 		if(id > 0){
 			id = String(parseInt(id) - 1);
-			meme = $memes.get(id);
 		}
 		else{
-			id = String($memes.size-1);
-			meme = $memes.get(id);
+			id = String($memes.size - 1);
 		}
-		update();
-
-	}
-	function update(){
-		comments = $meme.comments;
-		title = $meme.title;
-		image = $meme.src;
-		upvotes = $meme.score;
-		views = $meme.views;
-		description = $meme.description;
-
+		push("#/meme/" + id);
 
 	}
 
 </script>
-<div id="slideshow">
-	<button id="left"on:click={lastImage}>👈</button>
-	<button id="right" on:click={nextImage}>👉</button>
+<div  class="flexbox">
+	<button class="nextbefore" on:click={lastImage}>👈</button>
+	<button class="nextbefore" on:click={nextImage}>👉</button>
 </div>
 
-<div id="container">
-	<p id="title">{title}</p>
-	<div id="Middle">
-
-		<div style:background-image="url('{image}')" id="image"  />
-		<div id="commentsContainer">
+<div>
+	<h1 class="title">{title}</h1>
+	<div class="flexbox">
+		<div style:background-image="url('{image}')" class="meme"  />
+		<div style:padding-left="">
 			<h2> Comments</h2>
-			<div id="comments">
-				{#each comments as comment}
+			<div class="comments">
+				{#each $meme.comments as comment}
 					<Comment text={comment.text} name={comment.name} />
 
 				{/each}
 			</div>
-			<input bind:value={myComment} />
+			<textarea bind:value={myComment} />
 			<button on:click={submit}>Submit</button>
 
 		</div>
 	</div>
 
 </div>
-<div id="details">
+<div>
 	<p>Details</p>
 	<p>Description: {description}</p>
 	<p>Upvotes: {upvotes}</p>
@@ -90,10 +76,12 @@
 
 
 <style>
-	#middle{
-		height: auto;
+	.flexbox{
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
 	}
-	#image{
+	.meme{
 		width:50vw;
 		height: 50vh;
 		background-size: contain;
@@ -104,47 +92,19 @@
 		justify-self: center;
 		float:left
 	}
-	#title{
-		color: black;
-		font-size: 2em;
-		text-align: le;
-		width: 70vw;
-
-	}
-	#comments{
+	.comments{
 
 		overflow-y: auto;
 		overflow-x: hidden;
 		max-height: 41.5vh;
 		width: 30vw;
 	}
-	#commentsContainer{
-		float: right;
-		color:black;
-
-
-	}
-	#details{
-		color:black;
-	}
-	#slideshow{
-		flex-direction: row;
-font-size: 2em;
-	}
-	#right{
-
-		float:right;
+	.nextbefore{
 		background-color: transparent;
 		border:none;
-		font-size: 1.5em;
+		font-size: 2em;
 		cursor: pointer;
-	}
-	#left{
-		float: left;
-		background-color: transparent;
-		border:none;
-		font-size: 1.5em;
-		cursor: pointer;
+
 	}
 
 </style>
