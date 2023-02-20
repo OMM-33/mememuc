@@ -58,4 +58,8 @@ const mediaSchema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('Media', mediaSchema)
+Media = mongoose.model('Media', mediaSchema)
+module.exports = {
+    Media,
+    mediaSchema
+}

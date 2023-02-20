@@ -95,4 +95,5 @@ const layerSchema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('Layer', layerSchema)
+// module.exports = mongoose.model('Layer', layerSchema)
+module.exports = layerSchema
