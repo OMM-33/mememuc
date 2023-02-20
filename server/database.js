@@ -77,12 +77,7 @@ const upload = multer({ storage })
 // TODO: Limiting parameters
 // TODO: Sorting
 async function listMemes() {
-    try {
-        const memes = await Memes.find()
-        return memes
-    } catch (err) {
-        return err
-    }
+    return await Meme.find()
 }
 
 // This will throw an error if validation fails! We catch this during routing in order to return it to the client for debugging their request.
@@ -124,12 +119,7 @@ async function createMeme() {
 // TODO: Limiting parameters
 // TODO: Sorting
 async function listMedia() {
-    try {
-        const files = await gfs.find().toArray()
-        return files
-    } catch (err) {
-        return err
-    }
+    return await gfs.find().toArray()
 }
 
 // Function that fetches one media object from the GridFS bucket as specified by its unique ID and sends it to the client.
