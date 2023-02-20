@@ -5,9 +5,9 @@
 	"description": "",
 	"type": "module",
 	"scripts": {
-		"start": "concurrently \"npm run start --prefix ../client\"",
-		"dev": "concurrently \"npm run dev --prefix ../client\"",
-		"installall": "npm install && cd ../client && npm install"
+		"start": "concurrently \"npm start --prefix ../mongoserver\" \"npm start --prefix ../server\" \"npm run start --prefix ../client\"",
+		"dev": "concurrently \"npm run dev --prefix ../server\" \"npm run dev --prefix ../client\"",
+		"installall": "npm install && cd ../mongoserver && npm install && cd ../server && npm install && cd ../client && npm install"
 	},
 	"keywords": [],
 	"author": "LMU Mediainformatics Group",
