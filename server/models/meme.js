@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
 // Import other schemas that are used within this one.
-const Vote = require('./vote')
-const Media = require('./media')
-const Layer = require('./layer')
-const Comment = require('./comment')
+const {voteSchema} = require('./vote')
+const {mediaSchema} = require('./media')
+const {layerSchema} = require('./layer')
+const {commentSchema} = require('./comment')
 
 const memeSchema = new mongoose.Schema({
     mediaID: {
@@ -41,7 +41,7 @@ const memeSchema = new mongoose.Schema({
         default: 0
     },
     votes: {
-        type: [Vote],
+        type: [voteSchema],
         required: true,
         default: []
     },
@@ -56,13 +56,13 @@ const memeSchema = new mongoose.Schema({
         default: 0
     },
     comments: {
-        type: [Comment],
+        type: [commentSchema],
         required: true,
         default: []
     },
     background: {
         media: {
-            type: Media,
+            type: mediaSchema,
             required: false
         },
         color: {
@@ -72,7 +72,7 @@ const memeSchema = new mongoose.Schema({
         }
     },
     layers: {
-        type: [Layer],
+        type: [layerSchema],
         required: false
     }
 })

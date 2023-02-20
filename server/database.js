@@ -15,6 +15,14 @@ const {GridFsStorage} = require('multer-gridfs-storage') // See https://www.npmj
 // This allows us to access the type of ObjectId as provided by mongoose like any other datatype.
 const { ObjectId } = mongoose.Types
 
+// Import our mongoose schemas
+const Meme = require('./models/meme')
+const Media = require('./models/media')
+// const Layer = require('./models/layer')
+// const Comment = require('./models/comment')
+// const Vote = require('./models/vote')
+// const User = require('./models/user')
+
 // Initialize Mongoose and connect to the MongoDB database as specified in the .env file (if it is specified).
 if(!process.env.DATABASE_URL){
     console.error("No environment variable DATABASE_URL specified in .env file. Please add the URL of your MongoDB database for this project to file ./.env. Exiting...")
@@ -56,6 +64,42 @@ const upload = multer({ storage })
 // Below are all the functions required to interact with the database.
 // These will then be exposed via exports and available to the API endpoints.
 
+//     %%%%%%%%%%%%%%%%%%%
+// ... % for meme access %
+//     %%%%%%%%%%%%%%%%%%%
+
+// Function that lists all memes in the database, that fit the given parameters, in the given order.
+// No parameters means list ALL memes.
+// TODO: Offer parameter for objects returned per request and offer follow up requests (like pages). Set this to a reasonable default.
+// TODO: Limiting parameters
+// TODO: Sorting
+async function listMemes() {
+    try {
+        const memes = await Memes.find()
+        return memes
+    } catch (err) {
+        return err
+    }
+}
+
+async function saveMeme(mediaID, title, description, creatorID, updateDate, privacy, background, layers) {
+    const meme = new Meme({
+        mediaID,
+        title,
+        description,
+        creatorID,
+        updateDate,
+        privacy,
+        background,
+        layers
+    })
+}
+
+// The same as saveMeme, but with server-side rendering of the meme. Should only be used for the API.
+async function createMeme() {
+    // TODO
+}
+
 //     %%%%%%%%%%%%%%%%%%%%
 // ... % for media access %
 //     %%%%%%%%%%%%%%%%%%%%
@@ -65,8 +109,12 @@ const upload = multer({ storage })
 // TODO: Limiting parameters
 // TODO: Sorting
 async function listMedia() {
-    const files = await gfs.find().toArray()
-    return files
+    try {
+        const files = await gfs.find().toArray()
+        return files
+    } catch (err) {
+        return err
+    }
 }
 
 // Function that fetches one media object from the GridFS bucket as specified by its unique ID and sends it to the client.
@@ -130,6 +178,8 @@ async function deleteMediaById(id, res) {
 // Everything else: functions for database interaction as described above
 module.exports = {
   upload,
+  listMemes,
+  saveMeme,
   listMedia,
   getMediaById,
   deleteMediaById

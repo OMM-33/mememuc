@@ -28,7 +28,7 @@ app.get('/uploadtest',function(req, res){
 })
 
 // In order to keep this tidy we keep all of our API routes in separate files.
-const memeRoutes = require('./routes/memes')
+const memeRoutes = require('./routes/meme')
 const mediaRoutes = require('./routes/media')
 const apiRoutes = require('./routes/api')
 // Importing it like this will resolve all routes to /api or deeper through the aforementioned file.
