@@ -41,15 +41,12 @@ router.get('/', (req, res) => {
 // This way all necessary preprocessing can be handled before further interaction with the file itself.
 router.post('/', database.upload.single('mediaFile'), (req, res) => {
     const oid = String(req.file.id)
-    console.log(req.file.id)
-    console.log(oid)
-    // ToDo: Smarter way to fetch the URL other than hardcoding it lol
+    console.log('Successfully uploaded mediaFile to gridFS with ObjectId ' + oid)
     res.status(201).json({
         message: 'File uploaded successfully',
-        mediaID: '',
-        mediaURL: 'missing'
+        mediaID: oid,
+        mediaURL: `${req.headers.host}/api/media/${oid}`
     })
-    //TODO return URL und id
 })
 
 // Delete the media file with the specified id (if it exists)
