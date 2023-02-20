@@ -13,6 +13,9 @@
 	--c-white-hsl: var(--c-white-h), var(--c-white-s), var(--c-white-l);
 	--c-white: hsl(var(--c-white-hsl));
 
+	--c-white-bright-hsl: var(--c-white-h), var(--c-white-s), calc(var(--c-white-l) + 5%);
+	--c-white-bright: hsl(var(--c-white-bright-hsl));
+
 	--c-accent-h: 160;
 	--c-accent-s: 66%;
 	--c-accent-l: 44%;

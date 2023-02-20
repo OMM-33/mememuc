@@ -87,7 +87,7 @@
 		flex-grow: 1;
 		overflow: scroll;
 
-		background-color: hsl(var(--c-white-h), var(--c-white-s), calc(var(--c-white-l) + 5%));
+		background-color: var(--c-white-bright);
 		box-shadow: 0 0 1em rgb(0, 0, 0, 0.2);
 
 		user-select: none;
