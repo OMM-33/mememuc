@@ -4,6 +4,7 @@
   "description": "Backend REST API server for the group 33 implementation of mememuc during WS 2022/23",
   "main": "index.js",
   "scripts": {
+		"start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js"
   },
