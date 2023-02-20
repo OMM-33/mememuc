@@ -1,27 +1,30 @@
 <script>
-	export let upvotes = 12;
-	export let views = 3;
-	export let comments = 2;
+	export let upvotes;
+	export let views;
+	export let comments;
 	export let image;
 	export let title;
 	export let id;
 
 	let upvoted;
 	const link = "#/meme/" + id;
+
 	function handleUpvote(){
 		if(!upvoted){
 			upvotes++;
 			upvoted = true;
 		}
 	}
+
 	function details(){
 		views++;
 	}
+
 </script>
 <div class="container">
-	<p id="title">{title}</p>
-	<button style:background-image="url('{image}')" id="image"  />
-	<div class="info"><a href={link} on:click={details}>Single View </a><button id="upvoteButton" on:click={handleUpvote} class:upvoted={upvoted === true}> ⬆️ {upvotes}</button><span class="views">👁️ {views}</span><span class="comments">🗨️ {comments}</span>
+	<p class="title">{title}</p>
+	<button style:background-image="url('{image}')" class="overviewMeme"  />
+	<div class="info"><a href={link} on:click={details}>Single View </a><button class="upvoteButton" on:click={handleUpvote} class:upvoted={upvoted === true}> ⬆️ {upvotes}</button><span class="views">👁️ {views}</span><span class="comments">🗨️ {comments}</span>
 	</div>
 </div>
 
@@ -41,7 +44,7 @@
 		justify-content: center;
 		width: 100%;
 	}
-	#image{
+	.overviewMeme{
 		width:100%;
 		height: 32vh;
 		background-size: contain;
@@ -51,7 +54,7 @@
 		border: 1px solid black;
 		cursor: pointer;
 	}
-	#title{
+	.title{
 		margin: 0 5% 5% 5%;
 		text-align: center;
 		font-size: 1.2em;
@@ -61,7 +64,7 @@
 		white-space: nowrap;
 
 	}
-	#upvoteButton{
+	.upvoteButton{
   background-color: none;
   border: none;
   margin-left: 10%;
