@@ -31,9 +31,7 @@ if(!process.env.DATABASE_URL){
     console.error("No environment variable DATABASE_URL specified in .env file. Please add the URL of your MongoDB database for this project to file ./.env. Exiting...")
     process.exit()
 }
-
-mongoose.connect(process.env.DATABASE_URL) // Persistent Database
-// mongoose.connect(process.env.MEMORY_DATABASE_URL) // Non-persistent Memory Database
+mongoose.connect(process.env.DATABASE_URL)
 // Save the connection for future access.
 const connection = mongoose.connection
 
