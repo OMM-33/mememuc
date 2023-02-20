@@ -106,7 +106,7 @@ async function saveMeme(mediaID, title, description, creatorID, updateDate, priv
         const schemaLayer = new Layer(layer)
         schemaLayers.push(schemaLayer)
     }
-
+    
     const meme = new Meme({
         mediaID,
         title,
@@ -115,7 +115,7 @@ async function saveMeme(mediaID, title, description, creatorID, updateDate, priv
         updateDate,
         privacy,
         background,
-        schemaLayers
+        layers: schemaLayers
     })
 
     const newMeme = await meme.save()

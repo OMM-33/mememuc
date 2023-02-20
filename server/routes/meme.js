@@ -87,7 +87,7 @@ router.post('/', async (req, res) => {
             mediaID = inc.src.slice(-24), // The last 24 hex chars of the source URL are the ID of the media representation of the meme
             title = inc.title,
             description = inc.description,
-            creatorID = '000000000000000000000000', // Placeholder. TODO: Replace with function that fetches user ID from the request.
+            creatorID = '000000000000000000000000', // Placeholder. TODO: Replace with function that fetches user ID from the request. Possible as soon as auth is running.
             updateDate = Date.now(),
             privacy = inc.privacy,
             background = incBackground,
@@ -101,9 +101,9 @@ router.post('/', async (req, res) => {
 })
 
 // Create a meme with server-side rendering
-router.post('/create', (req, res) => {
+// router.post('/create', (req, res) => {
 
-})
+// })
 
 // Update meme
 router.put('/:id', (req, res) => {
