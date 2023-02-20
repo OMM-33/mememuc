@@ -40,7 +40,15 @@ router.get('/', (req, res) => {
 // The file upload is handled as middleware *before* the main route handler function (i.e. (req, res) => {...}).
 // This way all necessary preprocessing can be handled before further interaction with the file itself.
 router.post('/', database.upload.single('mediaFile'), (req, res) => {
-    res.status(201).json({ message: 'File uploaded successfully' })
+    const oid = String(req.file.id)
+    console.log(req.file.id)
+    console.log(oid)
+    // ToDo: Smarter way to fetch the URL other than hardcoding it lol
+    res.status(201).json({
+        message: 'File uploaded successfully',
+        mediaID: '',
+        mediaURL: 'missing'
+    })
     //TODO return URL und id
 })
 
