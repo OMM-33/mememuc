@@ -12,5 +12,5 @@ dist
 dist-ssr
 *.local
 
-.env
+#.env
 testing/test.rest
