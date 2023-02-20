@@ -4,20 +4,14 @@
 	import { push } from 'svelte-spa-router'
 	export let params = {};
 	let id = params.id;
-	const meme = $memes.get(id);
 
-	const image = $meme.src;
-	const upvotes = $meme.score;
-	const views = $meme.views;
-	const title = $meme.title;
-	const description = $meme.description;
 
 	let myComment;
 
 
 	function submit(){
-		$meme.comments.push({ name:"Ines",text:myComment });
-		$meme.comments = $meme.comments; //für reaktivität von svelte
+		$memes.get(id).comments.push({ name:"Ines",text:myComment });
+		$memes.get(id).comments =  $memes.get(id).comments; //für reaktivität von svelte
 		myComment = "";
 
 	}
@@ -49,13 +43,13 @@
 </div>
 
 <div>
-	<h1 class="title">{title}</h1>
+	<h1 class="title">{$memes.get(id).title}</h1>
 	<div class="flexbox">
-		<div style:background-image="url('{image}')" class="meme"  />
+		<div style:background-image="url('{$memes.get(id).src}')" class="meme"  />
 		<div style:padding-left="">
 			<h2> Comments</h2>
 			<div class="comments">
-				{#each $meme.comments as comment}
+				{#each  $memes.get(id).comments as comment}
 					<Comment text={comment.text} name={comment.name} />
 
 				{/each}
@@ -69,9 +63,9 @@
 </div>
 <div>
 	<p>Details</p>
-	<p>Description: {description}</p>
-	<p>Upvotes: {upvotes}</p>
-	<p>Views: {views}</p>
+	<p>Description: {$memes.get(id).description}</p>
+	<p>Upvotes: {$memes.get(id).upvotes}</p>
+	<p>Views: {$memes.get(id).views}</p>
 </div>
 
 
