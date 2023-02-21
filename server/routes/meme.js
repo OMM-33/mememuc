@@ -96,13 +96,17 @@ router.post('/', async (req, res) => {
         color: inc.background.color
     }
     if(inc.background.media) {incBackground.mediaSource = inc.background.media.src }
-
     
+    let incDescription
+    if(inc.description) {
+       incDescription = inc.description
+    }
+
     try {
         const newMeme = await database.saveMeme(
             mediaID = inc.src.slice(-24), // The last 24 hex chars of the source URL are the ID of the media representation of the meme
             title = inc.title,
-            description = inc.description,
+            description = incDescription,
             creatorID = '000000000000000000000000', // Placeholder. TODO: Replace with function that fetches user ID from the request. Possible as soon as auth is running.
             updateDate = Date.now(),
             privacy = inc.privacy,
