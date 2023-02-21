@@ -9,6 +9,10 @@ const memeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
+    mediaURL: {
+        type: String,
+        required: true
+    },
     title: {
         type: String,
         required: true,
