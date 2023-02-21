@@ -35,7 +35,23 @@ router.get('/:id', async (req, res) => {
         // Meme successfully found. Return it for further handling.
         console.log('This meme was found:\n' + meme)
         
-        
+        // const clientMeme = {
+        //     id: meme._id,
+        //     src: `http://${req.headers.host}/api/media/${meme.mediaID}`,
+        //     title: meme.title,
+        //     description: meme.description,
+        //     privacy: meme.privacy,
+        //     views: meme.viewCount,
+        //     score: meme.score,
+        //     commentCount: meme.commentCount,
+        //     background: {
+        //         color: meme.background.color
+        //     }
+        // }
+        // if background.media
+        // media: {
+        //     src: meme.background.mediaSource
+        // },
         res.json(meme) // ToDo: Format again according to client affordances before sending.
     }
 })

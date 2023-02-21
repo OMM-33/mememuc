@@ -45,7 +45,7 @@ router.post('/', database.upload.single('mediaFile'), (req, res) => {
     res.status(201).json({
         message: 'File uploaded successfully',
         mediaID: oid,
-        mediaURL: `${req.headers.host}/api/media/${oid}`
+        mediaURL: `http://${req.headers.host}/api/media/${oid}`
     })
 })
 
