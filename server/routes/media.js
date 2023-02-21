@@ -39,7 +39,7 @@ router.get('/', (req, res) => {
 // Upload a media file and save it to the database
 // The file upload is handled as middleware *before* the main route handler function (i.e. (req, res) => {...}).
 // This way all necessary preprocessing can be handled before further interaction with the file itself.
-router.post('/', database.upload.single('mediaFile'), (req, res) => {
+router.post('/', database.upload.single('mediaFile'), async (req, res) => {
     const oid = String(req.file.id)
     console.log('Successfully uploaded mediaFile to gridFS with ObjectId ' + oid)
     res.status(201).json({
@@ -47,6 +47,17 @@ router.post('/', database.upload.single('mediaFile'), (req, res) => {
         mediaID: oid,
         mediaURL: `http://${req.headers.host}/api/media/${oid}`
     })
+
+    const metadata = {
+        mediaID: oid,
+        creatorID: '000000000000000000000000', // Placeholder. TODO: Replace with function that fetches user ID from the request. Possible as soon as auth is running.,
+        privacy: req.body.privacy || 'public',
+        isTemplate: req.body.isTemplate || true,
+        dataType: req.file.contentType
+    }
+
+    const newMedia = await database.saveMediaMetadata(metadata)
+    console.log('Metadata for new media object: ' + newMedia)
 })
 
 // Delete the media file with the specified id (if it exists)
