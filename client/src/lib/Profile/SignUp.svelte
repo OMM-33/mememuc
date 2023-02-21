@@ -3,6 +3,8 @@
 	import Error from "../Error.svelte";
 	import { push } from "svelte-spa-router";
 
+	let userValue;
+	let email;
 	let password;
 	let confirmPassword;
 	let username;

@@ -5,7 +5,6 @@
 
 	let username;
 	let password;
-	let isLoggedIn = false;
 	let error = null;
 
 	async function handleLogin() {
@@ -33,9 +32,6 @@
 		}
 
 		const json = await response.json();
-
-		isLoggedIn = JSON.stringify(json);
-
 		if (json.success){
 			await push("#/user");
 		}
