@@ -1,34 +1,16 @@
 <script>
-	import { user } from "../../stores.js";
+	import Button from "../Button.svelte";
+	import Error from "../Error.svelte";
 
-	let userValue;
-	let email;
 	let password;
 	let confirmPassword;
 	let username;
+	let isRegistered = false;
+	let error = null;
 
-	const validEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-
-	user.subscribe((value) => (userValue = value));
-
-	function handleUser(u, username, email, password){
-		u.username = username;
-		u.email = email;
-		u.password = password;
-		return u;
-	}
-
-	function handleSignUp() {
+	async function handleSignUp() {
 		if (!username){
 			alert("please enter your username");
-			return;
-		}
-		if (!email) {
-			alert("please enter your Email");
-			return;
-		}
-		if (!(email.match(validEmail))) {
-			alert("please enter valid Email");
 			return;
 		}
 		if (!password){
@@ -43,10 +25,30 @@
 			alert("passwords must be same");
 			return;
 		}
-		user.update((u) => handleUser(u, username, email, password));
+
+		const response = await fetch("/api/signUp",
+			{
+				method: "POST",
+				body: JSON.stringify({ user: username, pw: password }),
+				headers: {
+					"content-type": "multipart/form-data",
+				},
+			});
+
+		if (!response.ok) {
+			error = (await response.json()).message;
+			return;
+		}
+
+		const json = await response.json();
+
+		isRegistered = JSON.stringify(json);
+
+		if (json.success){
+			window.location.href = "#/login";
+		}
 	}
 
-	$: console.log(userValue);
 </script>
 
 <style>
@@ -60,38 +62,23 @@
 		font-size: 15px;
 	}
 
-	button{
-		background-color: #26B784;
-		color: white;
-		font-size: 15px;
-		font-weight: bold;
-		width: 30%;
-		padding: 20px 20px;
-		margin: 8px 0;
-		box-sizing: border-box;
-		border: 2px solid #26B784;
-		border-radius: 4px;
-		cursor: pointer;
-	}
-
 	a {
 		color: #26B784;
 		font-weight: bold;
 	}
 </style>
 
-<form>
-	<input class="form-field" type="text" bind:value={username} placeholder="Username" />
+<Error {error} />
+<form method="post">
+	<input class="form-field" data-sc="Enter username" type="text" bind:value={username} placeholder="Username" />
 	<br />
-	<input class="form-field" type="email" bind:value={email} placeholder="Email" />
+	<input class="form-field" data-sc="Enter password" type="password" bind:value={password} placeholder="Password" />
 	<br />
-	<input class="form-field" type="password" bind:value={password} placeholder="Password" />
+	<input class="form-field" data-sc="Confirm password" type="password" bind:value={confirmPassword} placeholder="Confirm password" />
 	<br />
-	<input class="form-field" type="password" bind:value={confirmPassword} placeholder="Confirm password" />
-	<br />
-	<button class="form-field" on:click={handleSignUp}>Sign up</button>
+	<Button class="form-field" data-sc="Sign up" variant="primary" on:click={handleSignUp}>Sign up</Button>
 </form>
 <p>
 	Already have an account?
-	<a class="link" href="#/login">Login</a>
+	<a class="link" data-sc="login" href="#/login">Login</a>
 </p>
