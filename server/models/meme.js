@@ -16,7 +16,7 @@ const memeSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: true,
+        required: false,
         default: 'This meme lacks a creator-given description. Although we are sure it is very funny and might even contain cats.'
     },
     creatorID: {

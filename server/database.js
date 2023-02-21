@@ -101,6 +101,8 @@ async function getMemeById(id, res) {
 async function saveMeme(mediaID, title, description, creatorID, updateDate, privacy, background, layers) {
     let schemaLayers = []
     
+    console.log(layers)
+    
     for (let i=0; i<layers.length; i++) {
         let layer = layers[i]
         const schemaLayer = new Layer(layer)
