@@ -10,8 +10,26 @@ const database = require('../database')
 // TODO: Limiting parameters
 // TODO: Sorting
 // See also database.js > listMedia()
+// Query Params:
+// /api/media/list                  > returns everything
+// /api/media/list?templates=true   > returns ONLY templates 
+// /api/media/list?templates=false  > returns everything EXCEPT templates (also for any other value of templates other than true)
 router.get('/list', async (req, res) => {
     try {
+        if (req.query.templates) {
+            const getTemplates = (req.query.templates === 'true')
+            // console.log('Casted ' + req.query.templates + ' to ' + typeof getTemplates + ' ' + String(getTemplates)) // Debugging Boolean casts (ty JS!)
+    
+            if(getTemplates) {
+                // Return ONLY templates
+    
+            } else {
+                // Return ONLY non-templates
+    
+            }
+        }
+
+        // Because no value was specified for query param 'templates', we return everything(!)
         const media = await database.listMedia(req.headers.host)
         res.status(200).json(media)
     } catch (err) {
