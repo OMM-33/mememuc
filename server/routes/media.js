@@ -12,7 +12,7 @@ const database = require('../database')
 // See also database.js > listMedia()
 router.get('/list', async (req, res) => {
     try {
-        const media = await database.listMedia()
+        const media = await database.listMedia(req.headers.host)
         res.status(200).json(media)
     } catch (err) {
         res.status(500).json({ message: 'Error listing files: ' + err.message })

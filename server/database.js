@@ -135,8 +135,13 @@ async function saveMeme(mediaID, title, description, creatorID, updateDate, priv
 // No parameters means list ALL media objects. Future TODO: Limit max objects returned per request and offer follow up requests (like pages).
 // TODO: Limiting parameters
 // TODO: Sorting
-async function listMedia() {
-    return await gfs.find().toArray()
+async function listMedia(host) {
+    let media = await gfs.find().toArray()
+    if (!media) { return }
+    for (i = 0; i < media.length; i++) {
+        media[i].mediaURL = `http://${host}/api/media/${media[i]._id}`
+    }
+    return media
 }
 
 // Function that fetches one media object from the GridFS bucket as specified by its unique ID and sends it to the client.
