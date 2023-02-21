@@ -3,6 +3,12 @@ const mongoose = require('mongoose')
 // This is a schema describing a media object of our database
 // A media object holds one media object (img, gif, video) and it's metadata
 const mediaSchema = new mongoose.Schema({
+    // Since we want this metadata object to have the same ID as the media object in the gridFS database, we declare the _id explicitly here.
+    // This way we can declare it upon creation as the same ID for the media object already created.
+    _id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true
+    },
     // An optional title for the media object, helping with searchability
     title: {
         type: String,
@@ -24,12 +30,12 @@ const mediaSchema = new mongoose.Schema({
         // How this media object came to be (e.g. import, created, etc.)
         description: {
             type: String,
-            required: true
+            required: false
         },
         // If available, the URL of the media object source (e.g. the website it was imported from)
         url: {
             type: String,
-            required: true
+            required: false
         }
     },
     // Whether this media object is visible to everyone or only the creator
@@ -48,12 +54,7 @@ const mediaSchema = new mongoose.Schema({
     // The data type of this media object (i.e. image, gif or video)
     dataType: {
         type: String,
-        enum: ["image", "gif", "video"],
-        required: true
-    },
-    // The ObjectId of the actual media data of this media object stored in a GridFS object.
-    data: {
-        type: mongoose.Schema.Types.ObjectId,
+        //enum: ["image", "gif", "video"],
         required: true
     }
 })

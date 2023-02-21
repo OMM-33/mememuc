@@ -18,7 +18,7 @@ const { ObjectId } = mongoose.Types
 // Import our mongoose schemas
 const Meme = require('./models/meme')
 const {Layer} = require('./models/layer')
-// const Layer = require('./models/layer')
+const {Media} = require('./models/media')
 // const Comment = require('./models/comment')
 // const Vote = require('./models/vote')
 // const User = require('./models/user')
@@ -180,6 +180,21 @@ async function getMediaById(id, res) {
     })
 }
 
+// Function that saves additional metadata for files in the gridFS bucket in the 'normal' mongoDB database.
+async function saveMediaMetadata(metadata){
+    const media = new Media({
+        _id: metadata.mediaID,
+        creatorID: metadata.creatorID,
+        creationDate: Date.now(),
+        privacy: metadata.privacy,
+        isTemplate: metadata.isTemplate,
+        dataType: metadata.dataType
+    })
+
+    const newMedia = await media.save()
+    return newMedia
+}
+
 // Function that deletes one media object from the GridFS bucket as specified by its unique ID.
 // This ID can be found by searching the media database (instead of the GridFS bucket) or is saved wherever the media is used (e.g. within a meme).
 async function deleteMediaById(id, res) {
@@ -199,6 +214,7 @@ async function deleteMediaById(id, res) {
         console.error(`Error deleting media file ${id} from GridFS: ${err.message}`);
         res.status(400).send(err.message)
     }
+    // TODO: Also delete media metadata
 }
 
 // %%%%%%%%%%%
@@ -213,5 +229,6 @@ module.exports = {
   saveMeme,
   listMedia,
   getMediaById,
+  saveMediaMetadata,
   deleteMediaById
 }
