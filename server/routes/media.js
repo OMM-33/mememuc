@@ -16,21 +16,19 @@ const database = require('../database')
 // /api/media/list?templates=false  > returns everything EXCEPT templates (also for any other value of templates other than true)
 router.get('/list', async (req, res) => {
     try {
+        let media
         if (req.query.templates) {
             const getTemplates = (req.query.templates === 'true')
             // console.log('Casted ' + req.query.templates + ' to ' + typeof getTemplates + ' ' + String(getTemplates)) // Debugging Boolean casts (ty JS!)
     
-            if(getTemplates) {
-                // Return ONLY templates
-    
-            } else {
-                // Return ONLY non-templates
-    
-            }
+            // Returns either ONLY templates or ONLY non-templates, depending on the value of getTemplates
+            media = await database.listMedia(req.headers.host, {isTemplate: getTemplates})
+            
+        } else {
+            // Because no value was specified for query param 'templates', we return everything(!)
+            media = await database.listMedia(req.headers.host)
         }
 
-        // Because no value was specified for query param 'templates', we return everything(!)
-        const media = await database.listMedia(req.headers.host)
         res.status(200).json(media)
     } catch (err) {
         res.status(500).json({ message: 'Error listing files: ' + err.message })

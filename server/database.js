@@ -92,7 +92,7 @@ async function getMemeById(id, res) {
     }
     
     console.log('got here')
-    // Lookup meme id in database and return it. Error handling is to be done whereever called!
+    // Lookup meme id in database and return it. Error handling is to be done wherever called!
     return await Meme.findById(oid)
     
 }
@@ -138,8 +138,18 @@ async function saveMeme(mediaID, mediaURL, title, description, creatorID, update
 // No parameters means list ALL media objects. Future TODO: Limit max objects returned per request and offer follow up requests (like pages).
 // TODO: Limiting parameters
 // TODO: Sorting
-async function listMedia(host) {
-    let media = await gfs.find().toArray()
+async function listMedia(host, filter) {
+    let media
+    if (filter) {
+        // The following functions finds all media objects that correspond to the filter parameter,
+        // ... then returns only the object ids according to the projection parameter "{_id: 1}"
+        // ... and then unwraps these ids into an array with .map(), so that we can then use it to find all the corresponding data objects.
+        const filteredMedia = (await Media.find(filter, {_id: 1})).map((doc) => doc._id)
+        // Here we now use the above generated id array, in order to only return media data objects whose ids are within the array.
+        media = await gfs.find({ _id: { $in: filteredMedia } }).toArray()
+    } else {
+        media = await gfs.find().toArray()
+    }
     if (!media) { return }
     for (i = 0; i < media.length; i++) {
         media[i].mediaURL = `http://${host}/api/media/${media[i]._id}`
