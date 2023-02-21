@@ -1,6 +1,7 @@
 <script>
 	import Button from "../Button.svelte";
 	import Error from "../Error.svelte";
+	import { push } from "svelte-spa-router";
 
 	let password;
 	let confirmPassword;
@@ -45,7 +46,7 @@
 		isRegistered = JSON.stringify(json);
 
 		if (json.success){
-			window.location.href = "#/login";
+			await push("#/login");
 		}
 	}
 
