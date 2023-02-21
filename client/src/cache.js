@@ -43,6 +43,7 @@ const memesDefault = new Map([
 		commentCount: Math.floor(Math.random() * 25),
 		comments: [{ name:"Felix",text: getPlaceholderText(3 + Math.floor(Math.random() * 7)) }, { name:"Ines",text: getPlaceholderText(3 + Math.floor(Math.random() * 7)) }],
 		description: getPlaceholderText(3 + Math.floor(Math.random() * 10)),
+		privacy: ["private", "unlisted", "public"][Math.floor(Math.random() * 3)],
 	})];
 }));
 export const memes = writable(memesDefault);
