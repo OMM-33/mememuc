@@ -98,30 +98,29 @@ async function getMemeById(id, res) {
 }
 
 // This will throw an error if validation fails! We catch this during routing in order to return it to the client for debugging their request.
-async function saveMeme(mediaID, mediaURL, title, description, creatorID, updateDate, privacy, background, layers) {
+async function saveMeme(meme) {
     let schemaLayers = []
-    
-    console.log(layers)
-    
-    for (let i=0; i<layers.length; i++) {
-        let layer = layers[i]
-        const schemaLayer = new Layer(layer)
-        schemaLayers.push(schemaLayer)
+    if(meme.layers){    
+        for (let i=0; i<meme.layers.length; i++) {
+            let layer = meme.layers[i]
+            const schemaLayer = new Layer(layer)
+            schemaLayers.push(schemaLayer)
+        }
     }
-    
-    const meme = new Meme({
-        mediaID,
-        mediaURL,
-        title,
-        description,
-        creatorID,
-        updateDate,
-        privacy,
-        background,
+
+    const memeToSave = new Meme({
+        mediaID: meme.mediaID,
+        mediaURL: meme.mediaURL,
+        title: meme.title,
+        description: meme.description,
+        creatorID: meme.creatorID,
+        updateDate: meme.updateDate,
+        privacy: meme.privacy,
+        background: meme.background,
         layers: schemaLayers
     })
 
-    const newMeme = await meme.save()
+    const newMeme = await memeToSave.save()
     return newMeme
 }
 
