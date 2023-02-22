@@ -1,6 +1,7 @@
 <script>
 	import { push } from "svelte-spa-router";
 	import { mod } from "../util";
+	import { tts } from "../speech";
 	import { memes } from "../cache";
 	import Meme from "../models/Meme";
 
@@ -90,12 +91,25 @@
 				</Button>
 			</div>
 			<div class="tts">
-				<Button on:click={() => meme.tts("title")}>📔 Read Title</Button>
-				<Button on:click={() => meme.tts("captions")}>📰 Read Captions</Button>
-				<Button on:click={() => meme.tts("description")}>📜 Read Description</Button>
+				<Button on:click={() => meme.tts("title")}>
+					📔 Read Title
+				</Button>
+				<Button on:click={() => meme.tts("captions")}>
+					📰 Read Captions
+				</Button>
+				<Button on:click={() => meme.description ? meme.tts("description") : tts("This meeme has no description.")}>
+					📜 Read Description
+				</Button>
 			</div>
 			<div class="description">
-				{meme.description}
+				{#if meme.description}
+					{meme.description}
+				{:else}
+					<i>
+						This meme lacks a creator-given description.
+						Although we are sure it is very funny and might even contain cats.
+					</i>
+				{/if}
 			</div>
 		</div>
 
