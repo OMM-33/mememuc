@@ -76,7 +76,7 @@ router.post('/', async (req, res) => {
         // Return saved meme
         res.status(201).json(newMeme)
     } catch (err) {
-        console.error(err)
+        console.error('Failed saving new meme, due to error:\n' + err)
         res.status(400).send(err.message)
     }
     
@@ -88,8 +88,18 @@ router.post('/', async (req, res) => {
 // })
 
 // Update meme
-router.put('/:id', (req, res) => {
-
+router.patch('/:id', async (req, res) => {
+    try {
+        // Parse meme from frontend into database compatible format
+        const parsedMeme = parseMeme(req.body, req.headers.host)
+        // Save meme
+        const updatedMeme = await database.updateMeme(req.params.id, parsedMeme)
+        // Return updated meme
+        res.status(200).json(updatedMeme)
+    }catch (err) {
+        console.error(`Failed updating meme ${req.params.id}, due to error:\n${err}`)
+        res.status(400).send(err.message)
+    }
 })
 
 // Delete meme
