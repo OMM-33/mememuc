@@ -123,6 +123,7 @@ export default class Meme extends Media {
 
 	/**
 	 * Parses the serverside JSON representation to a Meme object.
+	 * This currently **modifies** the input JSON which is... let's say not optimal 🙃.
 	 * @override
 	 **/
 	static fromJSON(json) {
