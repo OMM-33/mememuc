@@ -9,16 +9,16 @@
 </script>
 
 |
-<Button on:click={() => dispatch("moveZ", 1)} disabled={isLast}>
+<Button on:click={() => dispatch("moveZ", 1)} disabled={isLast} padding="0.25em">
 	<span class:disabled={isLast}>🔼</span>
 </Button>
-<Button on:click={() => dispatch("moveZ", -1)} disabled={isFirst}>
+<Button on:click={() => dispatch("moveZ", -1)} disabled={isFirst} padding="0.25em">
 	<span class:disabled={isFirst}>🔽</span>
 </Button>
-<Button on:click={() => dispatch("duplicate")}>
+<Button on:click={() => dispatch("duplicate")} padding="0.25em">
 	<span>📋</span>
 </Button>
-<Button on:click={() => dispatch("delete")}>
+<Button on:click={() => dispatch("delete")} padding="0.25em">
 	<span>🗑️</span>
 </Button>
 
