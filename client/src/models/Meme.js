@@ -176,16 +176,16 @@ export default class Meme extends Media {
 		if (!res.ok) throw new Error(`${res.status} (${res.statusText}): ${await res.text()}`);
 	}
 
-	/** PUT up a new version of the Meme. We assume the server deletes the old media. */
-	async put() {
+	/** PATCH a new version of the Meme. We assume the server deletes the old media. */
+	async patch() {
 		await super.post({ isTemplate: false });
 
 		if (!this.id) throw new Error(
-			"Cannot PUT Meme as it has no id specified. Make sure it has been uploaded previously.",
+			"Cannot PATCH Meme as it has no id specified. Make sure it has been uploaded previously.",
 		);
 		const res = await fetch(buildURL(`api/meme/${this.id}`), {
 			headers: jsonHeaders,
-			method: "PUT",
+			method: "PATCH",
 			body: JSON.stringify(this),
 		});
 		if (!res.ok) throw new Error(`${res.status} (${res.statusText}): ${await res.text()}`);
