@@ -194,6 +194,10 @@ export default class Meme extends Media {
 			body: JSON.stringify(this),
 		});
 		if (!res.ok) throw new Error(`${res.status} (${res.statusText}): ${await res.text()}`);
+
+		const { _id: id } = await res.json();
+		this.id = id;
+		this.notify();
 	}
 
 	/** PATCH a new version of the Meme. We assume the server deletes the old media. */
