@@ -38,7 +38,7 @@ router.get('/:id', async (req, res) => {
     } else {
         // Meme successfully found. Return it for further handling.
         console.log('This meme was found:\n' + meme)
-        
+
         res.json(meme) // ToDo: Format again according to client affordances before sending.
     }
 })
@@ -62,7 +62,7 @@ router.post('/', async (req, res) => {
         console.error('Failed saving new meme, due to error:\n' + err)
         res.status(400).send(err.message)
     }
-    
+
 })
 
 // Create a meme with server-side rendering
@@ -111,12 +111,14 @@ function parseMeme(incoming, host) {
                 },
                 options: {}
             }
-            if (parsedLayer.layerType == 'text' || 'html') {
+            if (parsedLayer.layerType === 'text') {
                 parsedLayer.options = incomingLayer.options
             } else { // layerType is media (i.e. 'image', 'gif', 'video')
-                parsedLayer.options.mediaSource = incomingLayer.options.media.src
-                parsedLayer.options.fit = incomingLayer.options.fit
-                parsedLayer.options.flip = incomingLayer.options.flip
+                parsedLayer.options = {
+                    ...incomingLayer.options,
+                    mediaSource: incomingLayer.options.media.src,
+                };
+                delete parsedLayer.options.media;
             }
             parsedLayers.push(parsedLayer)
         }
@@ -128,7 +130,7 @@ function parseMeme(incoming, host) {
     if(incoming.background.media) {
         parsedBackground.mediaSource = incoming.background.media.src
     }
-    
+
     let parsedDescription
     if(incoming.description) {
        parsedDescription = incoming.description
