@@ -95,7 +95,6 @@
 					>
 						✔️ Save & Upload
 					</Button>
-					<Button>📲 Share</Button>
 				</div>
 			</form>
 		{:else}
