@@ -43,7 +43,7 @@
 <div class="controls">
 	<Button on:click={() => $meme.addLayer("text")}>📝 Add Text</Button>
 	<Button on:click={() => $meme.clear()}>❌ Clear Canvas</Button>
-	<Button variant="primary" on:click={render}>🧮 Generate Meme</Button>
+	<Button variant="primary" on:click={render}>🧮 {$meme.id ? "Save Changes" : "Generate Meme"}</Button>
 </div>
 <div class="editor">
 	<div

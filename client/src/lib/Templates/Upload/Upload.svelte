@@ -1,9 +1,11 @@
 <script>
 	import { createEventDispatcher } from "svelte";
+	import { templates } from "../../../cache";
+	import Media from "../../../models/Media";
 
 	import Overlay from "../../Overlay.svelte";
 	import Tabs from "../../Tabs.svelte";
-	import Error from "../../Error.svelte";
+	import ErrorDisplay from "../../Error.svelte";
 
 	import Local from "./Local.svelte";
 	import URL from "./URL.svelte";
@@ -12,16 +14,26 @@
 	import Draw from "./Draw.svelte";
 	import Card from "../../Card.svelte";
 
-	const dispatch = createEventDispatcher();
-
 	export let open = false;
+
+	const dispatch = createEventDispatcher();
 
 	let error = null;
 
 	// Apparently we cannot capture events on dynamic components,
 	// so we will have to use callback function props:
-	const onNew = detail => dispatch("new", detail);
 	const onError = detail => error = detail;
+	const onNew = async (mediaProps) => {
+		try {
+			const template = new Media(mediaProps);
+			await template.post({ isTemplate: true }); // will populate id and src from server
+			$templates.set(template.id, template);
+			$templates = $templates;
+			dispatch("new", template);
+		} catch (error) {
+			onError(error.message);
+		}
+	};
 	const tabs = [
 		{ title: "Local File", component: Local },
 		{ title: "URL", component: URL },
@@ -38,7 +50,7 @@
 		<h3 slot="header" style:margin="0">Add a template</h3>
 		<div class="upload">
 			<Tabs {tabs} on:change={() => error = null} />
-			<Error {error} />
+			<ErrorDisplay {error} />
 		</div>
 	</Card>
 </Overlay>
