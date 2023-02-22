@@ -19,10 +19,16 @@
 		}
 	});
 
-	const onConfirm = () => {
-		if (selectedIndex < 0) return;
+	const onConfirm = async () => {
+		if (selectedIndex === -1) return;
 
-		onNew({ src: images[selectedIndex] });
+		try {
+			const response = await fetch(images[selectedIndex]);
+			const blob = await response.blob();
+			onNew({ blob });
+		} catch (error) {
+			onError(error);
+		}
 	};
 </script>
 
@@ -42,7 +48,7 @@
 			</div>
 		{/each}
 	</div>
-	<Button on:click={onConfirm} disabled={selectedIndex < 0}>Use Image</Button>
+	<Button on:click={onConfirm} disabled={selectedIndex === -1}>Use Image</Button>
 </div>
 
 <style>

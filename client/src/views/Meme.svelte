@@ -2,13 +2,19 @@
 	import { push } from "svelte-spa-router";
 	import { mod } from "../util";
 	import { memes } from "../cache";
+	import Meme from "../models/Meme";
 
 	import Button from "../lib/Button.svelte";
 	import Comment from "../lib/View/Comment.svelte";
 
 	export let params = {};
 
-	$: meme = $memes.get(params.id);
+	// We cannot use the $ syntax to auto-subscribe our store, as it may be asynchronously loaded.
+	let meme;
+	$: (async () => {
+		const memeStore = $memes.get(params.id) || await Meme.get({ id: params.id });
+		memeStore.subscribe(value => meme = value);
+	})();
 
 	let commentText;
 
@@ -16,83 +22,91 @@
 		const text = commentText.trim();
 		if (text === "") return;
 
-		$meme.comments.push({ name: "Ines", text });
-		$meme.comments = $meme.comments; // reactivity...
+		meme.comments.push({ name: "Ines", text });
+		meme.comments = meme.comments; // reactivity...
 		commentText = "";
 	}
 
 	function switchMeme(offset) {
-		const targetID = String(mod(Number($meme.id) + offset, $memes.size));
+		const targetID = String(mod(Number(meme.id) + offset, memes.size));
 		push(`/meme/${targetID}`);
 	}
 	function switchMemeRandom() {
-		const otherIDs = [...$memes.keys()].filter(id => id !== $meme.id);
+		const otherIDs = [...memes.keys()].filter(id => id !== meme.id);
 		const targetID = otherIDs[Math.floor(Math.random() * otherIDs.length)];
 		push(`/meme/${targetID}`);
 	}
 </script>
 
-<div class="meme">
-	<div class="slideshow">
-		<Button on:click={() => switchMeme(-1)}>
-			<span class="pointing-hand">👈</span>
-		</Button>
-		<Button on:click={switchMemeRandom}>
-			🎲
-		</Button>
-		<Button on:click={() => switchMeme(1)}>
-			<span class="pointing-hand">👉</span>
-		</Button>
-	</div>
+{#if meme}
+	<div class="meme">
+		<div class="slideshow">
+			<Button on:click={() => switchMeme(-1)}>
+				<span class="pointing-hand">👈</span>
+			</Button>
+			<Button on:click={switchMemeRandom}>
+				🎲
+			</Button>
+			<Button on:click={() => switchMeme(1)}>
+				<span class="pointing-hand">👉</span>
+			</Button>
+		</div>
 
-	<div class="content">
-		<h1>{$meme.title}</h1>
-		<img src={$meme.src} />
+		<div class="content">
+			<h1>{meme.title}</h1>
+			<img src={meme.src} />
 
-		<div class="details">
-			<div class="score">
-				<Button
-					variant={$meme.vote === 1 && "primary"}
-					rounded={["tl", "bl"]}
-					on:click={() => $meme.toggleVote(1)}
-				>
-					<span class="vote up">🔼</span>
+			<div class="details">
+				<div class="score">
+					<Button
+						variant={meme.vote === 1 && "primary"}
+						rounded={["tl", "bl"]}
+						on:click={() => meme.toggleVote(1)}
+					>
+						<span class="vote up">🔼</span>
+					</Button>
+					<Button element="div" variant="noninteractive" rounded={[]}>
+						❤️ Score: {meme.score}
+					</Button>
+					<Button
+						variant={meme.vote === -1 && "primary"}
+						rounded={["tr", "br"]}
+						on:click={() => meme.toggleVote(-1)}
+					>
+						<span class="vote down">🔽</span>
+					</Button>
+				</div>
+				<Button element="div" variant="noninteractive">
+					👁️ Views: {meme.views}
 				</Button>
-				<Button element="div" variant="noninteractive" rounded={[]}>
-					❤️ Score: {$meme.score}
+				<Button element="div" variant="noninteractive" style="margin-left: auto">
+					👤 [CREATOR]
 				</Button>
-				<Button
-					variant={$meme.vote === -1 && "primary"}
-					rounded={["tr", "br"]}
-					on:click={() => $meme.toggleVote(-1)}
-				>
-					<span class="vote down">🔽</span>
+				<Button element="div" variant="noninteractive">
+					📅 {meme.updateDate.toLocaleDateString("en-GB")}
+				</Button>
+				<Button on:click={() => push(`/meme/${meme.id}/edit`)}>
+					✏️ Edit
 				</Button>
 			</div>
-			<Button element="div" variant="noninteractive">
-				👁️ Views: {$meme.views}
-			</Button>
-			<Button element="div" variant="noninteractive" style="margin-left: auto">
-				👤 [CREATOR]
-			</Button>
+			<div class="description">
+				{meme.description}
+			</div>
 		</div>
-		<div class="description">
-			{$meme.description}
-		</div>
-	</div>
 
-	<div class="comment-section">
-		<h2>Comments</h2>
-		<div class="comments">
-			{#each $meme.comments as comment}
-				<Comment text={comment.text} name={comment.name} />
-			{/each}
+		<div class="comment-section">
+			<h2>Comments</h2>
+			<div class="comments">
+				{#each meme.comments as comment}
+					<Comment text={comment.text} name={comment.name} />
+				{/each}
+			</div>
+			<h3>Post a comment</h3>
+			<textarea bind:value={commentText} />
+			<Button on:click={submitComment}>Post Comment</Button>
 		</div>
-		<h3>Post a comment</h3>
-		<textarea bind:value={commentText} />
-		<Button on:click={submitComment}>Post Comment</Button>
 	</div>
-</div>
+{/if}
 
 
 <style>

@@ -1,9 +1,10 @@
 <script>
 	import { onDestroy, onMount } from "svelte";
+	import { push } from "svelte-spa-router";
 	import { getUID, compressImage } from "../../../util";
 
 	import { privacyLevels } from "../../../models/Meme";
-	import { memes } from "../../../cache";
+	import { memes, resetEditorMeme } from "../../../cache";
 	import Button from "../../Button.svelte";
 	import Card from "../../Card.svelte";
 	import Footer from "./Footer.svelte";
@@ -34,15 +35,16 @@
 		$meme.updateBlob(uncompressedBlob);
 	});
 
-	const onSave = () => {
-		let id = $meme.id;
-		// ID should be provided by the server later on of course:
-		if (id === undefined) {
-			id = Math.max(...$memes.keys()) + 1;
-			$meme.id = id;
+	const onSave = async () => {
+		if ($meme.id) { // Meme is being edited
+			await $meme.put();
+		} else { // Meme is new
+			await $meme.post();
+			$memes.set($meme.id, $meme);
 		}
-		$memes.set(String(id + 1), $meme);
+		resetEditorMeme();
 		close.func();
+		push(`/meme/${$meme.id}`);
 	};
 </script>
 
@@ -50,43 +52,45 @@
 	<h3 slot="header" style:margin="0">Save Meme</h3>
 	<div class="content">
 		{#if compressed}
-			<div class="title">
-				<h4>Title</h4>
-				<input type="text" bind:value={$meme.title} />
-			</div>
-			<div class="row" style:flex-grow="3">
-				<fieldset>
-					<legend>Visibility</legend>
-					{#each privacyLevels as { id, label, icon }}
-						<div>
-							<label>
-								<input
-									type="radio"
-									name="visibility-{uid}"
-									value={id}
-									bind:group={$meme.privacy}
-								/>
-								{icon} {label}
-							</label>
-						</div>
-					{/each}
-				</fieldset>
-				<img src={$meme.src} />
-			</div>
-			<div class="description" style:flex-grow="2">
-				<h4>Add a Description</h4>
-				<textarea bind:value={$meme.description} />
-			</div>
-			<div class="row">
-				<Button
-					variant="primary"
-					style="flex-grow: 1"
-					on:click={onSave}
-				>
-					✔️ Save & Upload
-				</Button>
-				<Button>📲 Share</Button>
-			</div>
+			<form on:submit|preventDefault={onSave}>
+				<div class="title">
+					<h4>Title</h4>
+					<input type="text" required minlength="8" bind:value={$meme.title} />
+				</div>
+				<div class="row" style:flex-grow="3">
+					<fieldset>
+						<legend>Visibility</legend>
+						{#each privacyLevels as { id, label, icon }}
+							<div>
+								<label>
+									<input
+										type="radio"
+										name="visibility-{uid}"
+										value={id}
+										bind:group={$meme.privacy}
+									/>
+									{icon} {label}
+								</label>
+							</div>
+						{/each}
+					</fieldset>
+					<img src={$meme.src} />
+				</div>
+				<div class="description" style:flex-grow="2">
+					<h4>Add a Description</h4>
+					<textarea bind:value={$meme.description} />
+				</div>
+				<div class="row">
+					<Button
+						variant="primary"
+						style="flex-grow: 1"
+						type="submit"
+					>
+						✔️ Save & Upload
+					</Button>
+					<Button>📲 Share</Button>
+				</div>
+			</form>
 		{:else}
 			<div class="loading">
 				<Loading>Compressing Image</Loading>
@@ -100,12 +104,19 @@
 	.content {
 		display: flex;
 		flex-direction: column;
-		gap: 1em;
 
 		width: 800px;
 		height: 800px;
 		max-width: 100%;
 		max-height: 100%;
+	}
+
+	form {
+		flex-grow: 1;
+
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
 	}
 
 	.row {

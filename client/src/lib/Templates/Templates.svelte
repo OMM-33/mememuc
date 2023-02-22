@@ -1,8 +1,6 @@
 <script>
 	import { createEventDispatcher } from "svelte";
-
 	import { templates } from "../../cache";
-	import Media from "../../models/Media";
 
 	import Button from "../Button.svelte";
 	import Upload from "./Upload/Upload.svelte";
@@ -11,14 +9,6 @@
 
 	let uploadOpen = false;
 	let color = "#ffffff";
-
-	const onAddTemplate = ({ detail: mediaProps }) => {
-		// ID should be provided by the server later on of course:
-		const id = Math.max(...$templates.keys()) + 1;
-		$templates.set(String(id + 1), new Media({ ...mediaProps, id }));
-		$templates = $templates;
-		uploadOpen = false;
-	};
 
 	const pickColor = (() => {
 		const input = document.createElement("input");
@@ -57,7 +47,7 @@
 	</div>
 </div>
 
-<Upload bind:open={uploadOpen} on:new={onAddTemplate} />
+<Upload bind:open={uploadOpen} on:new={() => uploadOpen = false} />
 
 <style>
 	.templates {
