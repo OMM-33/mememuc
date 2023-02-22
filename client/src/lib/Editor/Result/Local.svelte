@@ -47,7 +47,7 @@
 		<div class="controls">
 			<div class="row">
 				<Button variant="primary" style="flex-grow: 1" on:click={() => dispatch("save")}>
-					✔️ Save in Profile
+					✔️ {media.id ? "Update in Profile" : "Save in Profile"}
 				</Button>
 			</div>
 			<div class="row">

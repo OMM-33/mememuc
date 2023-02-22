@@ -20,7 +20,7 @@ export const getImageDimensions = async (src) => {
 	return new Promise((resolve, reject) => {
 		const img = new Image();
 		img.onload = () => resolve([img.width, img.height]);
-		img.onerror = reject;
+		img.onerror = error => reject(new Error(`Loading image failed: ${src}`, { cause: error }));
 
 		img.src = src;
 	});

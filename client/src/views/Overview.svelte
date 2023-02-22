@@ -1,7 +1,9 @@
 <script>
-	import { memes } from "../cache";
+	import { memes, updateMemes } from "../cache";
 
 	import Frame from "../lib/View/Frame.svelte";
+
+	updateMemes();
 </script>
 
 <h1>Overview </h1>
