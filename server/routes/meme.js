@@ -4,6 +4,10 @@ const router = express.Router()
 // Import our database
 const database = require('../database')
 
+// ##########
+// # Routes #
+// ##########
+
 // Get a list of media, limited by parameters and sorted accordingly.
 // TODO: Limiting parameters
 // TODO: Sorting
@@ -62,62 +66,17 @@ router.get('/', (req, res) => {
     // ToDo
 })
 
-// Save a meme from our frontend
+// Save a meme from our frontend (after parsing it)
 router.post('/', async (req, res) => {
-    const inc = req.body
-
-    let incLayers = []
-    for (let i=0; i<inc.layers.length; i++) {
-        let layer = inc.layers[i]
-        let newLayer = {
-            layerType: layer.type,
-            origin: {
-                x: layer.origin[0],
-                y: layer.origin[1]
-            },
-            rotation: layer.angle,
-            scale: {
-                x: layer.size[0],
-                y: layer.size[1]
-            },
-            options: {}
-        }
-        if (newLayer.layerType == 'text') {
-            newLayer.options = layer.options
-        } else { // layerType is media (i.e. 'image', 'gif', 'video')
-            newLayer.options.mediaSource = layer.options.media.src
-            newLayer.options.fit = layer.options.fit
-            newLayer.options.flip = layer.options.flip
-        }
-        incLayers.push(newLayer)
-    }
-
-    let incBackground = {
-        color: inc.background.color
-    }
-    if(inc.background.media) {incBackground.mediaSource = inc.background.media.src }
-    
-    let incDescription
-    if(inc.description) {
-       incDescription = inc.description
-    }
-
-    const incMediaID = inc.src.slice(-24) // The last 24 hex chars of the source URL are the ID of the media representation of the meme
-
     try {
-        const newMeme = await database.saveMeme(
-            mediaID = incMediaID,
-            mediaURL = `http://${req.headers.host}/api/media/${incMediaID}`,
-            title = inc.title,
-            description = incDescription,
-            creatorID = '000000000000000000000000', // Placeholder. TODO: Replace with function that fetches user ID from the request. Possible as soon as auth is running.
-            updateDate = Date.now(),
-            privacy = inc.privacy,
-            background = incBackground,
-            layers = incLayers
-        )
+        // Parse meme from frontend into database compatible format
+        const parsedMeme = parseMeme(req.body, req.headers.host)
+        // Save meme
+        const newMeme = await database.saveMeme(parsedMeme)
+        // Return saved meme
         res.status(201).json(newMeme)
     } catch (err) {
+        console.error(err)
         res.status(400).send(err.message)
     }
     
@@ -137,5 +96,72 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
 
 })
+
+// ####################
+// # Helper functions #
+// ####################
+
+// Parses the client side representation of a meme into one the database can handle
+function parseMeme(incoming, host) {
+    let parsedLayers = []
+    if(incoming.layers){
+        for (let i=0; i<incoming.layers.length; i++) {
+            let incomingLayer = incoming.layers[i]
+            let parsedLayer = {
+                layerType: incomingLayer.type,
+                origin: {
+                    x: incomingLayer.origin[0],
+                    y: incomingLayer.origin[1]
+                },
+                rotation: incomingLayer.angle,
+                scale: {
+                    x: incomingLayer.size[0],
+                    y: incomingLayer.size[1]
+                },
+                options: {}
+            }
+            if (parsedLayer.layerType == 'text') {
+                parsedLayer.options = incomingLayer.options
+            } else { // layerType is media (i.e. 'image', 'gif', 'video')
+                parsedLayer.options.mediaSource = incomingLayer.options.media.src
+                parsedLayer.options.fit = incomingLayer.options.fit
+                parsedLayer.options.flip = incomingLayer.options.flip
+            }
+            parsedLayers.push(parsedLayer)
+        }
+    }
+
+    let parsedBackground = {
+        color: incoming.background.color
+    }
+    if(incoming.background.media) {
+        parsedBackground.mediaSource = incoming.background.media.src
+    }
+    
+    let parsedDescription
+    if(incoming.description) {
+       parsedDescription = incoming.description
+    }
+
+    const parsedMediaID = incoming.src.slice(-24) // The last 24 hex chars of the source URL are the ID of the media representation of the meme
+
+    const parsedMeme = {
+        mediaID: parsedMediaID,
+        mediaURL: `http://${host}/api/media/${parsedMediaID}`,
+        title: incoming.title,
+        description: parsedDescription,
+        creatorID: '000000000000000000000000', // Placeholder. TODO: Replace with function that fetches user ID from the request. Possible as soon as auth is running.
+        updateDate: Date.now(),
+        privacy: incoming.privacy,
+        background: parsedBackground,
+        layers: parsedLayers
+    }
+
+    return parsedMeme
+}
+
+// ###########
+// # Exports #
+// ###########
 
 module.exports = router
