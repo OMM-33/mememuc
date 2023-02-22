@@ -60,7 +60,7 @@ const layerSchema = new mongoose.Schema({
             required: false,
             default: false
         },
-        text: {
+        html: {
             type: String,
             required: false
         },
