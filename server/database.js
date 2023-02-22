@@ -113,6 +113,24 @@ async function saveMeme(meme) {
     return newMeme
 }
 
+// Update a meme that already exists in the database (if it does indeed exist)
+// This will throw an error if any validation (id, layer, meme) fails! We catch this during routing in order to return it to the client for debugging their request.
+async function updateMeme(id, meme) {
+    const oid = ObjectId(id)
+
+    // Replace layers in the meme with layers according to the layerSchema from models/layer.js
+    if(meme.layers){    
+        for (let i=0; i<meme.layers.length; i++) {
+            meme.layers[i] = new Layer(meme.layers[i])
+        }
+    }
+    // This options parameter tells Mongoose to return the updated object rather than the original object.
+    const options = { new: true }
+    
+    const updatedMeme = await Meme.findByIdAndUpdate(oid, { $set: meme }, options)
+    return updatedMeme
+}
+
 // The same as saveMeme, but with server-side rendering of the meme. Should only be used for the API.
 // async function createMeme() {
 //     // TODO
@@ -234,6 +252,7 @@ module.exports = {
   listMemes,
   getMemeById,
   saveMeme,
+  updateMeme,
   listMedia,
   getMediaById,
   saveMediaMetadata,
