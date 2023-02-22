@@ -21,7 +21,7 @@ const {Layer} = require('./models/layer')
 const {Media} = require('./models/media')
 // const Comment = require('./models/comment')
 // const Vote = require('./models/vote')
-// const User = require('./models/user')
+const User = require('./models/user')
 
 // Use this line if you want to use the memory database instead of the persistent local database. (Needed for final submission.)
 process.env.DATABASE_URL = process.env.MEMORY_DATABASE_URL
@@ -221,10 +221,19 @@ async function deleteMediaById(id, res) {
         console.log(`Media file ${id} deleted from GridFS bucket.`)
         res.status(200).send(`Media file ${id} successfully deleted.`)
     } catch (err) {
-        console.error(`Error deleting media file ${id} from GridFS: ${err.message}`);
+        console.error(`Error deleting media file ${id} from GridFS: ${err.message}`)
         res.status(400).send(err.message)
     }
     // TODO: Also delete media metadata
+}
+
+//     %%%%%%%%%%%%%%%%%%%%%%%%%%%
+// ... % for user authentication %
+//     %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+async function registerUser(name, password) {
+    const user = new User({ name, password })
+    await user.save()
 }
 
 // %%%%%%%%%%%
@@ -240,5 +249,6 @@ module.exports = {
   listMedia,
   getMediaById,
   saveMediaMetadata,
-  deleteMediaById
+  deleteMediaById,
+  registerUser
 }
