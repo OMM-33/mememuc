@@ -89,6 +89,11 @@
 					✏️ Edit
 				</Button>
 			</div>
+			<div class="tts">
+				<Button on:click={() => meme.tts("title")}>📔 Read Title</Button>
+				<Button on:click={() => meme.tts("captions")}>📰 Read Captions</Button>
+				<Button on:click={() => meme.tts("description")}>📜 Read Description</Button>
+			</div>
 			<div class="description">
 				{meme.description}
 			</div>
@@ -121,6 +126,12 @@
 		line-height: 1;
 	}
 
+	.content {
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
+	}
+
 	.meme {
 		display: flex;
 		flex-direction: column;
@@ -138,7 +149,6 @@
 	.details {
 		display: flex;
 		gap: 2em;
-		padding: 1em 0;
 	}
 
 	.score {
@@ -153,7 +163,13 @@
 	}
 
 	.description {
-		margin-top: 1em;
+		margin: 1em 0;
+	}
+
+	.tts {
+		font-size: 0.75em;
+		display: flex;
+		gap: 0.25em;
 	}
 
 	.comments {

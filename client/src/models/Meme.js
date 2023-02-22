@@ -114,7 +114,8 @@ export default class Meme extends Media {
 				const captions = this.layers
 					.filter(l => l.type === "text")
 					.map(l => stripHTML(l.options.html.replaceAll("</div>", "\n")));
-				captions.forEach(text => tts(text));
+				if (captions.length === 0) tts("This meeme has no captions.");
+				else captions.forEach(text => tts(text));
 				return;
 			}
 		}
