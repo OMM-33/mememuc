@@ -12,7 +12,7 @@ const database = require('../database')
 // See also database.js > listMedia()
 // Query Params:
 // /api/media/list                  > returns everything
-// /api/media/list?templates=true   > returns ONLY templates 
+// /api/media/list?templates=true   > returns ONLY templates
 // /api/media/list?templates=false  > returns everything EXCEPT templates (also for any other value of templates other than true)
 router.get('/list', async (req, res) => {
     try {
@@ -20,10 +20,10 @@ router.get('/list', async (req, res) => {
         if (req.query.templates) {
             const getTemplates = (req.query.templates === 'true')
             // console.log('Casted ' + req.query.templates + ' to ' + typeof getTemplates + ' ' + String(getTemplates)) // Debugging Boolean casts (ty JS!)
-    
+
             // Returns either ONLY templates or ONLY non-templates, depending on the value of getTemplates
             media = await database.listMedia(req.headers.host, {isTemplate: getTemplates})
-            
+
         } else {
             // Because no value was specified for query param 'templates', we return everything(!)
             media = await database.listMedia(req.headers.host)
@@ -68,7 +68,7 @@ router.post('/', database.upload.single('mediaFile'), async (req, res) => {
         mediaID: oid,
         creatorID: '000000000000000000000000', // Placeholder. TODO: Replace with function that fetches user ID from the request. Possible as soon as auth is running.,
         privacy: req.body.privacy || 'public',
-        isTemplate: req.body.isTemplate || true,
+        isTemplate: req.body.isTemplate !== 'false',
         dataType: req.file.contentType
     }
 
@@ -78,7 +78,7 @@ router.post('/', database.upload.single('mediaFile'), async (req, res) => {
 
 // Delete the media file with the specified id (if it exists)
 // TODO: Auth (isAdmin || isCreator)
-// TODO: Usage check (If still used replace w/ placeholder in all used places) 
+// TODO: Usage check (If still used replace w/ placeholder in all used places)
 router.delete('/:id', (req, res) => {
     database.deleteMediaById(req.params.id, res)
 })
