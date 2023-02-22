@@ -5,7 +5,7 @@ const Media = require('./media')
 const layerSchema = new mongoose.Schema({
     layerType: {
         type: String,
-        enum: ['image', 'gif', 'video', 'text', 'html'],
+        enum: ['image', 'gif', 'video', 'text'],
         required: true
     },
     origin: {
