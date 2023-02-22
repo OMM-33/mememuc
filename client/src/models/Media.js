@@ -94,7 +94,7 @@ export default class Media extends Reactive {
 		if (!res.ok) throw new Error(`${res.status} (${res.statusText})`);
 
 		const { mediaID: id, mediaURL: src } = await res.json();
-		if (!this.id) this.id = id;
+		if (this instanceof Media) this.id = id;
 		this.src = src;
 		this.notify();
 	}
