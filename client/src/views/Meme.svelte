@@ -17,6 +17,18 @@
 		memeStore.subscribe(value => meme = value);
 	})();
 
+	const shareText = "📲 Share";
+	let shareButtonText = shareText;
+	let shareButtonTextTimeout = NaN;
+
+	function share() {
+		clearTimeout(shareButtonTextTimeout);
+		navigator.clipboard.writeText(location.href)
+			.then(() => shareButtonText = "✔️ Link copied")
+			.catch(() => "❌ Copying link failed");
+		shareButtonTextTimeout = setTimeout(() => shareButtonText = shareText, 2000);
+	}
+
 	let commentText;
 
 	function submitComment() {
@@ -85,6 +97,9 @@
 				</Button>
 				<Button element="div" variant="noninteractive">
 					📅 {meme.updateDate.toLocaleDateString("en-GB")}
+				</Button>
+				<Button on:click={share}>
+					{shareButtonText}
 				</Button>
 				<Button on:click={() => push(`/meme/${meme.id}/edit`)}>
 					✏️ Edit
