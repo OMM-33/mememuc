@@ -2,7 +2,7 @@
 	import { memes, updateMemes } from "../cache";
 
 	import Button from "../lib/Button.svelte";
-	import Graph from "../lib/Graph/Graph.svelte";
+	import Graph from "../lib/Graph.svelte";
 	import Frame from "../lib/View/Frame.svelte";
 
 	updateMemes();
