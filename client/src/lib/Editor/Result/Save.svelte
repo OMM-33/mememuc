@@ -37,12 +37,12 @@
 
 	const onSave = async () => {
 		if ($meme.id) { // Meme is being edited
-			await $meme.put();
+			await $meme.patch();
 		} else { // Meme is new
 			await $meme.post();
 			$memes.set($meme.id, $meme);
+			resetEditorMeme();
 		}
-		resetEditorMeme();
 		close.func();
 		push(`/meme/${$meme.id}`);
 	};
