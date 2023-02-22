@@ -6,8 +6,10 @@
 	import Error from "../Error.svelte";
 	import { memes } from "../../cache.js";
 
-	const user = { id: 1, name: "Alice" };
+	const user = { id: 1, name: "Alice", createdMeme: [2,4,5] };
 	let error = null;
+
+	$: userMeme = user.createdMeme.map((el) => [...$memes.values()][el]);
 
 	async function handleDelete(el){
 		const response = await fetch("/api/meme",
@@ -54,7 +56,7 @@
 <h1 class="user">{user.name}'s memes</h1>
 <Error {error} />
 <div class="grid">
-	{#each [...$memes.values()] as meme}
+	{#each userMeme as meme}
 		<div>
 			<p class="item">
 				{#if meme.privacy === "public"}
