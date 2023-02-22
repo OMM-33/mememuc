@@ -37,10 +37,12 @@ app.get('/uploadtest',function(req, res){
 // In order to keep this tidy we keep all of our API routes in separate files.
 const memeRoutes = require('./routes/meme')
 const mediaRoutes = require('./routes/media')
+const userRoutes = require('./routes/user')
 const apiRoutes = require('./routes/api')
 // Importing it like this will resolve all routes to /api or deeper through the aforementioned file.
 app.use('/api/meme', memeRoutes)
 app.use('/api/media', mediaRoutes)
+app.use('/api/user', userRoutes)
 app.use('/api', apiRoutes)
 
 // If none of the above routes fit, send a 404
