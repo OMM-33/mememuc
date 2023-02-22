@@ -111,7 +111,7 @@ function parseMeme(incoming, host) {
                 },
                 options: {}
             }
-            if (parsedLayer.layerType == 'text') {
+            if (parsedLayer.layerType == 'text' || 'html') {
                 parsedLayer.options = incomingLayer.options
             } else { // layerType is media (i.e. 'image', 'gif', 'video')
                 parsedLayer.options.mediaSource = incomingLayer.options.media.src
