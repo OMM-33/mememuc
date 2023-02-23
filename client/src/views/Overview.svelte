@@ -4,8 +4,10 @@
 	import Button from "../lib/Button.svelte";
 	import Graph from "../lib/Graph.svelte";
 	import Frame from "../lib/View/Frame.svelte";
+	import InfiniteScroll from "svelte-infinite-scroll";
 
 	updateMemes();
+
 
 	let memesArray = [];
 	$: {
@@ -35,10 +37,33 @@
 	);
 
 	let statsVisible = false;
+
+	function sortBy(criterium){
+		console.log("Sort by: " + criterium);
+	}
+	function filter(){
+		const sb = document.getElementById("dropdown").selectedIndex;
+		console.log("Filter: " + sb);
+	}
+
+	let newBatch = [];
+
+	function fetchData() {
+		newBatch++;
+		console.log(newBatch);
+	}
 </script>
 
 <h1>Overview </h1>
+
 <div class="top-controls">
+	<div class="sort"><p style="margin-right: 1em">Sort by:</p><Button on:click={()=>sortBy("date")}>Date</Button><Button on:click={()=>sortBy("title")}>Title</Button></div>
+	<div class="filter"> <p style="margin-right: 1em">more than</p> <select id="dropdown">
+		<option value="1">10 views</option>
+		<option value="2">20 views</option>
+		<option value="3">10 upvotes</option>
+		<option value="4">20 upvotes</option>
+	</select> <Button on:click={filter}>Filter</Button>	</div>
 	<Button style="margin-left: auto" on:click={() => statsVisible = !statsVisible}>
 		📉 {statsVisible ? "Hide" : "Show"} Statistics
 	</Button>
@@ -69,7 +94,10 @@
 		<Frame {meme} />
 	{/each}
 </div>
-
+<InfiniteScroll
+	hasMore={newBatch.length}
+	threshold={10}
+	on:loadMore={() => {fetchData;}} />
 
 <style>
 	.top-controls {
@@ -89,5 +117,16 @@
 		justify-content: space-between;
 		row-gap: 4em;
 		column-gap: 1em;
+	}
+	.sort{
+		display: flex;
+		justify-content: space-between;
+
+	}
+	.filter{
+		margin-left: 20%;
+		display: flex;
+		width: 20vw;
+
 	}
 </style>
