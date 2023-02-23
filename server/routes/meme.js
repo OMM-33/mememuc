@@ -52,6 +52,36 @@ router.get('/:id', async (req, res) => {
     }
 })
 
+// Get the meme after this one according to the specified query params
+router.get('/:id/next', async (req, res) => {
+    await adjacentMeme(req, res, '$lt')
+})
+
+// Get the meme before this one according to the specified query params
+router.get('/:id/previous', async (req, res) => {
+    await adjacentMeme(req, res, '$gt')
+})
+
+// Actual implementation of the above
+// ToDO Auth!
+async function adjacentMeme(req, res, direction) {
+    const sortBy = req.query.sortBy || 'updateDate' // Either sort by the field specified in query params or per default by updateDate (which is equal to publish date since published memes can no longer be updated)
+    try {
+        const result = await database.getAdjacentMemeId(req.params.id, sortBy, direction)
+        if(!result) { // No adjacent meme in this direction was found. The current meme seems to be the last in the chain of these values.
+            console.log(`There are no further memes for ${sortBy} ${direction} ${req.params.id}`)
+            res.status(404).send('No further memes in this direction.')
+        } else {
+            const {_id: adjacentMemeId} = result
+            console.log(`Found the meme for ${sortBy} ${direction} ${req.params.id}: ${adjacentMemeId}`)
+            res.redirect('../'+adjacentMemeId);
+        }
+    } catch (err) {
+        console.error(`Could not provide adjacent meme for ${req.params.id}, due to error:\n${err}`)
+        res.status(400).send(`Could not provide adjacent meme for ${req.params.id}, due to error: ${err.message}`)
+    }
+}
+
 // Get command overview
 router.get('/', (req, res) => {
     res.send('Hello World!')
