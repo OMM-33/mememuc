@@ -1,16 +1,14 @@
 <script>
 	import Button from "../Button.svelte";
-	import Error from "../Error.svelte";
 	import { push } from "svelte-spa-router";
+	import { buildURL } from "../../api.js";
 
 	let password;
 	let confirmPassword;
-	let username;
-	let isRegistered = false;
-	let error = null;
+	let name;
 
 	async function handleSignUp() {
-		if (!username){
+		if (!name){
 			alert("please enter your username");
 			return;
 		}
@@ -27,26 +25,17 @@
 			return;
 		}
 
-		const response = await fetch("/api/signUp",
-			{
-				method: "POST",
-				body: JSON.stringify({ user: username, pw: password }),
-				headers: {
-					"content-type": "multipart/form-data",
-				},
-			});
-
-		if (!response.ok) {
-			error = (await response.json()).message;
-			return;
-		}
-
-		const json = await response.json();
-
-		isRegistered = JSON.stringify(json);
-
-		if (json.success){
+		const res = await fetch(buildURL("/api/user/register"), {
+			headers: { "Content-Type": "application/json" },
+			method: "POST",
+			body: JSON.stringify({ name: name, password: password }),
+		});
+		if (res.ok) {
+			alert("Your registration has been successfully completed.");
 			await push("#/login");
+		} else {
+			alert("A problem occurred during registration. please try again");
+			throw new Error(`${res.status} (${res.statusText}): ${await res.text()}`);
 		}
 	}
 
@@ -69,9 +58,8 @@
 	}
 </style>
 
-<Error {error} />
 <form method="post">
-	<input class="form-field" data-sc="Enter username" type="text" bind:value={username} placeholder="Username" />
+	<input class="form-field" data-sc="Enter username" type="text" bind:value={name} placeholder="Username" />
 	<br />
 	<input class="form-field" data-sc="Enter password" type="password" bind:value={password} placeholder="Password" />
 	<br />
