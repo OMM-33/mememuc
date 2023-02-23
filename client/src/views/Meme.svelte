@@ -1,6 +1,5 @@
 <script>
 	import { push } from "svelte-spa-router";
-	import { mod } from "../util";
 	import { tts } from "../speech";
 	import { memes, updateMemes } from "../cache";
 	import Meme from "../models/Meme";
@@ -8,9 +7,9 @@
 	import Button from "../lib/Button.svelte";
 	import Comment from "../lib/View/Comment.svelte";
 	import Graph from "../lib/Graph.svelte";
+	import { onDestroy } from "svelte";
 
 	export let params = {};
-	let timeout;
 
 	// We need the other memes for the statistics, but cached should be fine.
 	// So fetch only if the cache is empty:
@@ -20,8 +19,6 @@
 
 	// We cannot use the $ syntax to auto-subscribe our store, as it may be asynchronously loaded.
 	let meme;
-	let autoplayOn = false;
-	let playButton = "▶️";
 	$: (async () => {
 		const memeStore = $memes.get(params.id) || await Meme.get({ id: params.id });
 		memeStore.subscribe(value => meme = value);
@@ -30,10 +27,6 @@
 	const shareText = "📲 Share";
 	let shareButtonText = shareText;
 	let shareButtonTextTimeout = NaN;
-
-	if(params.autoplay === "true"){
-		autoplay();
-	}
 
 	function share() {
 		clearTimeout(shareButtonTextTimeout);
@@ -53,14 +46,31 @@
 		commentText = "";
 	}
 
-	function switchMeme(offset) {
-		const targetID = String(mod(Number(meme.id) + offset, memes.size));
-		push(`/meme/${targetID}`);
+	/** @param {"next" | "previous"} direction */
+	async function switchMeme(direction) {
+		try {
+			const newMeme = await Meme.get({ id: meme.id, adjacent: direction });
+			const { id } = newMeme;
+			$memes.set(id, newMeme); // update in cache
+			push(`/meme/${id}`);
+			return true;
+		} catch (error) {
+			console.info(error.message);
+			return false;
+		}
 	}
-	function switchMemeRandom() {
-		const otherIDs = [...memes.keys()].filter(id => id !== meme.id);
-		const targetID = otherIDs[Math.floor(Math.random() * otherIDs.length)];
-		push(`/meme/${targetID}`);
+
+	async function switchMemeRandom() {
+		try {
+			const newMeme = await Meme.get({ random: true });
+			const { id } = newMeme;
+			$memes.set(id, newMeme); // update in cache
+			push(`/meme/${id}`);
+			return true;
+		} catch (error) {
+			console.info(error.message);
+			return false;
+		}
 	}
 
 	let memesArray = [];
@@ -83,40 +93,46 @@
 		other: publicMemes.filter(({ id }) => id !== meme?.id).map(getMemeStats),
 		this: getMemeStats(meme),
 	};
-	function autoplay(){
 
-
-		if(!autoplayOn){
-			autoplayOn = true;
-			playButton = "⏸️";
-			timeout = setTimeout(() => {
-				const targetID = String(mod(Number(meme.id) + 1, memes.size));
-				push(`/meme/${targetID}/true`); }, 5000);
-
-		}else{
-			clearTimeout(timeout);
-			playButton = "▶️";
-			push(`/meme/${meme.id}/false`);
-			autoplayOn = false;
+	let autoplay = false;
+	let autoplayInterval = NaN;
+	function toggleAutoplay() {
+		if (!autoplay){
+			autoplay = true;
+			autoplayInterval = setInterval(async () => {
+				const success = await switchMeme("next");
+				// Can't find out if there's more on the client,
+				// so let's just end autoplay when it fails the first time for now
+				if (!success) {
+					clearInterval(autoplayInterval);
+					autoplay = false;
+				}
+			}, 5000);
+		} else {
+			clearInterval(autoplayInterval);
+			autoplay = false;
 		}
-
 	}
+
+	onDestroy(() => {
+		clearTimeout(shareButtonTextTimeout);
+		clearInterval(autoplayInterval);
+	});
 </script>
 
 {#if meme}
 	<div class="meme">
 		<div class="slideshow">
-			<Button on:click={() => switchMeme(-1)}>
+			<Button on:click={() => switchMeme("previous")}>
 				<span class="pointing-hand">👈</span>
 			</Button>
-			<Button on:click={autoplay}>
-				{playButton}
+			<Button on:click={toggleAutoplay}>
+				{autoplay ? "⏸️" : "▶️"}
 			</Button>
 			<Button on:click={switchMemeRandom}>
 				🎲
 			</Button>
-
-			<Button on:click={() => switchMeme(1)}>
+			<Button on:click={() => switchMeme("next")}>
 				<span class="pointing-hand">👉</span>
 			</Button>
 		</div>
