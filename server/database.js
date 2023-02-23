@@ -111,6 +111,19 @@ async function getRandomMemeId() {
     return randomMemeId
 }
 
+// Get the meme after / before this one according to the specified query params
+// ToDo Auth
+async function getAdjacentMemeId(currentId, sortBy, direction){
+    // Get the current value of the field to sort by
+    const {[sortBy]: currentValue} = await Meme.findById(ObjectId(currentId), {[sortBy]: 1})
+    // Build the query according to params
+    const query = {[sortBy]: {[direction]: currentValue}}
+    // Get the Id of the item fitting the query
+    const adjacentMemeId = await Meme.findOne(query, {_id: 1})
+
+    return adjacentMemeId
+}
+
 // Save a NEW meme to the database
 // This will throw an error if validation fails! We catch this during routing in order to return it to the client for debugging their request.
 async function saveMeme(meme) {
@@ -267,6 +280,7 @@ module.exports = {
   listMemes,
   getMemeById,
   getRandomMemeId,
+  getAdjacentMemeId,
   saveMeme,
   updateMeme,
   listMedia,
