@@ -11,9 +11,33 @@
 	let chart = null;
 	let canvasEl = null;
 
+	const defaultOptions = {
+		elements: {
+			point: {
+				radius: 6,
+				hoverRadius: 8,
+			},
+		},
+		maintainAspectRatio: false,
+		scales: {
+			x: {
+				offset: labels.length > 1 ? undefined : true,
+			},
+			y: {
+				beginAtZero: true,
+			},
+		},
+		plugins: {
+			legend: {
+				onClick: null,
+			},
+		},
+	};
+
 	$: if (chart) {
 		chart.data.labels = labels;
 		chart.data.datasets = datasets;
+		chart.options = { ...defaultOptions, ...options };
 		chart.update("none");
 	}
 
@@ -22,29 +46,6 @@
 		Chart.defaults.font.size = 16;
 		chart = new Chart(canvasEl, {
 			type: type,
-			options: {
-				elements: {
-					point: {
-						radius: 6,
-						hoverRadius: 8,
-					},
-				},
-				maintainAspectRatio: false,
-				scales: {
-					x: {
-						offset: labels.length > 1 ? undefined : true,
-					},
-					y: {
-						beginAtZero: true,
-					},
-				},
-				plugins: {
-					legend: {
-						onClick: null,
-					},
-				},
-				...options,
-			},
 		});
 	});
 </script>

@@ -103,6 +103,11 @@ export default class Meme extends Media {
 		this.notify();
 	}
 
+	addComment(text) {
+		this.comments.push({ name: "[AUTHOR]", text });
+		this.notify();
+	}
+
 	/** @param {"title" | "description" | "captions"} attribute */
 	tts(attribute) {
 		switch (attribute) {
