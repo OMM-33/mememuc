@@ -270,6 +270,10 @@ async function registerUser(name, password) {
     await user.save()
 }
 
+async function getUser(name){
+    return await User.findOne({name})
+}
+
 // %%%%%%%%%%%
 // % Exports %
 // %%%%%%%%%%%
@@ -288,5 +292,6 @@ module.exports = {
   getMediaIdOfMemeId,
   saveMediaMetadata,
   deleteMediaById,
-  registerUser
+  registerUser,
+  getUser
 }
