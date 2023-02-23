@@ -22,6 +22,18 @@ router.get('/list', async (req, res) => {
     }
 })
 
+router.get('/total', async (req, res) => {
+    try {
+        const totalCount = await database.countMemes()
+        res.status(200).json({
+            totalMemes: totalCount
+        })
+    } catch (err) {
+        console.error(err)
+        res.status(500).send('Failed getting total count of memes: ' + err.message)
+    }
+})
+
 // Get a random meme
 router.get('/random', async (req, res) => {
     // Get the Id of a random meme from the database
