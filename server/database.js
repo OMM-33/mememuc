@@ -82,6 +82,7 @@ async function listMemes() {
 
 // Function that fetches one meme from the database as specified by its unique ID and sends it to the client.
 // This ID can be found separately by searching the meme database or is returned upon saving a meme.
+// IMO suboptimal practice to handle the response here, due to separation of concerns. Future TODO: Pull response back to routing.
 async function getMemeById(id, res) {
     // Convert id string to ObjectId if possible
     let oid
@@ -91,7 +92,11 @@ async function getMemeById(id, res) {
         return
     }
     // Lookup meme id in database and return it. Error handling is to be done wherever called!
-    return await Meme.findById(oid)
+    return await Meme.findByIdAndUpdate(
+        oid, // the ID of the meme
+        { $inc: { viewCount: 1 } }, // increment the viewCount by 1
+        { new: true } // finally return the updated object instead of the original
+    )
     
 }
 
@@ -174,6 +179,7 @@ async function listMedia(host, filter) {
 
 // Function that fetches one media object from the GridFS bucket as specified by its unique ID and sends it to the client.
 // This ID can be found by searching the media database (instead of the GridFS bucket) or is saved wherever the media is used (e.g. within a meme).
+// IMO suboptimal practice to handle the response here, due to separation of concerns. Future TODO: Pull response back to routing.
 async function getMediaById(id, res) {
     // Convert id string to ObjectId if possible
     let oid
