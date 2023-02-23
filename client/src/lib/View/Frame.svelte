@@ -6,7 +6,7 @@
 </script>
 
 <Card>
-	<a href="#/meme/{$meme.id}">
+	<a href="#/meme/{$meme.id}/false">
 		<h3 class="title">{$meme.title}</h3>
 		<img src={$meme.src} />
 	</a>
