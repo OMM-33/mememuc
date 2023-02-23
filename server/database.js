@@ -205,6 +205,12 @@ async function getMediaById(id, res) {
     })
 }
 
+// Takes a meme ObjectId and returns the ObjectId of its current media representation
+async function getMediaIdOfMemeId(id){
+    const {mediaID: result} = await Meme.findById(ObjectId(id), {mediaID: 1})
+    return result
+}
+
 // Function that saves additional metadata for files in the gridFS bucket in the 'normal' mongoDB database.
 async function saveMediaMetadata(metadata){
     const media = new Media({
@@ -222,24 +228,18 @@ async function saveMediaMetadata(metadata){
 
 // Function that deletes one media object from the GridFS bucket as specified by its unique ID.
 // This ID can be found by searching the media database (instead of the GridFS bucket) or is saved wherever the media is used (e.g. within a meme).
-async function deleteMediaById(id, res) {
-    // Convert id string to ObjectId if possible
-    let oid
-    try { oid = ObjectId(id) }
-    catch (err) {
-        res.status(400).send(`ObjectId "${id}" is not valid. It must be a string of 12 bytes or a string of 24 hex characters or an integer.`)
-        return
-    }
-    // Try deleting the file and send success or error response according to if it succeeds.
+async function deleteMediaById(id) {
     try {
-        await gfs.delete(oid)
-        console.log(`Media file ${id} deleted from GridFS bucket.`)
-        res.status(200).send(`Media file ${id} successfully deleted.`)
+        // Delete the media file
+        await gfs.delete(ObjectId(id))
+        // Delete the media metadata
+        await Media.deleteOne({ _id: memeId });
+        console.log(`Media file ${id} deleted.`)
     } catch (err) {
-        console.error(`Error deleting media file ${id} from GridFS: ${err.message}`)
-        res.status(400).send(err.message)
+        console.error(`Could not delete media ${id}, due to error ${err}`)
+        err.message = 'Media ' + err.message // Equals to Media File not found for id ...
+        throw err
     }
-    // TODO: Also delete media metadata
 }
 
 //     %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -265,6 +265,7 @@ module.exports = {
   updateMeme,
   listMedia,
   getMediaById,
+  getMediaIdOfMemeId,
   saveMediaMetadata,
   deleteMediaById,
   registerUser
