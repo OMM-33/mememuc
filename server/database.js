@@ -80,6 +80,12 @@ async function listMemes() {
     return await Meme.find()
 }
 
+// Returns the total count of memes
+// ToDo: Only count memes user has auth for
+async function countMemes(){
+    return await Meme.countDocuments()
+}
+
 // Function that fetches one meme from the database as specified by its unique ID and sends it to the client.
 // This ID can be found separately by searching the meme database or is returned upon saving a meme.
 // IMO suboptimal practice to handle the response here, due to separation of concerns. Future TODO: Pull response back to routing.
@@ -282,6 +288,7 @@ async function getUser(name){
 module.exports = {
   upload,
   listMemes,
+  countMemes,
   getMemeById,
   getRandomMemeId,
   getAdjacentMemeId,
