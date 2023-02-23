@@ -22,6 +22,7 @@ router.get('/list', async (req, res) => {
     }
 })
 
+// Get the total count of memes
 router.get('/total', async (req, res) => {
     try {
         const totalCount = await database.countMemes()
@@ -40,7 +41,7 @@ router.get('/random', async (req, res) => {
     const randomMemeId = await database.getRandomMemeId()
     // Redirect towards the GET path for this meme. 
     // Theoretically we could also straight up send the meme, but found it better for system resilience if memes are always fetched the same way.
-    res.redirect(randomMemeId);
+    res.redirect(`${randomMemeId}?jwt=${req.query.jwt}`);
 })
 
 // Get the meme with the specified id (if it exists)
@@ -86,7 +87,7 @@ async function adjacentMeme(req, res, direction) {
         } else {
             const {_id: adjacentMemeId} = result
             console.log(`Found the meme for ${sortBy} ${direction} ${req.params.id}: ${adjacentMemeId}`)
-            res.redirect('../'+adjacentMemeId);
+            res.redirect(`../${adjacentMemeId}?jwt=${req.query.jwt}`);
         }
     } catch (err) {
         console.error(`Could not provide adjacent meme for ${req.params.id}, due to error:\n${err}`)
