@@ -119,6 +119,8 @@ router.patch('/:id', async (req, res) => {
         // After updating, delete the old media representation of the meme
         try { // Separate try catch, as updating still succeeded and media deletion fail is not that critical.
             await database.deleteMediaById(oldMediaId)
+            // Return updated meme
+            res.status(200).json(updatedMeme)
         } catch (err) {
             console.error(`Error deleting old media ${oldMediaId} for meme ${req.params.id}:\n${err}`)
             res.status(500).json({
@@ -126,8 +128,6 @@ router.patch('/:id', async (req, res) => {
                 updatedMeme: updatedMeme
             })
         }
-        // Return updated meme
-        res.status(200).json(updatedMeme)
     }catch (err) {
         console.error(`Error updating meme ${req.params.id}:\n${err}`)
         res.status(400).send('Error updating meme: ' + err.message)
