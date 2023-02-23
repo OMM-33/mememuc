@@ -13,6 +13,7 @@
 	// We cannot use the $ syntax to auto-subscribe our store, as it may be asynchronously loaded.
 	let meme;
 	let autoplayOn = false;
+	let playButton = "▶️";
 	$: (async () => {
 		const memeStore = $memes.get(params.id) || await Meme.get({ id: params.id });
 		memeStore.subscribe(value => meme = value);
@@ -57,10 +58,12 @@
 	function autoplay(){
 		if(!autoplayOn){
 			autoplayOn = true;
+			playButton = "⏸️";
 			setTimeout(() => {
 				const targetID = String(mod(Number(meme.id) + 1, memes.size));
 				push(`/meme/${targetID}/true`); }, 5000);
 		}else{
+			playButton = "▶️";
 			push(`/meme/${meme.id}/false`);
 			autoplayOn = false;
 		}
@@ -75,7 +78,7 @@
 				<span class="pointing-hand">👈</span>
 			</Button>
 			<Button on:click={autoplay}>
-				▶️
+				{playButton}
 			</Button>
 			<Button on:click={switchMemeRandom}>
 				🎲
