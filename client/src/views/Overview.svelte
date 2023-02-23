@@ -7,10 +7,12 @@
 
 	updateMemes();
 
-	const memesArray = [];
+	let memesArray = [];
 	$: {
+		const result = [];
 		const memeStores = [...$memes.values()];
-		memeStores.forEach((store, i) => store.subscribe(value => memesArray[i] = value));
+		memeStores.forEach((store, i) => store.subscribe(value => result[i] = value));
+		memesArray = result;
 	}
 
 	$: publicMemes = memesArray.filter(({ privacy }) => privacy === "public");
@@ -49,7 +51,8 @@
 			datasets={[{
 				label: "Memes created",
 				data: Object.values(stats),
-				borderWidth: 1,
+				backgroundColor: "#26ba8955",
+				borderColor: "#26ba89",
 			}]}
 			options={{
 				scale: {
