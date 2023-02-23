@@ -31,9 +31,9 @@ app.use((req, res, next) => {
 		const token = req.query.jwt
         // Verify and decode token to userData
         req.userData = jwt.verify(token, process.env.JWT_SECRET_KEY)
-		console.log(`Successfully authenticated user "${req.userData.userId}"`)
+		console.log(`Successfully authenticated user "${req.userData.name}"`)
 		next()
-        
+
 	} catch (err) {
         // This line can be used instead of next() if you want to stop processing requests, that fail authentication here.
         // Since we want our system fully available for non-registered users to, it is commented out.

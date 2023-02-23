@@ -38,9 +38,8 @@ router.post('/login', async (req, res) => {
             return res.status(401).send('Authentication failed') // For the client we don't want to specify whether user or password were wrong.
         }
 		
-		// Since we chose unique names, for the sake of simplicity we use the name instead of the _id to sign
-		// In the future (ToDo) you'd probably rather use the unique userid _id: {userId: user._id}
-		const token = jwt.sign({userId: user.name}, process.env.JWT_SECRET_KEY) // ToDo: In the future this should expire, by handing it an options object, like { expiresIn: '12h' }.
+		// We sign this also with the name, for ease of access. Might not be best practice?
+		const token = jwt.sign({id: user._id, name: user.name}, process.env.JWT_SECRET_KEY) // ToDo: In the future this should expire, by handing it an options object, like { expiresIn: '12h' }.
 		res.status(200).json({token})
 	} catch (err) {
         console.error(`User authentication failed, due to error:\n${err}`)
