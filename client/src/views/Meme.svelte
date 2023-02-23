@@ -10,7 +10,6 @@
 	import Graph from "../lib/Graph.svelte";
 
 	export let params = {};
-	let timeout;
 
 	// We need the other memes for the statistics, but cached should be fine.
 	// So fetch only if the cache is empty:
@@ -63,17 +62,13 @@
 		push(`/meme/${targetID}`);
 	}
 	function autoplay(){
-
-
 		if(!autoplayOn){
 			autoplayOn = true;
 			playButton = "⏸️";
-			timeout = setTimeout(() => {
+			setTimeout(() => {
 				const targetID = String(mod(Number(meme.id) + 1, memes.size));
 				push(`/meme/${targetID}/true`); }, 5000);
-
 		}else{
-			clearTimeout(timeout);
 			playButton = "▶️";
 			push(`/meme/${meme.id}/false`);
 			autoplayOn = false;
