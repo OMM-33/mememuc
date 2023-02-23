@@ -4,17 +4,11 @@
 	import Button from "../lib/Button.svelte";
 	import Graph from "../lib/Graph.svelte";
 	import Frame from "../lib/View/Frame.svelte";
-	import Select from 'svelte-select';
 	import InfiniteScroll from "svelte-infinite-scroll";
 
 	updateMemes();
-	const items = [
-		{ value:1, label: '10 views'},
-		{ value:2, label: '20 views'},
-		{ value:3, label: '10 upvotes'},
-		{ value:4, label: '20 upvotes'},
-	];
-	let selected;
+
+
 	let memesArray = [];
 	$: {
 		const result = [];
@@ -48,13 +42,10 @@
 		console.log("Sort by: " + criterium);
 	}
 	function filter(){
-		try{
-			console.log("Filter: " + selected.value);
-		}catch{
-			console.log("No filter");
-		}
-
+		const sb = document.getElementById("dropdown").selectedIndex;
+		console.log("Filter: " + sb);
 	}
+
 	let newBatch = [];
 
 	function fetchData() {
@@ -67,7 +58,12 @@
 
 <div class="top-controls">
 	<div class="sort"><p style="margin-right: 1em">Sort by:</p><Button on:click={()=>sortBy("date")}>Date</Button><Button on:click={()=>sortBy("title")}>Title</Button></div>
-	<div class="filter"> <p>more than</p> <Select id="filter" {items} bind:value={selected}/> <Button on:click={filter}>Filter</Button>	</div>
+	<div class="filter"> <p style="margin-right: 1em">more than</p> <select id="dropdown">
+		<option value="1">10 views</option>
+		<option value="2">20 views</option>
+		<option value="3">10 upvotes</option>
+		<option value="4">20 upvotes</option>
+	</select> <Button on:click={filter}>Filter</Button>	</div>
 	<Button style="margin-left: auto" on:click={() => statsVisible = !statsVisible}>
 		📉 {statsVisible ? "Hide" : "Show"} Statistics
 	</Button>

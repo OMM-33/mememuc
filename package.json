@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "infinite-scroll": "^4.0.1",
-    "svelte-infinite-scroll": "^2.0.1"
-  }
-}
