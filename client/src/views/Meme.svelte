@@ -61,20 +61,26 @@
 		const targetID = otherIDs[Math.floor(Math.random() * otherIDs.length)];
 		push(`/meme/${targetID}`);
 	}
+
 	function autoplay(){
+
+
 		if(!autoplayOn){
 			autoplayOn = true;
 			playButton = "⏸️";
-			setTimeout(() => {
+			timeout = setTimeout(() => {
 				const targetID = String(mod(Number(meme.id) + 1, memes.size));
 				push(`/meme/${targetID}/true`); }, 5000);
+
 		}else{
+			clearTimeout(timeout);
 			playButton = "▶️";
 			push(`/meme/${meme.id}/false`);
 			autoplayOn = false;
 		}
 
 	}
+
 
 	let memesArray = [];
 	$: {
