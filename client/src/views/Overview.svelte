@@ -4,9 +4,17 @@
 	import Button from "../lib/Button.svelte";
 	import Graph from "../lib/Graph.svelte";
 	import Frame from "../lib/View/Frame.svelte";
+	import Select from 'svelte-select';
+	import InfiniteScroll from "svelte-infinite-scroll";
 
 	updateMemes();
-
+	const items = [
+		{ value:1, label: '10 views'},
+		{ value:2, label: '20 views'},
+		{ value:3, label: '10 upvotes'},
+		{ value:4, label: '20 upvotes'},
+	];
+	let selected;
 	let memesArray = [];
 	$: {
 		const result = [];
@@ -35,10 +43,31 @@
 	);
 
 	let statsVisible = false;
+
+	function sortBy(criterium){
+		console.log("Sort by: " + criterium);
+	}
+	function filter(){
+		try{
+			console.log("Filter: " + selected.value);
+		}catch{
+			console.log("No filter");
+		}
+
+	}
+	let newBatch = [];
+
+	function fetchData() {
+		newBatch++;
+		console.log(newBatch);
+	}
 </script>
 
 <h1>Overview </h1>
+
 <div class="top-controls">
+	<div class="sort"><p style="margin-right: 1em">Sort by:</p><Button on:click={()=>sortBy("date")}>Date</Button><Button on:click={()=>sortBy("title")}>Title</Button></div>
+	<div class="filter"> <p>more than</p> <Select id="filter" {items} bind:value={selected}/> <Button on:click={filter}>Filter</Button>	</div>
 	<Button style="margin-left: auto" on:click={() => statsVisible = !statsVisible}>
 		📉 {statsVisible ? "Hide" : "Show"} Statistics
 	</Button>
@@ -69,7 +98,10 @@
 		<Frame {meme} />
 	{/each}
 </div>
-
+<InfiniteScroll
+	hasMore={newBatch.length}
+	threshold={10}
+	on:loadMore={() => {fetchData;}} />
 
 <style>
 	.top-controls {
@@ -89,5 +121,16 @@
 		justify-content: space-between;
 		row-gap: 4em;
 		column-gap: 1em;
+	}
+	.sort{
+		display: flex;
+		justify-content: space-between;
+
+	}
+	.filter{
+		margin-left: 20%;
+		display: flex;
+		width: 20vw;
+
 	}
 </style>
