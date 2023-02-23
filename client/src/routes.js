@@ -10,7 +10,7 @@ import NotFound from "./views/NotFound.svelte";
 export default {
 	"/": Overview,
 	"/meme/:id?/edit": Editor,
-	"/meme/:id/:autoplay": Meme,
+	"/meme/:id": Meme,
 	"/user/:id?": User,
 	"/login": LogIn,
 	"/signup": SignUp,

@@ -56,7 +56,7 @@ export const updateTemplates = async () => {
 };
 
 export const updateMemes = async () => {
-	const newMemes = await Meme.get();
+	const newMemes = await Meme.getMultiple();
 	memes.set(new Map(newMemes.map(meme => [meme.id, meme])));
 };
 

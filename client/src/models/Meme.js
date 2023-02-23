@@ -166,22 +166,30 @@ export default class Meme extends Media {
 	}
 
 	/**
-	 * GETs and returns a list of all meme objects.
-	 *
-	 * When an `id` is provided it instead returns that specific meme.
-	 * @param {{ id?: string }}
+	 * GETs and returns an array of all meme objects.
 	 * @override
 	 */
-	static async get({ id } = {}) {
-		if (id) {
-			const res = await fetch(buildURL(`api/meme/${id}`));
-			const memeJSON = await res.json();
-			return Meme.fromJSON(memeJSON);
-		}
-
+	static async getMultiple() {
 		const res = await fetch(buildURL("api/meme/list"));
+		if (!res.ok) throw new Error(`${res.status} (${res.statusText}): ${await res.json().message}`);
+
 		const memesJSON = await res.json();
 		return memesJSON.map(memeJSON => Meme.fromJSON(memeJSON));
+	}
+
+	/**
+	 * GETs and returns a specific meme object of the specific `id`
+	 * (or a `random` one, or adjacent to the `id`).
+	 * @param {{ id?: string, random?: boolean, adjacent?: "next" | "previous" }}
+	 * @override
+	 */
+	static async get({ id, random = false, adjacent } = {}) {
+		const url = random ? buildURL("api/meme/random") : buildURL(`api/meme/${id}/${adjacent ?? ""}`);
+		const res = await fetch(url);
+		if (!res.ok) throw new Error(`${res.status} (${res.statusText}): ${await res.text()}`);
+
+		const memeJSON = await res.json();
+		return Meme.fromJSON(memeJSON);
 	}
 
 	/**
