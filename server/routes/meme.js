@@ -24,10 +24,11 @@ router.get('/list', async (req, res) => {
 
 // Get a random meme
 router.get('/random', async (req, res) => {
+    // Get the Id of a random meme from the database
     const randomMemeId = await database.getRandomMemeId()
+    // Redirect towards the GET path for this meme. 
+    // Theoretically we could also straight up send the meme, but found it better for system resilience if memes are always fetched the same way.
     res.redirect(randomMemeId);
-    //res.send(randomMemeId)
-    //res.send('test')
 })
 
 // Get the meme with the specified id (if it exists)
