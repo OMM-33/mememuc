@@ -57,7 +57,7 @@
 				<div class="title">
 					<h4>Title</h4>
 					<div class="row">
-						<input type="text" style:flex-grow="1" bind:value={$meme.title} />
+						<input type="text" required minlength="8" style:flex-grow="1" bind:value={$meme.title} />
 						<SpeechInput bind:value={$meme.title} data-sc="title" />
 					</div>
 				</div>
@@ -95,7 +95,6 @@
 					>
 						✔️ Save & Upload
 					</Button>
-					<Button>📲 Share</Button>
 				</div>
 			</form>
 		{:else}

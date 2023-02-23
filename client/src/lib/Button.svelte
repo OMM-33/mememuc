@@ -7,11 +7,14 @@
 	export let type = "button";
 	/** @type {("tl" | "tr" | "bl" | "br")[]} */
 	export let rounded = ["tl", "tr", "bl", "br"];
+	/** @type {string} */
+	export let padding = "0.5em 1em";
 </script>
 
 <svelte:element
 	this={element}
 	class={`button shape-${shape} ${variant} ${rounded.join(" ")}`}
+	style:--padding={padding}
 	{type}
 	{variant}
 	{...$$restProps}
@@ -29,7 +32,7 @@
 		appearance: none;
 
 		border: 2px solid transparent;
-		padding: 0.5em 1em;
+		padding: var(--padding);
 		font-family: inherit;
 		font-size: 1em;
 		font-weight: 600;

@@ -48,7 +48,7 @@
 					🔁 Swap template
 				</Button>
 				<Button on:click={async () => color = await pickColor()}>
-					🎨 Change color
+					🎨 Choose a color
 				</Button>
 			</div>
 		</button>
@@ -71,7 +71,7 @@
 						on:click={() => dispatch("add-layer", { media: template })}
 						data-sc={focusIndex === i + 1 ? "place" : undefined}
 					>
-						🖼️ Place layer
+						🖼️ Place as layer
 					</Button>
 				</div>
 			</button>
@@ -108,6 +108,7 @@
 		background: none;
 		padding: 0;
 		margin: 0;
+		font: inherit;
 
 		background: repeating-conic-gradient(whitesmoke 0% 25%, white 0% 50%) 50% / 20px 20px
 	}
@@ -118,6 +119,7 @@
 		justify-content: center;
 		align-items: center;
 		gap: 0.5em;
+		font-size: 0.75em;
 
 		visibility: hidden;
 		position: absolute;
