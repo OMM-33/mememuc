@@ -3,6 +3,7 @@ const router = express.Router()
 
 // Import our database
 const database = require('../database')
+const meme = require('../models/meme')
 
 // ##########
 // # Routes #
@@ -21,6 +22,14 @@ router.get('/list', async (req, res) => {
     }
 })
 
+// Get a random meme
+router.get('/random', async (req, res) => {
+    const randomMemeId = await database.getRandomMemeId()
+    res.redirect(randomMemeId);
+    //res.send(randomMemeId)
+    //res.send('test')
+})
+
 // Get the meme with the specified id (if it exists)
 // TODO: Auth (privacy || isAdmin || isCreator)
 router.get('/:id', async (req, res) => {
@@ -37,9 +46,8 @@ router.get('/:id', async (req, res) => {
         res.status(404).send('Meme Not Found')
     } else {
         // Meme successfully found. Return it for further handling.
-        console.log('This meme was found:\n' + meme)
-
-        res.json(meme) // ToDo: Format again according to client affordances before sending.
+        // console.log('This meme was found:\n' + meme)
+        res.json(meme)
     }
 })
 

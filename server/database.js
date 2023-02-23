@@ -90,11 +90,20 @@ async function getMemeById(id, res) {
         res.status(400).send(`ObjectId "${id}" is not valid. It must be a string of 12 bytes or a string of 24 hex characters or an integer.`)
         return
     }
-    
-    console.log('got here')
     // Lookup meme id in database and return it. Error handling is to be done wherever called!
     return await Meme.findById(oid)
     
+}
+
+// Returns the Id of a random meme
+// TODO only return Ids out of the memes that the user is allowed to see.
+async function getRandomMemeId() {
+    // Here we receive a random meme Id by destructuring the object we get from Meme.aggregate
+    // ... for the aggregate function, that allows to group, filter, transform, etc. data, we use the following operators:
+    // ... $sample: returns random item(s) form the aggregation - amount specified by size object
+    // ... $project: allows us to only receive the Id (as nothing else is needed). 
+    const [{_id: randomMemeId}] = await Meme.aggregate([{$sample: {size: 1}}, {$project: {_id: 1}}]);
+    return randomMemeId
 }
 
 // Save a NEW meme to the database
@@ -251,6 +260,7 @@ module.exports = {
   upload,
   listMemes,
   getMemeById,
+  getRandomMemeId,
   saveMeme,
   updateMeme,
   listMedia,
