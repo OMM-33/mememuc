@@ -82,7 +82,6 @@ async function listMemes() {
 
 // Function that fetches one meme from the database as specified by its unique ID and sends it to the client.
 // This ID can be found separately by searching the meme database or is returned upon saving a meme.
-// IMO suboptimal practice to handle the response here, due to separation of concerns. Future TODO: Pull response back to routing.
 async function getMemeById(id, res) {
     // Convert id string to ObjectId if possible
     let oid
@@ -91,37 +90,11 @@ async function getMemeById(id, res) {
         res.status(400).send(`ObjectId "${id}" is not valid. It must be a string of 12 bytes or a string of 24 hex characters or an integer.`)
         return
     }
-    // Lookup meme id in database and return it. Error handling is to be done wherever called!
-    return await Meme.findByIdAndUpdate(
-        oid, // the ID of the meme
-        { $inc: { viewCount: 1 } }, // increment the viewCount by 1
-        { new: true } // finally return the updated object instead of the original
-    )
     
-}
-
-// Returns the Id of a random meme
-// TODO only return Ids out of the memes that the user is allowed to see.
-async function getRandomMemeId() {
-    // Here we receive a random meme Id by destructuring the object we get from Meme.aggregate
-    // ... for the aggregate function, that allows to group, filter, transform, etc. data, we use the following operators:
-    // ... $sample: returns random item(s) form the aggregation - amount specified by size object
-    // ... $project: allows us to only receive the Id (as nothing else is needed). 
-    const [{_id: randomMemeId}] = await Meme.aggregate([{$sample: {size: 1}}, {$project: {_id: 1}}]);
-    return randomMemeId
-}
-
-// Get the meme after / before this one according to the specified query params
-// ToDo Auth
-async function getAdjacentMemeId(currentId, sortBy, direction){
-    // Get the current value of the field to sort by
-    const {[sortBy]: currentValue} = await Meme.findById(ObjectId(currentId), {[sortBy]: 1})
-    // Build the query according to params
-    const query = {[sortBy]: {[direction]: currentValue}}
-    // Get the Id of the item fitting the query
-    const adjacentMemeId = await Meme.findOne(query, {_id: 1})
-
-    return adjacentMemeId
+    console.log('got here')
+    // Lookup meme id in database and return it. Error handling is to be done wherever called!
+    return await Meme.findById(oid)
+    
 }
 
 // Save a NEW meme to the database
@@ -192,7 +165,6 @@ async function listMedia(host, filter) {
 
 // Function that fetches one media object from the GridFS bucket as specified by its unique ID and sends it to the client.
 // This ID can be found by searching the media database (instead of the GridFS bucket) or is saved wherever the media is used (e.g. within a meme).
-// IMO suboptimal practice to handle the response here, due to separation of concerns. Future TODO: Pull response back to routing.
 async function getMediaById(id, res) {
     // Convert id string to ObjectId if possible
     let oid
@@ -224,12 +196,6 @@ async function getMediaById(id, res) {
     })
 }
 
-// Takes a meme ObjectId and returns the ObjectId of its current media representation
-async function getMediaIdOfMemeId(id){
-    const {mediaID: result} = await Meme.findById(ObjectId(id), {mediaID: 1})
-    return result
-}
-
 // Function that saves additional metadata for files in the gridFS bucket in the 'normal' mongoDB database.
 async function saveMediaMetadata(metadata){
     const media = new Media({
@@ -247,18 +213,24 @@ async function saveMediaMetadata(metadata){
 
 // Function that deletes one media object from the GridFS bucket as specified by its unique ID.
 // This ID can be found by searching the media database (instead of the GridFS bucket) or is saved wherever the media is used (e.g. within a meme).
-async function deleteMediaById(id) {
-    try {
-        // Delete the media file
-        await gfs.delete(ObjectId(id))
-        // Delete the media metadata
-        await Media.deleteOne({ _id: memeId });
-        console.log(`Media file ${id} deleted.`)
-    } catch (err) {
-        console.error(`Could not delete media ${id}, due to error ${err}`)
-        err.message = 'Media ' + err.message // Equals to Media File not found for id ...
-        throw err
+async function deleteMediaById(id, res) {
+    // Convert id string to ObjectId if possible
+    let oid
+    try { oid = ObjectId(id) }
+    catch (err) {
+        res.status(400).send(`ObjectId "${id}" is not valid. It must be a string of 12 bytes or a string of 24 hex characters or an integer.`)
+        return
     }
+    // Try deleting the file and send success or error response according to if it succeeds.
+    try {
+        await gfs.delete(oid)
+        console.log(`Media file ${id} deleted from GridFS bucket.`)
+        res.status(200).send(`Media file ${id} successfully deleted.`)
+    } catch (err) {
+        console.error(`Error deleting media file ${id} from GridFS: ${err.message}`)
+        res.status(400).send(err.message)
+    }
+    // TODO: Also delete media metadata
 }
 
 //     %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -279,13 +251,10 @@ module.exports = {
   upload,
   listMemes,
   getMemeById,
-  getRandomMemeId,
-  getAdjacentMemeId,
   saveMeme,
   updateMeme,
   listMedia,
   getMediaById,
-  getMediaIdOfMemeId,
   saveMediaMetadata,
   deleteMediaById,
   registerUser

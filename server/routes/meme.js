@@ -3,7 +3,6 @@ const router = express.Router()
 
 // Import our database
 const database = require('../database')
-const meme = require('../models/meme')
 
 // ##########
 // # Routes #
@@ -22,15 +21,6 @@ router.get('/list', async (req, res) => {
     }
 })
 
-// Get a random meme
-router.get('/random', async (req, res) => {
-    // Get the Id of a random meme from the database
-    const randomMemeId = await database.getRandomMemeId()
-    // Redirect towards the GET path for this meme. 
-    // Theoretically we could also straight up send the meme, but found it better for system resilience if memes are always fetched the same way.
-    res.redirect(randomMemeId);
-})
-
 // Get the meme with the specified id (if it exists)
 // TODO: Auth (privacy || isAdmin || isCreator)
 router.get('/:id', async (req, res) => {
@@ -47,40 +37,11 @@ router.get('/:id', async (req, res) => {
         res.status(404).send('Meme Not Found')
     } else {
         // Meme successfully found. Return it for further handling.
-        // console.log('This meme was found:\n' + meme)
-        res.json(meme)
+        console.log('This meme was found:\n' + meme)
+
+        res.json(meme) // ToDo: Format again according to client affordances before sending.
     }
 })
-
-// Get the meme after this one according to the specified query params
-router.get('/:id/next', async (req, res) => {
-    await adjacentMeme(req, res, '$lt')
-})
-
-// Get the meme before this one according to the specified query params
-router.get('/:id/previous', async (req, res) => {
-    await adjacentMeme(req, res, '$gt')
-})
-
-// Actual implementation of the above
-// ToDO Auth!
-async function adjacentMeme(req, res, direction) {
-    const sortBy = req.query.sortBy || 'updateDate' // Either sort by the field specified in query params or per default by updateDate (which is equal to publish date since published memes can no longer be updated)
-    try {
-        const result = await database.getAdjacentMemeId(req.params.id, sortBy, direction)
-        if(!result) { // No adjacent meme in this direction was found. The current meme seems to be the last in the chain of these values.
-            console.log(`There are no further memes for ${sortBy} ${direction} ${req.params.id}`)
-            res.status(404).send('No further memes in this direction.')
-        } else {
-            const {_id: adjacentMemeId} = result
-            console.log(`Found the meme for ${sortBy} ${direction} ${req.params.id}: ${adjacentMemeId}`)
-            res.redirect('../'+adjacentMemeId);
-        }
-    } catch (err) {
-        console.error(`Could not provide adjacent meme for ${req.params.id}, due to error:\n${err}`)
-        res.status(400).send(`Could not provide adjacent meme for ${req.params.id}, due to error: ${err.message}`)
-    }
-}
 
 // Get command overview
 router.get('/', (req, res) => {
@@ -112,25 +73,13 @@ router.patch('/:id', async (req, res) => {
     try {
         // Parse meme from frontend into database compatible format
         const parsedMeme = parseMeme(req.body, req.headers.host)
-        // Before updating save the Id of the old media representation of the meme
-        const oldMediaId = await database.getMediaIdOfMemeId(req.params.id)
         // Save meme
         const updatedMeme = await database.updateMeme(req.params.id, parsedMeme)
-        // After updating, delete the old media representation of the meme
-        try { // Separate try catch, as updating still succeeded and media deletion fail is not that critical.
-            await database.deleteMediaById(oldMediaId)
-            // Return updated meme
-            res.status(200).json(updatedMeme)
-        } catch (err) {
-            console.error(`Error deleting old media ${oldMediaId} for meme ${req.params.id}:\n${err}`)
-            res.status(500).json({
-                message: `Meme successfully updated. However: Error deleting old media ${oldMediaId} for meme ${req.params.id}: ${err.message}`,
-                updatedMeme: updatedMeme
-            })
-        }
+        // Return updated meme
+        res.status(200).json(updatedMeme)
     }catch (err) {
-        console.error(`Error updating meme ${req.params.id}:\n${err}`)
-        res.status(400).send('Error updating meme: ' + err.message)
+        console.error(`Failed updating meme ${req.params.id}, due to error:\n${err}`)
+        res.status(400).send(err.message)
     }
 })
 

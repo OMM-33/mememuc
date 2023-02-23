@@ -79,15 +79,8 @@ router.post('/', database.upload.single('mediaFile'), async (req, res) => {
 // Delete the media file with the specified id (if it exists)
 // TODO: Auth (isAdmin || isCreator)
 // TODO: Usage check (If still used replace w/ placeholder in all used places)
-router.delete('/:id', async (req, res) => {
-    // Try deleting the file and send success or error response according to if it succeeds.
-    try {
-        await database.deleteMediaById(req.params.id)
-        res.status(200).send(`Media file ${id} successfully deleted.`)
-    } catch (err) {
-        console.error(`Error deleting media file ${id}, due to: ${err}`)
-        res.status(400).send(err.message)
-    }
+router.delete('/:id', (req, res) => {
+    database.deleteMediaById(req.params.id, res)
 })
 
 // Update media

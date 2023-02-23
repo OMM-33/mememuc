@@ -2,21 +2,14 @@
 	import { push } from "svelte-spa-router";
 	import { mod } from "../util";
 	import { tts } from "../speech";
-	import { memes, updateMemes } from "../cache";
+	import { memes } from "../cache";
 	import Meme from "../models/Meme";
 
 	import Button from "../lib/Button.svelte";
 	import Comment from "../lib/View/Comment.svelte";
-	import Graph from "../lib/Graph.svelte";
 
 	export let params = {};
 	let timeout;
-
-	// We need the other memes for the statistics, but cached should be fine.
-	// So fetch only if the cache is empty:
-	if ($memes.size === 0) {
-		updateMemes();
-	}
 
 	// We cannot use the $ syntax to auto-subscribe our store, as it may be asynchronously loaded.
 	let meme;
@@ -49,7 +42,8 @@
 		const text = commentText.trim();
 		if (text === "") return;
 
-		meme.addComment(commentText);
+		meme.comments.push({ name: "Ines", text });
+		meme.comments = meme.comments; // reactivity...
 		commentText = "";
 	}
 
@@ -80,27 +74,6 @@
 		}
 
 	}
-
-	let memesArray = [];
-	$: {
-		const result = [];
-		const memeStores = [...$memes.values()];
-		memeStores.forEach((store, i) => store.subscribe(value => result[i] = value));
-		memesArray = result;
-	}
-
-	$: publicMemes = memesArray.filter(({ privacy }) => privacy === "public");
-
-	let selectedStat = "views";
-	const getMemeStats = ({ updateDate, views, score, comments }) => {
-		const ageMS = new Date() - updateDate;
-		const ageDays = Math.floor(ageMS / (1000 * 60 * 60 * 24));
-		return { ageDays, views, score, comments: comments.length };
-	};
-	$: stats = meme && {
-		other: publicMemes.filter(({ id }) => id !== meme?.id).map(getMemeStats),
-		this: getMemeStats(meme),
-	};
 </script>
 
 {#if meme}
@@ -195,67 +168,6 @@
 			<textarea bind:value={commentText} />
 			<Button on:click={submitComment}>Post Comment</Button>
 		</div>
-
-		<div class="graph">
-			<h2>Statistics</h2>
-			<h3>Compared to other Memes</h3>
-			<div class="graph-controls">
-				<Button variant={selectedStat === "views" && "primary"} on:click={() => selectedStat = "views"}>
-					👁️ Views
-				</Button>
-				<Button variant={selectedStat === "score" && "primary"} on:click={() => selectedStat = "score"}>
-					❤️ Score
-				</Button>
-				<Button variant={selectedStat === "comments" && "primary"} on:click={() => selectedStat = "comments"}>
-					🗨️ Comments
-				</Button>
-			</div>
-			<Graph
-				type="scatter"
-				datasets={[{
-					label: meme.title,
-					data: [{
-						x: stats?.this.ageDays,
-						y: stats?.this[selectedStat],
-					}],
-					backgroundColor: "#26ba89",
-				}, {
-					label: "Other Memes",
-					data: stats?.other.map(({ ageDays, ...stats }) => ({ x: ageDays, y: stats[selectedStat] })),
-					backgroundColor: "hsl(0, 0%, 50%)",
-				}]}
-				options={{
-					scale: {
-						ticks: {
-							precision: 0,
-						},
-					},
-					scales: {
-						y: {
-							beginAtZero: true,
-							title: {
-								display: true,
-								text: selectedStat.charAt(0).toUpperCase() + selectedStat.slice(1),
-							},
-						},
-						x: {
-							title: {
-								display: true,
-								text: "Age (in days)",
-							},
-						},
-					},
-					plugins: {
-						legend: {
-							onClick: null,
-						},
-						tooltip: {
-							enabled: false,
-						},
-					},
-				}}
-			/>
-		</div>
 	</div>
 {/if}
 
@@ -329,9 +241,5 @@
 		resize: none;
 		width: 100%;
 		height: 8em;
-	}
-
-	.graph-controls {
-		font-size: 0.75em;
 	}
 </style>
