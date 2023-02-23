@@ -1,12 +1,11 @@
 <script>
 	import Button from "../Button.svelte";
-	import Error from "../Error.svelte";
 	import { push } from "svelte-spa-router";
+	import { buildURL } from "../../api.js";
+	import { jwt } from "../../auth.js";
 
 	let username;
 	let password;
-	let isLoggedIn = false;
-	let error = null;
 
 	async function handleLogin() {
 		if (!username) {
@@ -18,26 +17,18 @@
 			return;
 		}
 
-		const response = await fetch("/api/login",
-			{
-				method: "POST",
-				body: JSON.stringify({ user: username, pw: password }),
-				headers: {
-					"content-type": "multipart/form-data",
-				},
-			});
-
-		if (!response.ok) {
-			error = (await response.json()).message;
-			return;
-		}
-
-		const json = await response.json();
-
-		isLoggedIn = JSON.stringify(json);
-
-		if (json.success){
+		const res = await fetch(buildURL("/api/user/login"), {
+			headers: { "Content-Type": "application/json" },
+			method: "POST",
+			body: JSON.stringify({ name: username, password: password }),
+		});
+		if (res.ok){
+			jwt.set(await res.json());
+			alert("Your login has been successfully completed.");
 			await push("#/user");
+		} else {
+			alert("A problem occurred during login. please try again");
+			throw new Error(`${res.status} (${res.statusText}): ${await res.text()}`);
 		}
 	}
 </script>
@@ -59,13 +50,12 @@
 	}
 </style>
 
-<Error {error} />
 <form method="post">
 	<input class="form-field" type="text" bind:value={username} placeholder="Username" />
 	<br />
 	<input class="form-field" type="password" bind:value={password} placeholder="Password" />
 	<br />
-	<Button class="form-field" data-sc="login" variant="primary" on:click={() => handleLogin}>Login</Button>
+	<Button class="form-field" data-sc="Login" variant="primary" on:click={handleLogin}>Login</Button>
 </form>
 <p>
 	Don't have an account?
