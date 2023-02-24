@@ -1,4 +1,5 @@
 <script>
+	import { user } from "../../auth";
 	import Button from "../Button.svelte";
 	import Card from "../Card.svelte";
 
@@ -12,8 +13,8 @@
 	</a>
 	<div class="info" class:private={$meme.privacy === "private"}>
 		<Button
-			variant={$meme.vote === 1 && "primary"}
-			on:click={() => $meme.toggleVote(1)}
+			variant={$user.id ? $meme.vote === 1 && "primary" : "noninteractive"}
+			on:click={() => $user.id && $meme.toggleVote(1)}
 		>
 			❤️ {$meme.score}
 		</Button>

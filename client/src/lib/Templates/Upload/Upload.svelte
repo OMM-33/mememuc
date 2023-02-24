@@ -1,6 +1,6 @@
 <script>
 	import { createEventDispatcher } from "svelte";
-	import { templates } from "../../../cache";
+	import { templates, getNextLocalTemplateID } from "../../../cache";
 	import Media from "../../../models/Media";
 
 	import Overlay from "../../Overlay.svelte";
@@ -29,8 +29,10 @@
 			const template = new Media(mediaProps);
 			if ($user.id) {
 				await template.post({ isTemplate: true }); // will populate id and src from server
+				$templates.set(template.id, template);
+			} else {
+				$templates.set(getNextLocalTemplateID(), template);
 			}
-			$templates.set(template.id, template);
 			$templates = $templates;
 			dispatch("new", template);
 		} catch (error) {

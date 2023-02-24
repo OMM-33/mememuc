@@ -20,6 +20,8 @@ const templatesDefault = new Map([
 	return [id, new Media({ id, src })];
 }));
 export const templates = writable(templatesDefault);
+let localTemplateID = 0;
+export const getNextLocalTemplateID = () => localTemplateID++;
 
 /** @type {Map<string, Meme>} */
 const memesDefault = new Map([
