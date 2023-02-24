@@ -34,29 +34,32 @@ GET http://localhost:3000/api/meme/list?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
 
 
 
-
+###
+GET http://localhost:3000/api/meme/total
+###
+GET http://localhost:3000/api/meme/total?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4ZWRjYTMxYTA4ZDc1M2I4MDIwNWYiLCJuYW1lIjoiQWxleCIsImlhdCI6MTY3NzI1ODI0NX0.mjcMMURc83bNymyCnRFKtZ2xVNfLsvQ24j-5_PPF7hw
+###
+GET http://localhost:3000/api/meme/total?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4ZWRjZTMxYTA4ZDc1M2I4MDIwNjEiLCJuYW1lIjoiQWxleDIiLCJpYXQiOjE2NzcyNTgxOTh9.gi84vVzYAPhi-J5m5bn82jYSu0X7-mHjao0os1ZloPo
 ###
 
-GET http://localhost:3000/api/meme/total?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4MWYwNzhmMDdhZjY1MjRiYjlmMGUiLCJuYW1lIjoiQWxleGlpIiwiaWF0IjoxNjc3MjA1MjU5fQ.IqAIswTdJ1s0SE3ZxZBNjFuO6JSFiykn6cNTEASWEKU
-
-###
-
-GET http://localhost:3000/api/meme/random?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4MWYwNzhmMDdhZjY1MjRiYjlmMGUiLCJuYW1lIjoiQWxleGlpIiwiaWF0IjoxNjc3MjA1MjU5fQ.IqAIswTdJ1s0SE3ZxZBNjFuO6JSFiykn6cNTEASWEKU
+GET http://localhost:3000/api/meme/random?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4ZWRjZTMxYTA4ZDc1M2I4MDIwNjEiLCJuYW1lIjoiQWxleDIiLCJpYXQiOjE2NzcyNTgxOTh9.gi84vVzYAPhi-J5m5bn82jYSu0X7-mHjao0os1ZloPo
 ###
 GET http://localhost:3000/api/meme/random
 
 
 ###
 
-GET http://localhost:3000/api/meme/63f81fb42736d9ec6ea5ef5b
+GET http://localhost:3000/api/meme/63f8d3eb85cab9eeb72702cf
 
 ###
 
-GET http://localhost:3000/api/meme/63f75c289f65c4500909404c/next?sortBy=title
+GET http://localhost:3000/api/meme/63f8d3eb85cab9eeb72702cf/previous?sortBy=title
 
 ###
-
-&jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4MWYwNzhmMDdhZjY1MjRiYjlmMGUiLCJuYW1lIjoiQWxleGlpIiwiaWF0IjoxNjc3MjA1MjU5fQ.IqAIswTdJ1s0SE3ZxZBNjFuO6JSFiykn6cNTEASWEKU
+Alex:
+&jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4ZWRjYTMxYTA4ZDc1M2I4MDIwNWYiLCJuYW1lIjoiQWxleCIsImlhdCI6MTY3NzI1ODI0NX0.mjcMMURc83bNymyCnRFKtZ2xVNfLsvQ24j-5_PPF7hw
+Alex2:
+&jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4ZWRjZTMxYTA4ZDc1M2I4MDIwNjEiLCJuYW1lIjoiQWxleDIiLCJpYXQiOjE2NzcyNTgxOTh9.gi84vVzYAPhi-J5m5bn82jYSu0X7-mHjao0os1ZloPo
 
 ###
 
@@ -82,7 +85,7 @@ POST http://localhost:3000/api/user/register
 Content-Type: application/json
 
 {
-  "name": "Alex",
+  "name": "Alex2",
   "password": "hunter123"
 }
 
@@ -98,7 +101,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:3000/api/meme?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4YmYyYzY5ZTVlMTczMzAwODc2MTEiLCJuYW1lIjoiQWxleGlpIiwiaWF0IjoxNjc3MjQ2MjU5fQ.ZnqoLCoR4tI3XFD2Ch9fPZnV9q4uZM5K-aD2QjxPhbk
+POST http://localhost:3000/api/meme?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4ZWRjZTMxYTA4ZDc1M2I4MDIwNjEiLCJuYW1lIjoiQWxleDIiLCJpYXQiOjE2NzcyNTgxOTh9.gi84vVzYAPhi-J5m5bn82jYSu0X7-mHjao0os1ZloPo
 Content-Type: application/json
 
 {
@@ -108,7 +111,7 @@ Content-Type: application/json
   "width": 650,
   "height": 865,
   "dimensions": {},
-  "title": "e",
+  "title": "f",
   "privacy": "public",
   "views": 0,
   "score": 0,
