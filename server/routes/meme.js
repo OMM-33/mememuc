@@ -10,10 +10,11 @@ const database = require('../database')
 
 // Get a list of media, limited by parameters and sorted accordingly.
 router.get('/list', async (req, res) => {
-    const {limit=null, lastId=null, sortBy='updateDate', sortDir=-1, filterBy=null, filterOperator=null, filterValue=null} = req.query
     try {
+        // Get possible query parameters to adapt this search or use defaults
+        const {limit=null, lastId=null, sortBy='updateDate', sortDir=-1, filterBy=null, filterOperator=null, filterValue=null} = req.query
         // Get userId if userData exists. Otherwise set it to null
-        userId = req.userData ? req.userData._id : null
+        const userId = req.userData ? req.userData._id : null
         const memes = await database.listMemes(userId, limit, lastId, sortBy, sortDir, filterBy, filterOperator, filterValue)
         res.status(200).json(memes)
     } catch (err) {
@@ -26,7 +27,7 @@ router.get('/list', async (req, res) => {
 router.get('/total', async (req, res) => {
     try {
         // Get userId if userData exists. Otherwise set it to null
-        userId = req.userData ? req.userData._id : null
+        const userId = req.userData ? req.userData._id : null
         const totalCount = await database.countMemes(userId)
         res.status(200).json({
             totalMemes: totalCount
@@ -39,11 +40,26 @@ router.get('/total', async (req, res) => {
 
 // Get a random meme
 router.get('/random', async (req, res) => {
-    // Get the Id of a random meme from the database
-    const randomMemeId = await database.getRandomMemeId()
-    // Redirect towards the GET path for this meme. 
-    // Theoretically we could also straight up send the meme, but found it better for system resilience if memes are always fetched the same way.
-    res.redirect(`${randomMemeId}?jwt=${req.query.jwt}`);
+    try{
+        // Get possible query parameters to adapt this search or use defaults
+        const {filterBy=null, filterOperator=null, filterValue=null} = req.query
+        // Get userId if userData exists. Otherwise set it to null
+        const userId = req.userData ? req.userData._id : null
+
+        // Get all possible memes for this user
+        const memes = await database.listMemes(userId, filterBy, filterOperator, filterValue)
+
+        // Pick a random meme id out of the possible ones
+        const randomMemeId = memes[getRandomInt(memes.length)]._id
+        
+        // Redirect towards the GET path for this meme. 
+        // Theoretically we could also straight up send the meme, but found it better for system resilience if memes are always fetched the same way. (Because of stats etc.)
+        res.redirect(`${randomMemeId}?jwt=${req.query.jwt}`)
+        
+    } catch (err) {
+        console.error('Error getting random meme:\n'+err)
+        res.status(500).send('Error getting random meme: '+err.message)
+    }
 })
 
 // Get the meme with the specified id (if it exists)
@@ -97,11 +113,11 @@ async function adjacentMeme(req, res, direction) {
     }
 }
 
-// Get command overview
-router.get('/', (req, res) => {
-    res.send('Hello World!')
-    // ToDo
-})
+// // Get command overview
+// router.get('/', (req, res) => {
+//     res.send('Hello World!')
+//     // ToDo
+// })
 
 // Save a meme from our frontend (after parsing it)
 router.post('/', async (req, res) => {
@@ -262,6 +278,11 @@ function parseMeme(userData, incoming, host) {
     }
 
     return parsedMeme
+}
+
+// Get a random integer value out of max possible ones (e.g. max=3 returns 0 or 1 or 2)
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
 }
 
 // ###########

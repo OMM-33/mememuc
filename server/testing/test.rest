@@ -30,7 +30,21 @@ GET http://localhost:3000/api/meme/list?limit=5&filterBy=viewCount&filterOperato
 
 ###
 
+GET http://localhost:3000/api/meme/list?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4MWYwNzhmMDdhZjY1MjRiYjlmMGUiLCJuYW1lIjoiQWxleGlpIiwiaWF0IjoxNjc3MjA1MjU5fQ.IqAIswTdJ1s0SE3ZxZBNjFuO6JSFiykn6cNTEASWEKU
+
+
+
+
+###
+
 GET http://localhost:3000/api/meme/total?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4MWYwNzhmMDdhZjY1MjRiYjlmMGUiLCJuYW1lIjoiQWxleGlpIiwiaWF0IjoxNjc3MjA1MjU5fQ.IqAIswTdJ1s0SE3ZxZBNjFuO6JSFiykn6cNTEASWEKU
+
+###
+
+GET http://localhost:3000/api/meme/random?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4MWYwNzhmMDdhZjY1MjRiYjlmMGUiLCJuYW1lIjoiQWxleGlpIiwiaWF0IjoxNjc3MjA1MjU5fQ.IqAIswTdJ1s0SE3ZxZBNjFuO6JSFiykn6cNTEASWEKU
+###
+GET http://localhost:3000/api/meme/random
+
 
 ###
 
@@ -39,14 +53,6 @@ GET http://localhost:3000/api/meme/63f81fb42736d9ec6ea5ef5b
 ###
 
 GET http://localhost:3000/api/meme/63f75c289f65c4500909404c/next?sortBy=title
-
-###
-
-GET http://localhost:3000/api/meme/random?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzZjdmNTZlYWMyYThjZjlhZjUzNTBjNyIsIm5hbWUiOiJBbGV4aWkiLCJpYXQiOjE2NzcxOTQ2MTF9.rWpHkx44U6AsB0r7TR4Xr5JK86vvDkRzmGpp6pipzEc
-
-###
-
-GET http://localhost:3000/api/meme/random
 
 ###
 
@@ -103,7 +109,7 @@ Content-Type: application/json
   "height": 865,
   "dimensions": {},
   "title": "e",
-  "privacy": "private",
+  "privacy": "public",
   "views": 0,
   "score": 0,
   "commentCount": 0,
