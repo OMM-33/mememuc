@@ -1,26 +1,60 @@
 <script>
-	import { memes, updateMemes } from "../cache";
+	import { memes } from "../cache";
+	import Meme from "../models/Meme";
 
 	import Button from "../lib/Button.svelte";
 	import Graph from "../lib/Graph.svelte";
 	import Frame from "../lib/View/Frame.svelte";
 	import InfiniteScroll from "../lib/InfiniteScroll.svelte";
 
-	updateMemes();
+	let sortBy = "updateDate";
+	const filter = { type: "viewCount", amount: 0 };
+	$: console.log("sortBy", sortBy);
+	$: console.log("filter", filter);
 
 	let memesArray = [];
+	let showingAll = false;
+
+	const clearMemes = () => {
+		memesArray = [];
+		showingAll = false;
+	};
+
 	$: {
-		const result = [];
-		const memeStores = [...$memes.values()];
-		memeStores.forEach((store, i) => store.subscribe(value => result[i] = value));
-		memesArray = result;
+		// initially or...
+		sortBy, filter; // if any of these change...
+		clearMemes();
+		loadMore();
 	}
 
-	$: publicMemes = memesArray.filter(({ privacy }) => privacy === "public");
+	const loadMore = async () => {
+		if (showingAll) return;
+		const newMemes = await Meme.getMultiple({
+			published: true,
+			lastId: memesArray.at(-1)?.id,
+			limit: 6,
+			sortBy,
+			sortDir: sortBy === "title" ? 1 : undefined,
+			filterBy: filter.type,
+			filterValue: filter.amount,
+			filterOperator: "$gte",
+		});
+		if (newMemes.length === 0) {
+			showingAll = true;
+			return;
+		}
+		newMemes.forEach(meme => $memes.set(meme.id, meme)); // update our cache
+		memesArray = memesArray.concat(newMemes);
+	};
+
+	const onInfiniteTrigger = () => {
+		if (memesArray.length === 0) return;
+		loadMore();
+	};
 
 	$: stats = Object.fromEntries(
 		Object.entries(
-			publicMemes.reduce((result, meme) => {
+			memesArray.reduce((result, meme) => {
 				const date = meme.updateDate;
 				const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 				if (!result[dateStr]) result[dateStr] = 0;
@@ -36,15 +70,6 @@
 	);
 
 	let statsVisible = false;
-
-	let sortBy = "date";
-	const filter = { type: undefined, amount: 10 };
-	$: console.log("sortBy", sortBy);
-	$: console.log("filter", filter);
-
-	function onInfiniteScrollTrigger() {
-		console.log("scroll");
-	}
 </script>
 
 <h1>Overview </h1>
@@ -53,18 +78,18 @@
 		<label>
 			Sort by:
 			<select bind:value={sortBy}>
-				<option value="date">Date</option>
+				<option value="updateDate">Date</option>
 				<option value="title">Title</option>
 			</select>
 		</label>
 	</div>
 	<div class="filter">
 		<label>
-			more than
+			at least
 		</label>
-		<input type="number" bind:value={filter.amount} size="5" />
+		<input type="number" bind:value={filter.amount} size="5" min="0" step="1" />
 		<select bind:value={filter.type}>
-			<option value="views">Views</option>
+			<option value="viewCount">Views</option>
 			<option value="score">Score</option>
 		</select>
 	</div>
@@ -96,11 +121,11 @@
 	</div>
 {/if}
 <div class="grid">
-	{#each publicMemes as meme}
+	{#each memesArray as meme}
 		<Frame {meme} />
 	{/each}
 </div>
-<InfiniteScroll on:trigger={onInfiniteScrollTrigger} />
+<InfiniteScroll on:trigger={onInfiniteTrigger} />
 
 <style>
 	.top-controls {

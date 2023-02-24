@@ -212,10 +212,16 @@ export default class Meme extends Media {
 
 	/**
 	 * GETs and returns an array of all meme objects.
+	 * @param {{ limit, lastId, sortBy, sortDir, filterBy, filterOperator, filterValue }} queryParams
 	 * @override
 	 */
-	static async getMultiple() {
-		const res = await fetch(buildURL("api/meme/list"));
+	static async getMultiple(queryParams = {}) {
+		const url = buildURL("api/meme/list");
+		Object.entries(queryParams).forEach(([name, value]) => {
+			// eslint-disable-next-line eqeqeq
+			value != null && url.searchParams.append(name, value);
+		});
+		const res = await fetch(url);
 		if (!res.ok) throw new Error(`${res.status} (${res.statusText}): ${await res.json().message}`);
 
 		const memesJSON = await res.json();
