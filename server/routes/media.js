@@ -55,25 +55,44 @@ router.get('/', (req, res) => {
 // Upload a media file and save it to the database
 // The file upload is handled as middleware *before* the main route handler function (i.e. (req, res) => {...}).
 // This way all necessary preprocessing can be handled before further interaction with the file itself.
+// It's a little messy that if user auth is missing we upload the file anyways and then remove it again.
+// ... We didn't want to mess with the multer middleware for now though, since it was a pain to get running so smoothly.
+// ... Therefore future ToDo: Improve this!
 router.post('/', database.upload.single('mediaFile'), async (req, res) => {
-    const oid = String(req.file.id)
-    console.log('Successfully uploaded mediaFile to gridFS with ObjectId ' + oid)
-    res.status(201).json({
-        message: 'File uploaded successfully',
-        mediaID: oid,
-        mediaURL: `http://${req.headers.host}/api/media/${oid}`
-    })
+    try {
+        const oid = String(req.file.id)
+        console.log('Successfully uploaded mediaFile to gridFS with ObjectId ' + oid)
+        
+        // Abort if user unauthorized.
+        if (!req.userData) {
+            // Revoke the file upload
+            database.deleteMediaById(oid, metadata=false)
+            console.log('... and removed it again, due to missing user authentication.')
+            res.status(401).send('You need to be logged in to upload media files.')
+            return
+        }
 
-    const metadata = {
-        mediaID: oid,
-        creatorID: '000000000000000000000000', // Placeholder. TODO: Replace with function that fetches user ID from the request. Possible as soon as auth is running.,
-        privacy: req.body.privacy || 'public',
-        isTemplate: req.body.isTemplate !== 'false',
-        dataType: req.file.contentType
+        const metadata = {
+            mediaID: oid,
+            creatorID: userData._id,
+            creatorName: userData.name,
+            privacy: req.body.privacy || 'public',
+            isTemplate: req.body.isTemplate !== 'false',
+            dataType: req.file.contentType
+        }
+
+        const newMedia = await database.saveMediaMetadata(metadata)
+        console.log('Metadata for new media object: ' + newMedia)
+
+        res.status(201).json({
+            message: 'File uploaded successfully',
+            mediaID: oid,
+            mediaURL: `http://${req.headers.host}/api/media/${oid}`
+        })
+    } catch (err) {
+        console.error('Media file upload failed, due to error:\n'+err)
+        res.status(400).send('Media file upload failed, due to error: '+err.message)
     }
-
-    const newMedia = await database.saveMediaMetadata(metadata)
-    console.log('Metadata for new media object: ' + newMedia)
 })
 
 // Delete the media file with the specified id (if it exists)

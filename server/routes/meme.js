@@ -103,9 +103,14 @@ router.get('/', (req, res) => {
 
 // Save a meme from our frontend (after parsing it)
 router.post('/', async (req, res) => {
+    // Abort if user unauthorized.
+    if (!req.userData) {
+        res.status(401).send('You need to be logged in to publish your memes.')
+        return
+    }
     try {
         // Parse meme from frontend into database compatible format
-        const parsedMeme = parseMeme(req.body, req.headers.host)
+        const parsedMeme = parseMeme(req.userData, req.body, req.headers.host)
         // Save meme
         const newMeme = await database.saveMeme(parsedMeme)
         // Return saved meme
@@ -122,13 +127,18 @@ router.post('/', async (req, res) => {
 
 // Update meme
 router.patch('/:id', async (req, res) => {
+    // Abort if user unauthorized.
+    if (!req.userData) {
+        res.status(401).send('You need to be logged in to comment.')
+        return
+    }
     try {
         // Parse meme from frontend into database compatible format
-        const parsedMeme = parseMeme(req.body, req.headers.host)
+        const parsedMeme = parseMeme(userData, req.body, req.headers.host)
         // Before updating save the Id of the old media representation of the meme
         const oldMediaId = await database.getMediaIdOfMemeId(req.params.id)
         // Save meme
-        const updatedMeme = await database.updateMeme(req.params.id, parsedMeme)
+        const updatedMeme = await database.updateMeme(req.userData, req.params.id, parsedMeme)
         // After updating, delete the old media representation of the meme
         try { // Separate try catch, as updating still succeeded and media deletion fail is not that critical.
             await database.deleteMediaById(oldMediaId)
@@ -191,7 +201,7 @@ router.delete('/:id', (req, res) => {
 // ####################
 
 // Parses the client side representation of a meme into one the database can handle
-function parseMeme(incoming, host) {
+function parseMeme(userData, incoming, host) {
     let parsedLayers = []
     if(incoming.layers){
         for (let i=0; i<incoming.layers.length; i++) {
@@ -241,7 +251,8 @@ function parseMeme(incoming, host) {
         mediaURL: `http://${host}/api/media/${parsedMediaID}`,
         title: incoming.title,
         description: parsedDescription,
-        creatorID: '63f81f078f07af6524bb9f0e', // Placeholder. TODO: Replace with function that fetches user ID from the request. Possible as soon as auth is running.
+        creatorID: userData._id,
+        creatorName: userData.name,
         updateDate: Date.now(),
         privacy: incoming.privacy,
         background: parsedBackground,
