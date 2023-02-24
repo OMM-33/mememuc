@@ -2,26 +2,30 @@
 	import Button from "../Button.svelte";
 	import { push } from "svelte-spa-router";
 	import { buildURL } from "../../api.js";
+	import Error from "../Error.svelte";
 
 	let password;
 	let confirmPassword;
 	let name;
 
+	let error = null;
+	const onError = detail => error = detail;
+
 	async function handleSignUp() {
 		if (!name){
-			alert("please enter your username");
+			onError("please enter your username");
 			return;
 		}
 		if (!password){
-			alert("please enter your password");
+			onError("Please enter your password.");
 			return;
 		}
 		if (!confirmPassword){
-			alert("please enter your password again");
+			onError("Please enter your password again.");
 			return;
 		}
 		if (password !== confirmPassword){
-			alert("passwords must be same");
+			onError("Passwords must be same.");
 			return;
 		}
 
@@ -31,11 +35,10 @@
 			body: JSON.stringify({ name: name, password: password }),
 		});
 		if (res.ok) {
-			alert("Your registration has been successfully completed.");
+			alert("Your registration has been successfully completed. Please log in to continue.");
 			await push("#/login");
 		} else {
-			alert("A problem occurred during registration. please try again");
-			throw new Error(`${res.status} (${res.statusText}): ${await res.text()}`);
+			onError(`${await res.text()}` + ". Please try again.");
 		}
 	}
 
@@ -58,6 +61,7 @@
 	}
 </style>
 
+<Error {error} />
 <form method="post">
 	<input class="form-field" data-sc="Enter username" type="text" bind:value={name} placeholder="Username" />
 	<br />
@@ -65,7 +69,7 @@
 	<br />
 	<input class="form-field" data-sc="Confirm password" type="password" bind:value={confirmPassword} placeholder="Confirm password" />
 	<br />
-	<Button class="form-field" data-sc="Sign up" variant="primary" on:click={handleSignUp}>Sign up</Button>
+	<Button data-sc="Sign up" variant="primary" on:click={handleSignUp}>Sign up</Button>
 </form>
 <p>
 	Already have an account?
