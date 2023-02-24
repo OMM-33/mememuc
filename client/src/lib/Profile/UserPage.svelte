@@ -1,35 +1,23 @@
 <script>
 	import { push } from "svelte-spa-router";
-
 	import Frame from "../View/Frame.svelte";
 	import Button from "../Button.svelte";
 	import Error from "../Error.svelte";
+	import Meme from "../../models/Meme.js";
 	import { memes } from "../../cache.js";
 
-	const user = { id: 1, name: "Alice", createdMeme: [2,4,5] };
 	let error = null;
+	const onError = detail => error = detail;
 
+	//TODO: Fetch memes from a server
+	const user = { id: 1, name: "Alice", createdMeme: [2,4,5] };
 	$: userMeme = user.createdMeme.map((el) => [...$memes.values()][el]);
 
-	async function handleDelete(el){
-		const response = await fetch("/api/meme",
-			{
-				method: "DELETE",
-				body: JSON.stringify({ id: el.id }),
-				headers: {
-					"content-type": "application/json",
-				},
-			});
-
-		if (!response.ok) {
-			error = (await response.json()).message;
-			return;
-		}
-
-		const json = await response.json();
-
-		if (json.success){
-			window.location.href = "/";
+	async function handleDelete(){
+		try {
+			await Meme.delete();
+		} catch (error) {
+			onError(error.message);
 		}
 	}
 
@@ -70,9 +58,9 @@
 				{/if}
 			</p>
 			{#if meme.privacy === "private"}
-				<Button class="item" data-sc="edit" on:click={()=>push("/meme/:id?/edit")}>✏ Edit</Button>
+				<Button class="item" data-sc="edit" on:click={() => push(`/meme/${meme.id}/edit`)}>✏ Edit</Button>
 			{/if}
-			<Button class="item delete" data-sc="delete" on:click={()=>handleDelete(meme)}>🗑️ Delete</Button>
+			<Button class="item delete" data-sc="delete" on:click={() => handleDelete()}>🗑️ Delete</Button>
 			<div>
 				<Frame {meme} />
 			</div>
