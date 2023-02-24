@@ -48,7 +48,7 @@ router.get('/random', async (req, res) => {
         const userId = req.userData ? req.userData._id : null
 
         // Get all possible memes for this user
-        const memes = await database.listMemes(userId, filterBy, filterOperator, filterValue)
+        const memes = await database.listMemes(userId, null, null, null, null, filterBy, filterOperator, filterValue)
 
         // Pick a random meme id out of the possible ones
         const randomMemeId = memes[getRandomInt(memes.length)]._id
