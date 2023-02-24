@@ -4,15 +4,16 @@ import { arrayMove, stripHTML } from "../util";
 import { buildURL, jsonHeaders } from "../api";
 import { tts } from "../speech";
 
-export const privacyLevels = [
-	{ id: "public", label: "Public", icon:"🌐", description: "Post to public overview" },
-	{ id: "unlisted", label: "Unlisted", icon:"🔓", description: "Do not post to public overview" },
-	{ id: "private", label: "Private (Draft)", icon:"🔒", description: "Can only be viewed by you" },
-];
+export const privacyLevels = {
+	public: { id: "public", label: "Public", icon: "🌐", description: "Post to public overview" },
+	unlisted: { id: "unlisted", label: "Unlisted", icon: "🔓", description: "Do not post to public overview" },
+	private: { id: "private", label: "Private (Draft)", icon: "🔒", description: "Can only be viewed by you" },
+};
 
 export default class Meme extends Media {
 	constructor({
 		id, src, blob, width, height, updateDate,
+		creatorID,
 		title = "",
 		description = "",
 		privacy = "public",
@@ -25,6 +26,8 @@ export default class Meme extends Media {
 	} = {}) {
 		super({ id, src, blob, width, height, updateDate });
 
+		/** @type {string?} */
+		this.creatorID = creatorID;
 		/** @type {string} */
 		this.title = title;
 		/** @type {string} */
@@ -199,6 +202,11 @@ export default class Meme extends Media {
 	 * @override
 	 */
 	async post() {
+		// For when a user starts creating a meme when not logged in,
+		// we need to make sure all the used templates are uploaded:
+		const offlineLayers = this.layers.filter(({ options }) => options?.media && !options.media.id);
+		await Promise.all(offlineLayers.map(layer => layer.options.media.post()));
+
 		await super.post({ isTemplate: false });
 
 		const res = await fetch(buildURL("api/meme"), {

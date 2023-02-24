@@ -1,11 +1,11 @@
-import { jwt as jwtStore } from "./auth";
+import { user as userStore } from "./auth";
 
-let jwt;
-jwtStore.subscribe(value => jwt = value);
+let user;
+userStore.subscribe(value => user = value);
 
 export const buildURL = (url, { useAuth = true } = {}) => {
 	const resultURL = new URL(url, import.meta.env.VITE_SERVER_URL);
-	if (useAuth && jwt) resultURL.searchParams.append("jwt", jwt);
+	if (useAuth && user.jwt) resultURL.searchParams.append("jwt", user.jwt);
 	return resultURL;
 };
 

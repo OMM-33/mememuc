@@ -13,6 +13,7 @@
 	import Camera from "./Camera.svelte";
 	import Draw from "./Draw.svelte";
 	import Card from "../../Card.svelte";
+	import { user } from "../../../auth";
 
 	export let open = false;
 
@@ -26,7 +27,9 @@
 	const onNew = async (mediaProps) => {
 		try {
 			const template = new Media(mediaProps);
-			await template.post({ isTemplate: true }); // will populate id and src from server
+			if ($user.id) {
+				await template.post({ isTemplate: true }); // will populate id and src from server
+			}
 			$templates.set(template.id, template);
 			$templates = $templates;
 			dispatch("new", template);
