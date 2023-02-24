@@ -3,22 +3,22 @@ const router = express.Router()
 
 // Import our database
 const database = require('../database')
-const meme = require('../models/meme')
 
 // ##########
 // # Routes #
 // ##########
 
 // Get a list of media, limited by parameters and sorted accordingly.
-// TODO: Limiting parameters
-// TODO: Sorting
-// See also database.js > listMedia()
 router.get('/list', async (req, res) => {
+    const {limit=null, lastId=null, sortBy='updateDate', sortDir=-1, filterBy=null, filterOperator=null, filterValue=null} = req.query
     try {
-        const memes = await database.listMemes()
+        // Get userId if userData exists. Otherwise set it to null
+        userId = req.userData ? req.userData._id : null
+        const memes = await database.listMemes(userId, limit, lastId, sortBy, sortDir, filterBy, filterOperator, filterValue)
         res.status(200).json(memes)
     } catch (err) {
-        res.status(500).json({ message: 'Error listing memes: ' + err.message })
+        console.error('Error listing memes:\n' + err)
+        res.status(400).send('Error listing memes: ' + err.message)
     }
 })
 
@@ -207,7 +207,7 @@ function parseMeme(incoming, host) {
         mediaURL: `http://${host}/api/media/${parsedMediaID}`,
         title: incoming.title,
         description: parsedDescription,
-        creatorID: '000000000000000000000000', // Placeholder. TODO: Replace with function that fetches user ID from the request. Possible as soon as auth is running.
+        creatorID: '63f81f078f07af6524bb9f0e', // Placeholder. TODO: Replace with function that fetches user ID from the request. Possible as soon as auth is running.
         updateDate: Date.now(),
         privacy: incoming.privacy,
         background: parsedBackground,
