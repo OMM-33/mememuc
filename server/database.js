@@ -19,7 +19,7 @@ const { ObjectId } = mongoose.Types
 const Meme = require('./models/meme')
 const {Layer} = require('./models/layer')
 const {Media} = require('./models/media')
-// const Comment = require('./models/comment')
+const {Comment} = require('./models/comment')
 // const Vote = require('./models/vote')
 const User = require('./models/user')
 
@@ -122,12 +122,12 @@ async function listMemes(userId=null, limit=null, lastId=null, sortBy='updateDat
 
     // Build the filter using our helperFunction
     const filter = await buildFilter(userId, lastId, sortBy, sortDir, filterBy, filterOperator, filterValue)
-    console.log(`
-    ${filterBy}
-    ${filterOperator}
-    ${filterValue}
-    ${filter}
-    `)
+    // console.log(`
+    // ${filterBy}
+    // ${filterOperator}
+    // ${filterValue}
+    // ${filter}
+    // `)
     // Build the query 
     const query = Meme.find(filter).sort(sort)
 
@@ -223,6 +223,28 @@ async function updateMeme(id, meme) {
     const options = { new: true }
     
     const updatedMeme = await Meme.findByIdAndUpdate(oid, { $set: meme }, options)
+    return updatedMeme
+}
+
+async function postComment(memeId, userId, userName, text){
+    // Create the comment according to the schema
+    const comment = new Comment({
+        creatorID: ObjectId(userId),
+        creatorName: userName,
+        creationDate: Date.now(),
+        content: text
+    })
+
+    // Find the meme
+    const meme = await Meme.findById(ObjectId(memeId))
+
+    if (!meme) { throw new Error(`Meme with ID ${memeId} not found`) }
+
+    // Add comment and increment commentCount
+    meme.comments.push(comment)
+    meme.commentCount++
+
+    const updatedMeme = await meme.save()
     return updatedMeme
 }
 
@@ -356,6 +378,7 @@ module.exports = {
   getAdjacentMemeId,
   saveMeme,
   updateMeme,
+  postComment,
   listMedia,
   getMediaById,
   getMediaIdOfMemeId,
