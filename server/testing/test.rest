@@ -18,7 +18,7 @@ DELETE http://localhost:3000/api/media/63f4cc00a51e805a5eb8062a
 
 ###
 
-GET http://localhost:3000/api/meme/list
+GET http://localhost:3000/api/meme/list?sortBy=title&sortDir=1&filterBy=title&filterOperator=$gte&filterValue=c&jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4ZWRjZTMxYTA4ZDc1M2I4MDIwNjEiLCJuYW1lIjoiQWxleDIiLCJpYXQiOjE2NzcyNTgxOTh9.gi84vVzYAPhi-J5m5bn82jYSu0X7-mHjao0os1ZloPo
 
 ###
 
@@ -42,18 +42,24 @@ GET http://localhost:3000/api/meme/total?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ
 GET http://localhost:3000/api/meme/total?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4ZWRjZTMxYTA4ZDc1M2I4MDIwNjEiLCJuYW1lIjoiQWxleDIiLCJpYXQiOjE2NzcyNTgxOTh9.gi84vVzYAPhi-J5m5bn82jYSu0X7-mHjao0os1ZloPo
 ###
 
+
+
+
 GET http://localhost:3000/api/meme/random?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4ZWRjZTMxYTA4ZDc1M2I4MDIwNjEiLCJuYW1lIjoiQWxleDIiLCJpYXQiOjE2NzcyNTgxOTh9.gi84vVzYAPhi-J5m5bn82jYSu0X7-mHjao0os1ZloPo
 ###
 GET http://localhost:3000/api/meme/random
 
 
+
+###
+GET http://localhost:3000/api/meme/63f8d3eb85cab9eeb72702cf/previous?sortBy=title?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4ZWRjZTMxYTA4ZDc1M2I4MDIwNjEiLCJuYW1lIjoiQWxleDIiLCJpYXQiOjE2NzcyNTgxOTh9.gi84vVzYAPhi-J5m5bn82jYSu0X7-mHjao0os1ZloPo
 ###
 
 GET http://localhost:3000/api/meme/63f8d3eb85cab9eeb72702cf
 
 ###
 
-GET http://localhost:3000/api/meme/63f8d3eb85cab9eeb72702cf/previous?sortBy=title
+GET http://localhost:3000/api/meme/63f8d3eb85cab9eeb72702cf/previous?sortBy=title?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4ZWRjZTMxYTA4ZDc1M2I4MDIwNjEiLCJuYW1lIjoiQWxleDIiLCJpYXQiOjE2NzcyNTgxOTh9.gi84vVzYAPhi-J5m5bn82jYSu0X7-mHjao0os1ZloPo
 
 ###
 Alex:
