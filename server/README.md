@@ -14,10 +14,10 @@ Production:
 | [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) | MIT | JsonWebToken implementation for node.js |
 
 Additionally during development:
-| Name & Link | Description |
-| ----------- | ----------- |
-| [Nodemon](https://nodemon.io/) | Monitors for any changes in source code and automatically restarts the node.js server |
-| [Dotenv](https://github.com/motdotla/dotenv) | Zero-dependency module that loads environment variables from a .env file into process.env |
+| Name & Link | License | Description |
+| ----------- | ------- | ----------- |
+| [Nodemon](https://nodemon.io/) | MIT | Monitors for any changes in source code and automatically restarts the node.js server |
+| [Dotenv](https://github.com/motdotla/dotenv) | BSD 2-Clause "Simplified" License | Zero-dependency module that loads environment variables from a .env file into process.env |
 
 ---
 
