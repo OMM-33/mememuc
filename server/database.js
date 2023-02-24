@@ -96,7 +96,7 @@ async function buildFilter(userId=null, lastId=null, sortBy='updateDate', sortDi
         filter[sortBy] = sortDir === -1 ? {$lt: previousMeme[sortBy]} : {$gt: previousMeme[sortBy]}
     }
 
-    // console.log(JSON.stringify(filter)) // Debugging
+    console.log('Filtering: ' + JSON.stringify(filter)) // Debugging
     return filter
 }
 

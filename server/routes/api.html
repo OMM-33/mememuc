@@ -150,8 +150,8 @@
           In this case however, you will only see publicly available information.<br>
           If you want to see and fetch your private memes as well, you will have to first do this:<br>
           <ul>
-            <li><a href="#register">/api/user/register</a>: To register yourself as a user</li>
-            <li><a href="#login">/api/user/login</a>: To login with your registered account</li>
+            <li>POST /api/user/register Content-Type: application/json - {name, password}: To register yourself as a user</li>
+            <li>POST /api/user/login Content-Type: application/json - {name, password}: To login with your registered account</li>
             <li>Add the JSONWebToken, that you get back from the login as a queryParameter to any request, like this: ?jwt=...</li>
           </ul>
         </p>
@@ -190,6 +190,13 @@
             </tr>
           </tbody>
         </table>
+        <p>
+          <b>Example usage:</b><br>
+          <ul>
+            <li><a href="/api/meme/list" target="_blank">/api/meme/list</a></li> for all available memes
+            <li><a href="/api/meme/list?limit=3&sortBy=title&sortDir=1&filterBy=viewCount&filterOperator=$gte&filterValue=5" target="_blank">/api/meme/list?limit=3&sortBy=title&sortDir=1&filterBy=viewCount&filterOperator=$gte&filterValue=5</a></li> (At max.) three available memes, sorted by title in ascending direction, with at least 5 views. 
+          </ul>
+        </p>
       </section>
       <section id="total count">
         <h2>Total count</h2>
@@ -209,7 +216,13 @@
               <td>jwt (optional): Your JSONWebToken</td>
             <tr>
           </tbody>
-        </table>  
+        </table>
+        <p>
+          <b>Example usage:</b><br>
+          <ul>
+            <li><a href="/api/meme/total" target="_blank">/api/meme/total</a></li> for the count of available memes
+          </ul>
+        </p>
       </section>
       <section id="specific meme">
         <h2>Specific Meme</h2>
@@ -233,7 +246,13 @@
               <td>jwt (optional): Your JSONWebToken</td>
             <tr>
           </tbody>
-        </table> 
+        </table>
+        <p>
+          <b>Example usage:</b><br>
+          A straight up url cannot be provided here, since you first need to get a valid _id of a meme, f.e. from the <a href="#list memes">list</a>.<br>
+          An _id is always a string of 24 hex characters.<br>
+          After you have an Id please just append the id to <a href="/api/meme/" target="_blank">/api/meme/</a> like this /api/meme/id
+        </p>
       </section>
       <section id="random meme">
         <h2>Random Meme</h2>
@@ -260,9 +279,14 @@
               </td>
             <tr>
           </tbody>
-        </table> 
-      </section>
-      <section id="list memes">
+        </table>
+        <p>
+          <b>Example usage:</b><br>
+          <ul>
+            <li><a href="/api/meme/random" target="_blank">/api/meme/random</a></li> gets you a random meme out of all available ones
+            <li><a href="/api/meme/random?filterBy=score&filterOperator=$gte&filterValue=1" target="_blank">/api/meme/random?filterBy=score&filterOperator=$gte&filterValue=1</a></li> A random meme with at least one upvote. 
+          </ul>
+        </p>
       </section>
     </main>
   </body>
