@@ -1,0 +1,229 @@
+GET http://localhost:3000/api
+
+###
+
+GET http://localhost:3000/api/media/list
+
+###
+
+GET http://localhost:3000/api/media/list?templates=true
+
+###
+
+POST http://localhost:3000/api/media
+
+###
+
+DELETE http://localhost:3000/api/media/63f4cc00a51e805a5eb8062a
+
+###
+
+GET http://localhost:3000/api/meme/list
+
+###
+
+GET http://localhost:3000/api/meme/list?limit=5&sortBy=title&sortDir=1&lastId=63f81e15765e46f4127933be&jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4MWYwNzhmMDdhZjY1MjRiYjlmMGUiLCJuYW1lIjoiQWxleGlpIiwiaWF0IjoxNjc3MjA1MjU5fQ.IqAIswTdJ1s0SE3ZxZBNjFuO6JSFiykn6cNTEASWEKU
+
+###
+
+GET http://localhost:3000/api/meme/list?limit=5&filterBy=viewCount&filterOperator=$gt&filterValue=-10&sortBy=title&sortDir=1&lastId=63f81e15765e46f4127933be&jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4MWYwNzhmMDdhZjY1MjRiYjlmMGUiLCJuYW1lIjoiQWxleGlpIiwiaWF0IjoxNjc3MjA1MjU5fQ.IqAIswTdJ1s0SE3ZxZBNjFuO6JSFiykn6cNTEASWEKU
+
+###
+
+GET http://localhost:3000/api/meme/total
+
+###
+
+GET http://localhost:3000/api/meme/63f81fb42736d9ec6ea5ef5b
+
+###
+
+GET http://localhost:3000/api/meme/63f75c289f65c4500909404c/next?sortBy=title
+
+###
+
+GET http://localhost:3000/api/meme/random?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzZjdmNTZlYWMyYThjZjlhZjUzNTBjNyIsIm5hbWUiOiJBbGV4aWkiLCJpYXQiOjE2NzcxOTQ2MTF9.rWpHkx44U6AsB0r7TR4Xr5JK86vvDkRzmGpp6pipzEc
+
+###
+
+GET http://localhost:3000/api/meme/random
+
+###
+
+&jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4MWYwNzhmMDdhZjY1MjRiYjlmMGUiLCJuYW1lIjoiQWxleGlpIiwiaWF0IjoxNjc3MjA1MjU5fQ.IqAIswTdJ1s0SE3ZxZBNjFuO6JSFiykn6cNTEASWEKU
+
+###
+
+POST http://localhost:3000/api/user/register
+Content-Type: application/json
+
+{
+  "name": "Alexii",
+  "password": "hunter123"
+}
+
+###
+
+POST http://localhost:3000/api/user/login
+Content-Type: application/json
+
+{
+  "name": "Alexii",
+  "password": "hunter123"
+}
+
+###
+
+POST http://localhost:3000/api/meme
+Content-Type: application/json
+
+{
+  "id": 9,
+  "src": "http://localhost:3000/api/media/63f75c0b9f65c45009094038",
+  "blob": {},
+  "width": 650,
+  "height": 865,
+  "dimensions": {},
+  "title": "e",
+  "privacy": "private",
+  "views": 0,
+  "score": 0,
+  "commentCount": 0,
+  "background": {
+    "media": {
+      "id": "0",
+      "src": "https://i.imgur.com/Yu7x5MV.jpeg",
+      "width": 640,
+      "height": 853,
+      "dimensions": {}
+    },
+    "color": "#ffffff"
+  },
+  "layers": [
+    {
+      "id": 0,
+      "type": "image",
+      "origin": [
+        0.6599229846356284,
+        0.7395872622080492
+      ],
+      "angle": 0,
+      "size": [
+        0.6497492163009413,
+        0.4921621621621626
+      ],
+      "options": {
+        "media": {
+          "id": "3",
+          "src": "https://i.imgur.com/OQ2z11V.jpeg",
+          "width": 1170,
+          "height": 1146,
+          "dimensions": {}
+        },
+        "fit": 0,
+        "flip": false
+      }
+    },
+    {
+      "id": 1,
+      "type": "text",
+      "origin": [
+        0.42163009404388674,
+        0.3061104582843713
+      ],
+      "angle": 0.59375,
+      "size": [
+        0.5,
+        0.25
+      ],
+      "options": {
+        "text": "Cooler Text<br>",
+        "font": {
+          "size": 79,
+          "color": "#ffffff",
+          "colorStroke": "#ff0080",
+          "align": 1
+        }
+      }
+    }
+  ],
+  "nextLayerID": 2
+}
+
+###
+
+PATCH http://localhost:3000/api/meme/63f75c289f65c4500909404c
+Content-Type: application/json
+
+{
+  "id": 9,
+  "src": "http://localhost:3000/api/media/63f0f55909c4f34d77ebe9bd",
+  "blob": {},
+  "width": 650,
+  "height": 865,
+  "dimensions": {},
+  "title": "Neuer Titel2",
+  "privacy": "unlisted",
+  "views": 0,
+  "score": 0,
+  "commentCount": 0,
+  "background": {
+    "media": {
+      "id": "0",
+      "src": "https://i.imgur.com/Yu7x5MV.jpeg",
+      "width": 640,
+      "height": 853,
+      "dimensions": {}
+    },
+    "color": "#ffffff"
+  },
+  "layers": [
+    {
+      "id": 0,
+      "type": "image",
+      "origin": [
+        0.6599229846356284,
+        0.7395872622080492
+      ],
+      "angle": 0,
+      "size": [
+        0.6497492163009413,
+        0.4921621621621626
+      ],
+      "options": {
+        "media": {
+          "id": "3",
+          "src": "https://i.imgur.com/OQ2z11V.jpeg",
+          "width": 1170,
+          "height": 1146,
+          "dimensions": {}
+        },
+        "fit": 0,
+        "flip": false
+      }
+    },
+    {
+      "id": 1,
+      "type": "text",
+      "origin": [
+        0.42163009404388674,
+        0.3061104582843713
+      ],
+      "angle": 0.59375,
+      "size": [
+        0.5,
+        0.25
+      ],
+      "options": {
+        "text": "Cooler Text<br>",
+        "font": {
+          "size": 79,
+          "color": "#ffffff",
+          "colorStroke": "#ff0080",
+          "align": 1
+        }
+      }
+    }
+  ],
+  "nextLayerID": 2
+}
