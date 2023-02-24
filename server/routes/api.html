@@ -45,30 +45,129 @@
   <body>
     <h1>Grp 33 MemeMuc REST API Documentation</h1>
     <main>
-      <p>This is a implementation of a RESTful API server establishing the backend for our "MemeMuc" Meme Generator project.</p>
-      <p>The project is part of the WS 2022/2023 iteration of the course <a href="https://www.medien.ifi.lmu.de/lehre/ws2223/omm/">Online Multimedia at LMU Munich</a></p>
-      <p>While there is a beautiful frontend available, you can of course interact directly with the endpoints if you prefer staring at CLIs</p>
-      <h2>Authentication</h2>
       <p>
-        All of the following endpoints are available to unauthenticated users as well.</br>
-        In this case however, you will only see publicly available information.</br>
-        If you want to see and fetch your private memes as well, you will have to first do this:</br>
-        <ul>
-          <li><a href="#register">/api/user/register</a>: To register yourself as a user</li>
-          <li><a href="#login">/api/user/login</a>: To login with your registered account</li>
-          <li>Add the JSONWebToken, that you get back from the login as a queryParameter to any request, like this: ?jwt=...</li>
-        </ul>
+        This is a implementation of a RESTful API server establishing the backend for our "MemeMuc" Meme Generator project.<br>
+        The project is part of the WS 2022/2023 iteration of the course <a href="https://www.medien.ifi.lmu.de/lehre/ws2223/omm/">Online Multimedia at LMU Munich</a><br>
+        <br>
+        While there is a beautiful frontend available, you can of course interact directly with the endpoints if you prefer staring at CLIs<br>
+        Following the most important GET endpoints for Meme Retrieval are explained.
       </p>
+      <section id="datafields">
+        <h2>Data Fields</h2>
+        <p>These are the data fields a meme is constructed out of. They are important later for sorting and filtering.</p>
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td>mediaID</td>
+            <td>mongoose.Schema.Types.ObjectId</td>
+            <td>ID of the associated media file</td>
+          </tr>
+          <tr>
+            <td>mediaURL</td>
+            <td>String</td>
+            <td>URL of the associated media file</td>
+          </tr>
+          <tr>
+            <td>title</td>
+            <td>String</td>
+            <td>Title of the meme</td>
+          </tr>
+          <tr>
+            <td>description</td>
+            <td>String</td>
+            <td>Description of the meme</td>
+          </tr>
+          <tr>
+            <td>creatorID</td>
+            <td>mongoose.Schema.Types.ObjectId</td>
+            <td>ID of the creator of the meme</td>
+          </tr>
+          <tr>
+            <td>creatorName</td>
+            <td>String</td>
+            <td>Name of the creator of the meme</td>
+          </tr>
+          <tr>
+            <td>updateDate</td>
+            <td>Date</td>
+            <td>Date the meme was last updated</td>
+          </tr>
+          <tr>
+            <td>privacy</td>
+            <td>String</td>
+            <td>Privacy setting for the meme: private, unlisted, or public</td>
+          </tr>
+          <tr>
+            <td>viewCount</td>
+            <td>Number</td>
+            <td>Number of views for the meme</td>
+          </tr>
+          <tr>
+            <td>votes</td>
+            <td>[voteSchema]</td>
+            <td>List of votes for the meme</td>
+          </tr>
+          <tr>
+            <td>score</td>
+            <td>Number</td>
+            <td>Score of the meme based on votes</td>
+          </tr>
+          <tr>
+            <td>commentCount</td>
+            <td>Number</td>
+            <td>Number of comments on the meme</td>
+          </tr>
+          <tr>
+            <td>comments</td>
+            <td>[commentSchema]</td>
+            <td>List of comments on the meme</td>
+          </tr>
+          <tr>
+            <td>background.mediaSource</td>
+            <td>String</td>
+            <td>Specifies the media source of the background image.</td>
+          </tr>
+          <tr>
+            <td>background.color</td>
+            <td>String</td>
+            <td>Specifies the background color of the image. Default value is #ffffff.</td>
+          </tr>
+          <tr>
+            <td>layers</td>
+            <td>[layerSchema]</td>
+            <td>An array of layers to be added to the image.</td>
+          </tr>
+        </table>
+      </section>
+      <section id="authentication">
+        <h2>Authentication</h2>
+        <p>
+          All of the following endpoints are available to unauthenticated users as well.<br>
+          In this case however, you will only see publicly available information.<br>
+          If you want to see and fetch your private memes as well, you will have to first do this:<br>
+          <ul>
+            <li><a href="#register">/api/user/register</a>: To register yourself as a user</li>
+            <li><a href="#login">/api/user/login</a>: To login with your registered account</li>
+            <li>Add the JSONWebToken, that you get back from the login as a queryParameter to any request, like this: ?jwt=...</li>
+          </ul>
+        </p>
+      </section>
       <section id="list memes">
         <h2>List Memes</h2>
-        <p>Returns a list of all the memes you are allowed to see, as limited by the query parameters and sorted accordingly.</p>
+        <p>
+          Returns a list of all the memes you are allowed to see, as limited by the query parameters and sorted accordingly.<br>
+          To actually view the meme please follow the link within the <a href="#datafields">field</a> mediaURL
+        </p>
         <table>
           <thead>
             <tr>
               <th>Endpoint</th>
               <th>Method</th>
               <th>Query Parameters</th>
-              <th>Description</th>
             </tr>
           </thead>
           <tbody>
@@ -76,40 +175,95 @@
               <td>/api/meme/list</td>
               <td>GET</td>
               <td>
-                limit (optional)<br>
-                lastId (optional)<br>
-                sortBy (optional)<br>
-                sortDir (optional)<br>
-                filterBy (optional)<br>
-                filterOperator (optional)<br>
-                filterValue (optional)
+                <ul>
+                  <li>limit (optional): The amount of results to receive. No limit is ALL memes!<br></li>
+                  <li>lastId (optional): The ObjectId of the last previous meme after which this list shall begin<br></li>
+                  <li>sortBy (optional): The <a href="#datafields">field</a> name to sort this list by<br></li>
+                  <li>sortDir (optional): The direction to sort this list by (either 1 or -1)<br></li>
+                  <li>filterBy (optional): The <a href="#datafields">field</a> name to filter this list by<br></li>
+                  <li>filterOperator (optional): The operator to filter this list with (e.g. $gt $gte $lt $lte)<br></li>
+                  <li>filterValue (optional): The value to apply the filter operator to<br></li>
+                  <li>published (optional): Whether you want to see only published memes (true / false)<br></li>
+                  <li>jwt (optional): Your JSONWebToken
+                </ul>
               </td>
-              <td>Get a list of memes, limited by parameters and sorted accordingly.</td>
             </tr>
           </tbody>
         </table>
       </section>
-      <h2>Total Count</h2>
-      <p>Returns the total count of memes.</p>
-      <table>
-        <thead>
-          <tr>
-            <th>Endpoint</th>
-            <th>Method</th>
-            <th>Parameters</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>/total</td>
-            <td>GET</td>
-            <td></td>
-            <td>Get the total count of memes.</td>
-          </tr>
-        </tbody>
-      </table>
-    
+      <section id="total count">
+        <h2>Total count</h2>
+        <p>Returns the total count of all the memes you are allowed to see.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Method</th>
+              <th>Query Parameters</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>/api/meme/total</td>
+              <td>GET</td>
+              <td>jwt (optional): Your JSONWebToken</td>
+            <tr>
+          </tbody>
+        </table>  
+      </section>
+      <section id="specific meme">
+        <h2>Specific Meme</h2>
+        <p>
+          Get the meme with the specified id (if it exists)<br>
+          To get this ID please use the <a href="#list memes">list</a> with your search parameters<br>
+          To actually view the meme please follow the link within the <a href="#datafields">field</a> mediaURL
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Method</th>
+              <th>Query Parameters</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>/api/meme/:id</td>
+              <td>GET</td>
+              <td>jwt (optional): Your JSONWebToken</td>
+            <tr>
+          </tbody>
+        </table> 
+      </section>
+      <section id="random meme">
+        <h2>Random Meme</h2>
+        <p>Get a random Meme you are allowed to see</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Method</th>
+              <th>Query Parameters</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>/api/meme/random</td>
+              <td>GET</td>
+              <td>
+                <ul>
+                  <li>filterBy (optional): The <a href="#datafields">field</a> name to filter this list by<br></li>
+                  <li>filterOperator (optional): The operator to filter this list with (e.g. $gt $gte $lt $lte)<br></li>
+                  <li>filterValue (optional): The value to apply the filter operator to<br></li>
+                  <li>jwt (optional): Your JSONWebToken
+                </ul>
+              </td>
+            <tr>
+          </tbody>
+        </table> 
+      </section>
+      <section id="list memes">
+      </section>
     </main>
   </body>
 </html>
