@@ -64,7 +64,6 @@ router.get('/random', async (req, res) => {
 })
 
 // Get the meme with the specified id (if it exists)
-// ToDo: Auth (privacy || isAdmin || isCreator)
 router.get('/:id', async (req, res) => {
     try {
         console.log('Getting meme with id: ' + req.params.id) // Debugging
