@@ -1,1 +1,4 @@
-<h1>User</h1>
+<script>
+	import UserPage from "../lib/Profile/UserPage.svelte";
+</script>
+<UserPage />
