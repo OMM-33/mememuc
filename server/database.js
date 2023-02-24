@@ -171,7 +171,8 @@ async function getMemeById(id, res) {
 }
 
 // Returns the Id of a random meme
-async function getRandomMemeId(userId=null) {
+// Old and currently unused
+async function getRandomMemeId(userId=null, filterBy=null, filterOperator=null, filterValue=null) {
     console.log(userId)
     // Build the filter using our helperFunction
     const filter = await buildFilter(userId)
@@ -184,6 +185,7 @@ async function getRandomMemeId(userId=null) {
     // ... $project: allows us to only receive the Id (as nothing else is needed). 
     const [{_id: randomMemeId}] = await Meme.aggregate([
         {$match: filter},
+        {$sample: {size: 1}},
         {$project: {_id: 1}}
     ])
 
@@ -191,7 +193,7 @@ async function getRandomMemeId(userId=null) {
 }
 
 // Get the meme after / before this one according to the specified query params
-// ToDo Auth
+// Old and currently unused
 async function getAdjacentMemeId(currentId, sortBy, direction){
     // Get the current value of the field to sort by
     const {[sortBy]: currentValue} = await Meme.findById(ObjectId(currentId), {[sortBy]: 1})
