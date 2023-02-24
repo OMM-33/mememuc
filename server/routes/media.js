@@ -66,7 +66,7 @@ router.post('/', database.upload.single('mediaFile'), async (req, res) => {
         // Abort if user unauthorized.
         if (!req.userData) {
             // Revoke the file upload
-            database.deleteMediaById(oid, metadata=false)
+            await database.deleteMediaById(oid, false)
             console.log('... and removed it again, due to missing user authentication.')
             res.status(401).send('You need to be logged in to upload media files.')
             return
@@ -74,8 +74,8 @@ router.post('/', database.upload.single('mediaFile'), async (req, res) => {
 
         const metadata = {
             mediaID: oid,
-            creatorID: userData._id,
-            creatorName: userData.name,
+            creatorID: req.userData._id,
+            creatorName: req.userData.name,
             privacy: req.body.privacy || 'public',
             isTemplate: req.body.isTemplate !== 'false',
             dataType: req.file.contentType

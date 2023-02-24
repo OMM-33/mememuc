@@ -386,6 +386,7 @@ async function saveMediaMetadata(metadata){
     const media = new Media({
         _id: metadata.mediaID,
         creatorID: metadata.creatorID,
+        creatorName: metadata.creatorName,
         creationDate: Date.now(),
         privacy: metadata.privacy,
         isTemplate: metadata.isTemplate,

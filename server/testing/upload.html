@@ -8,19 +8,38 @@
 <body>
   
  <!-- SINGLE FILE -->
+ <form action="/api/media" enctype="multipart/form-data" method="POST"> 
+  <input type="file" name="mediaFile" />
+  <label for="jwt">Your JWT:</label>
+  <input type="text" name="jwt" id="jwt" />
+  <input type="submit" value="Upload a file"/>
+</form>
+<!-- Without auth
 <form action="/api/media" enctype="multipart/form-data" method="POST"> 
    <input type="file" name="mediaFile" />
    <input type="submit" value="Upload a file"/>
-</form>
-<!-- MULTIPLE FILES
-<form action="/uploadmultiple"  enctype="multipart/form-data" method="POST">
+</form> -->
+<!-- MULTIPLE FILES -->
+<!--<form action="/uploadmultiple"  enctype="multipart/form-data" method="POST">
   Select images: <input type="file" name="myFiles" multiple>
   <input type="submit" value="Upload your files"/>
-</form>
-  PHOTO
-<form action="/uploadphoto" enctype="multipart/form-data" method="POST"> 
+</form>-->
+<!-- PHOTO -->
+<!--<form action="/uploadphoto" enctype="multipart/form-data" method="POST"> 
   <input type="file" name="myImage" accept="image/*" />
   <input type="submit" value="Upload Photo"/>
-</form>
+</form>-->
+<script>
+  const form = document.querySelector('form')
+  const jwtInput = document.querySelector('#jwt')
+
+  form.addEventListener('submit', (event) => {
+     event.preventDefault()
+     const jwt = jwtInput.value
+     const actionUrl = `/api/media?jwt=${jwt}`
+     form.action = actionUrl
+     form.submit()
+  })
+</script>
 </body>
-</html>-->
+</html>
