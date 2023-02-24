@@ -20,7 +20,7 @@ const Meme = require('./models/meme')
 const {Layer} = require('./models/layer')
 const {Media} = require('./models/media')
 const {Comment} = require('./models/comment')
-// const Vote = require('./models/vote')
+const {Vote} = require('./models/vote')
 const User = require('./models/user')
 
 // Use this line if you want to use the memory database instead of the persistent local database. (Needed for final submission.)
@@ -226,6 +226,7 @@ async function updateMeme(id, meme) {
     return updatedMeme
 }
 
+// Posts a comment to a meme
 async function postComment(memeId, userId, userName, text){
     // Create the comment according to the schema
     const comment = new Comment({
@@ -243,6 +244,42 @@ async function postComment(memeId, userId, userName, text){
     // Add comment and increment commentCount
     meme.comments.push(comment)
     meme.commentCount++
+
+    const updatedMeme = await meme.save()
+    return updatedMeme
+}
+
+// Casts a vote on a meme
+async function castVote(memeId, userId, userName, voteValue){
+    
+    // Create the vote according to the schema
+    const vote = new Vote({
+        creatorID: ObjectId(userId),
+        creatorName: userName,
+        creationDate: Date.now(),
+        value: voteValue
+    })
+
+    // Find the meme
+    const meme = await Meme.findById(ObjectId(memeId))
+
+    if (!meme) { throw new Error(`Meme with ID ${memeId} not found`) }
+
+    // First check if there already is a vote with this userId:
+    // If there is, the following function will return the index of it. If there isn't, it will be -1.
+    const voteIndex = meme.votes.findIndex((v) => v.creatorID.equals(userId))
+
+    if (voteIndex === -1) {
+        // No votes where found, thus add the vote as new
+        meme.votes.push(vote)
+        meme.score += voteValue
+
+    } else {
+        // A previous vote was found, therefore we update it (and the score).
+        const oldVote = meme.votes[voteIndex].value
+        meme.votes[voteIndex] = vote
+        meme.score += (voteValue - oldVote)
+    }
 
     const updatedMeme = await meme.save()
     return updatedMeme
@@ -379,6 +416,7 @@ module.exports = {
   saveMeme,
   updateMeme,
   postComment,
+  castVote,
   listMedia,
   getMediaById,
   getMediaIdOfMemeId,

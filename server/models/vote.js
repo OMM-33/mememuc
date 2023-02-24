@@ -5,17 +5,25 @@ const voteSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
+    creatorName: {
+        type: String,
+        required: true
+    },
     creationDate: {
         type: Date,
         required: true,
         default: Date.now
     },
-    positive: {
-        type: Boolean,
+    value: {
+        type: Number,
+        enum: [-1, 1],
         required: true,
-        default: true
+        default: 1
     }
 })
 
-// module.exports = mongoose.model('Vote', voteSchema)
-module.exports = voteSchema
+Vote = mongoose.model('Vote', voteSchema)
+module.exports = {
+    Vote,
+    voteSchema
+}

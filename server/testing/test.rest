@@ -54,6 +54,24 @@ GET http://localhost:3000/api/meme/random
 
 ###
 
+POST http://localhost:3000/api/meme/63f81e15765e46f4127933be/comment?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4MWYwNzhmMDdhZjY1MjRiYjlmMGUiLCJuYW1lIjoiQWxleGlpIiwiaWF0IjoxNjc3MjA1MjU5fQ.IqAIswTdJ1s0SE3ZxZBNjFuO6JSFiykn6cNTEASWEKU
+Content-Type: application/json
+
+{
+  "content": "Very funy"
+}
+
+###
+
+POST http://localhost:3000/api/meme/63f81e15765e46f4127933be/vote?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4MWYwNzhmMDdhZjY1MjRiYjlmMGUiLCJuYW1lIjoiQWxleGlpIiwiaWF0IjoxNjc3MjA1MjU5fQ.IqAIswTdJ1s0SE3ZxZBNjFuO6JSFiykn6cNTEASWEKU
+Content-Type: application/json
+
+{
+  "value": "funy"
+}
+
+###
+
 POST http://localhost:3000/api/user/register
 Content-Type: application/json
 
