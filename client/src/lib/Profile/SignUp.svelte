@@ -3,8 +3,6 @@
 	import { push } from "svelte-spa-router";
 	import { buildURL } from "../../api.js";
 
-	let userValue;
-	let email;
 	let password;
 	let confirmPassword;
 	let name;
