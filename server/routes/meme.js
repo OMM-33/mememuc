@@ -64,23 +64,27 @@ router.get('/random', async (req, res) => {
 })
 
 // Get the meme with the specified id (if it exists)
-// TODO: Auth (privacy || isAdmin || isCreator)
+// ToDo: Auth (privacy || isAdmin || isCreator)
 router.get('/:id', async (req, res) => {
-    console.log('Getting meme with id: ' + req.params.id) // Debugging
-    let meme
     try {
-        meme = await database.getMemeById(req.params.id, res)
+        console.log('Getting meme with id: ' + req.params.id) // Debugging
+        
+        // Get userId if userData exists. Otherwise set it to null
+        const userId = req.userData ? req.userData._id : null
+
+        const meme = await database.getMemeById(req.params.id, userId)
+        
+        if (!meme) {
+            // No meme with this id was found
+            res.status(404).send('Meme Not Found')
+        } else {
+            // Meme successfully found. Return it for further handling.
+            // console.log('This meme was found:\n' + meme)
+            res.json(meme)
+        }
     } catch (err) {
         console.error('Failed retrieving meme from database, due to:\n' + err)
         res.status(500).send('Internal Server Error: ' + err.message)
-    }
-    if (!meme) {
-        // No meme with this id was found
-        res.status(404).send('Meme Not Found')
-    } else {
-        // Meme successfully found. Return it for further handling.
-        // console.log('This meme was found:\n' + meme)
-        res.json(meme)
     }
 })
 
@@ -170,6 +174,7 @@ router.patch('/:id', async (req, res) => {
         // Parse meme from frontend into database compatible format
         const parsedMeme = parseMeme(req.userData, req.body, req.headers.host)
         // Before updating save the Id of the old media representation of the meme
+        // Seems to sometimes not find the old media correctly // ToDo: fix (non-critical)
         const oldMediaId = await database.getMediaIdOfMemeId(req.params.id)
         // Save meme
         const updatedMeme = await database.updateMeme(req.userData, req.params.id, parsedMeme)
@@ -225,10 +230,8 @@ router.post('/:id/vote', async (req, res) => {
     }
 })
 
-// Delete meme
-router.delete('/:id', (req, res) => {
-
-})
+// Delete meme (Future ToDo)
+// router.delete('/:id', (req, res) => {})
 
 // ####################
 // # Helper functions #

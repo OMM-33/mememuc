@@ -96,7 +96,7 @@ async function buildFilter(userId=null, lastId=null, sortBy='updateDate', sortDi
         filter[sortBy] = sortDir === -1 ? {$lt: previousMeme[sortBy]} : {$gt: previousMeme[sortBy]}
     }
 
-    console.log(JSON.stringify(filter)) // Debugging
+    // console.log(JSON.stringify(filter)) // Debugging
     return filter
 }
 
@@ -151,24 +151,32 @@ async function countMemes(userId=null){
     return await Meme.countDocuments(filter)
 }
 
-// Function that fetches one meme from the database as specified by its unique ID and sends it to the client.
+// Function that fetches one meme from the database as specified by its unique ID and sends it to the client if he has the authorization for it.
 // This ID can be found separately by searching the meme database or is returned upon saving a meme.
-// IMO suboptimal practice to handle the response here, due to separation of concerns. Future TODO: Pull response back to routing.
-async function getMemeById(id, res) {
-    // Convert id string to ObjectId if possible
-    let oid
-    try { oid = ObjectId(id) }
-    catch (err) {
-        res.status(400).send(`ObjectId "${id}" is not valid. It must be a string of 12 bytes or a string of 24 hex characters or an integer.`)
-        return
-    }
+// userId is required to check auth
+async function getMemeById(memeId, userId=null) {
+    // Convert id to ObjectId
+    const memeOId = ObjectId(memeId)
+
     // Lookup meme id in database and return it. Error handling is to be done wherever called!
-    return await Meme.findByIdAndUpdate(
-        oid, // the ID of the meme
+    const meme = await Meme.findByIdAndUpdate(
+        memeOId, // the ObjectId of the meme
         { $inc: { viewCount: 1 } }, // increment the viewCount by 1
         { new: true } // finally return the updated object instead of the original
     )
     
+    if (!meme) {
+        return null
+    }
+
+    // If the meme is private and the user is not the memes creator do not send
+    if ((meme.privacy === 'private')){
+        if(meme.creatorID != userId) {
+            throw new Error('The meme is private and the requesting user is not it\'s creator')
+        }
+    }
+
+    return meme    
 }
 
 // Returns the Id of a random meme
