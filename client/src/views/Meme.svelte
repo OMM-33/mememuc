@@ -77,7 +77,14 @@
 		}
 	}
 
-	updateMemes();
+	(async () => {
+		// If we don't have all public memes cached, fetch them all once.
+		// This should be accurate enough for the statistics instead of
+		// always fetching EVERY meme when a single view is loaded.
+		if ($memes.size < await Meme.getCount()) {
+			updateMemes();
+		}
+	})();
 
 	let memesArray = [];
 	$: {
