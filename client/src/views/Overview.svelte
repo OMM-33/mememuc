@@ -92,7 +92,7 @@
 		</select>
 	</div>
 	<div class="stats-toggle">
-		<Button on:click={() => statsVisible = !statsVisible}>
+		<Button on:click={() => statsVisible = !statsVisible} data-sc="stats">
 			📉 {statsVisible ? "Hide" : "Show"} Statistics
 		</Button>
 	</div>

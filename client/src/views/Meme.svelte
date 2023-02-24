@@ -136,16 +136,16 @@
 {#if meme}
 	<div class="meme">
 		<div class="slideshow">
-			<Button on:click={() => switchMeme("previous")}>
+			<Button on:click={() => switchMeme("previous")} data-sc="previous" data-sc-dir="bottom">
 				<span class="pointing-hand">👈</span>
 			</Button>
-			<Button on:click={toggleAutoplay}>
+			<Button on:click={toggleAutoplay} data-sc={autoplay ? "pause" : "play"} data-sc-dir="bottom">
 				{autoplay ? "⏸️" : "▶️"}
 			</Button>
-			<Button on:click={switchMemeRandom}>
+			<Button on:click={switchMemeRandom} data-sc="random" data-sc-dir="bottom">
 				🎲
 			</Button>
-			<Button on:click={() => switchMeme("next")}>
+			<Button on:click={() => switchMeme("next")} data-sc="next" data-sc-dir="bottom">
 				<span class="pointing-hand">👉</span>
 			</Button>
 		</div>
@@ -157,23 +157,29 @@
 			<div class="details">
 				{#if meme.privacy !== "private"}
 					<div class="score">
-						<Button
-							variant={meme.vote === 1 && "primary"}
-							rounded={["tl", "bl"]}
-							on:click={() => meme.toggleVote(1)}
-						>
-							<span class="vote up">🔼</span>
-						</Button>
-						<Button element="div" variant="noninteractive" rounded={[]}>
+						{#if $user.id}
+							<Button
+								variant={meme.vote === 1 && "primary"}
+								rounded={["tl", "bl"]}
+								on:click={() => meme.toggleVote(1)}
+								data-sc="vote up"
+							>
+								<span class="vote up">🔼</span>
+							</Button>
+						{/if}
+						<Button element="div" variant="noninteractive" rounded={$user.id ? [] : undefined}>
 							❤️ Score: {meme.score}
 						</Button>
-						<Button
-							variant={meme.vote === -1 && "primary"}
-							rounded={["tr", "br"]}
-							on:click={() => meme.toggleVote(-1)}
-						>
-							<span class="vote down">🔽</span>
-						</Button>
+						{#if $user.id}
+							<Button
+								variant={meme.vote === -1 && "primary"}
+								rounded={["tr", "br"]}
+								on:click={() => meme.toggleVote(-1)}
+								data-sc="vote down"
+							>
+								<span class="vote down">🔽</span>
+							</Button>
+						{/if}
 					</div>
 					<Button element="div" variant="noninteractive">
 						👁️ Views: {meme.views}
@@ -184,24 +190,24 @@
 					<Button element="div" variant="noninteractive">
 						📅 {meme.updateDate.toLocaleDateString("en-GB")}
 					</Button>
-					<Button on:click={share}>
+					<Button on:click={share} data-sc="share">
 						{shareButtonText}
 					</Button>
 				{/if}
 				{#if meme.privacy === "private" && meme.creatorID === $user.id}
-					<Button style="flex-grow: 1" on:click={() => push(`/meme/${meme.id}/edit`)}>
+					<Button style="flex-grow: 1" on:click={() => push(`/meme/${meme.id}/edit`)} data-sc="edit">
 						✏️ Edit
 					</Button>
 				{/if}
 			</div>
 			<div class="tts">
-				<Button on:click={() => meme.tts("title")}>
+				<Button on:click={() => meme.tts("title")} data-sc="read title">
 					📔 Read Title
 				</Button>
-				<Button on:click={() => meme.tts("captions")}>
+				<Button on:click={() => meme.tts("captions")} data-sc="read captions">
 					📰 Read Captions
 				</Button>
-				<Button on:click={() => meme.description ? meme.tts("description") : tts("This meeme has no description.")}>
+				<Button on:click={() => meme.description ? meme.tts("description") : tts("This meeme has no description.")} data-sc="read description">
 					📜 Read Description
 				</Button>
 			</div>
