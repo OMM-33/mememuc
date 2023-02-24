@@ -147,6 +147,23 @@ router.patch('/:id', async (req, res) => {
     }
 })
 
+// Posts a comment to the meme of the Id.
+router.post('/:id/comment', async (req, res) => {
+    // Abort if user unauthorized.
+    if (!req.userData) {
+        res.status(401).send('You need to be logged in to comment.')
+        return
+    }
+    const {_id, name} = req.userData
+    try {
+        const commentedMeme = await database.postComment(req.params.id, _id, name, req.body.content)
+        res.status(201).json(commentedMeme)
+    } catch (err) {
+        console.error('Commenting failed:\n' + err)
+        res.status(400).send('Commenting failed: ' + err.message)
+    }
+})
+
 // Delete meme
 router.delete('/:id', (req, res) => {
 

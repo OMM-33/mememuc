@@ -5,6 +5,10 @@ const commentSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
+    creatorName: {
+        type: String,
+        required: true
+    },
     creationDate: {
         type: Date,
         required: true,
@@ -16,5 +20,9 @@ const commentSchema = new mongoose.Schema({
     }
 })
 
-// module.exports = mongoose.model('Comment', commentSchema)
-module.exports = commentSchema
+
+Comment = mongoose.model('Comment', commentSchema)
+module.exports = {
+    Comment,
+    commentSchema
+}
