@@ -119,7 +119,7 @@ async function adjacentMeme(req, res, direction) {
             console.log(`There are no further memes for ${sortBy} ${direction} of ${req.params.id}`)
             res.status(404).send('No further memes in this direction.')
         } else {
-            const adjacentMemeId = meme[adjacentMemeIndex]._id
+            const adjacentMemeId = memes[adjacentMemeIndex]._id
             console.log(`Found the meme for ${sortBy} ${direction} of ${req.params.id}: ${adjacentMemeId}`)
             res.redirect(`../${adjacentMemeId}?jwt=${req.query.jwt}`);
         }
