@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Grp 33 MemeMuc REST API Documentation</title>
+    <style>
+      /* Basic styling for the page */
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        margin: 0;
+        padding: 0;
+      }
+      h1 {
+        font-size: 36px;
+        margin: 0;
+        padding: 20px;
+        text-align: center;
+      }
+      main {
+        margin: 20px;
+      }
+      table {
+        border-collapse: collapse;
+        margin: 20px 0;
+        width: 100%;
+      }
+      th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      a {
+        color: #007bff;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Grp 33 MemeMuc REST API Documentation</h1>
+    <main>
+      <p>This is a implementation of a RESTful API server establishing the backend for our "MemeMuc" Meme Generator project.</p>
+      <p>The project is part of the WS 2022/2023 iteration of the course <a href="https://www.medien.ifi.lmu.de/lehre/ws2223/omm/">Online Multimedia at LMU Munich</a></p>
+      <p>While there is a beautiful frontend available, you can of course interact directly with the endpoints if you prefer staring at CLIs</p>
+      <h2>Authentication</h2>
+      <p>
+        All of the following endpoints are available to unauthenticated users as well.</br>
+        In this case however, you will only see publicly available information.</br>
+        If you want to see and fetch your private memes as well, you will have to first do this:</br>
+        <ul>
+          <li><a href="#register">/api/user/register</a>: To register yourself as a user</li>
+          <li><a href="#login">/api/user/login</a>: To login with your registered account</li>
+          <li>Add the JSONWebToken, that you get back from the login as a queryParameter to any request, like this: ?jwt=...</li>
+        </ul>
+      </p>
+      <section id="list memes">
+        <h2>List Memes</h2>
+        <p>Returns a list of all the memes you are allowed to see, as limited by the query parameters and sorted accordingly.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Method</th>
+              <th>Query Parameters</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>/api/meme/list</td>
+              <td>GET</td>
+              <td>
+                limit (optional)<br>
+                lastId (optional)<br>
+                sortBy (optional)<br>
+                sortDir (optional)<br>
+                filterBy (optional)<br>
+                filterOperator (optional)<br>
+                filterValue (optional)
+              </td>
+              <td>Get a list of memes, limited by parameters and sorted accordingly.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <h2>Total Count</h2>
+      <p>Returns the total count of memes.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Endpoint</th>
+            <th>Method</th>
+            <th>Parameters</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>/total</td>
+            <td>GET</td>
+            <td></td>
+            <td>Get the total count of memes.</td>
+          </tr>
+        </tbody>
+      </table>
+    
+    </main>
+  </body>
+</html>

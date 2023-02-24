@@ -12,11 +12,11 @@ const database = require('../database')
 router.get('/list', async (req, res) => {
     try {
         // Get possible query parameters to adapt this search or use defaults
-        const {limit=null, lastId=null, sortBy='updateDate', sortDir=-1, filterBy=null, filterOperator=null, filterValue=null} = req.query
+        const {limit=null, lastId=null, sortBy='updateDate', sortDir=-1, filterBy=null, filterOperator=null, filterValue=null, published=false} = req.query
         // Get userId if userData exists. Otherwise set it to null
         const userId = req.userData ? req.userData._id : null
 
-        const memes = await database.listMemes(userId, limit, lastId, sortBy, sortDir, filterBy, filterOperator, filterValue)
+        const memes = await database.listMemes(userId, limit, lastId, sortBy, sortDir, filterBy, filterOperator, filterValue, published)
         res.status(200).json(memes)
     } catch (err) {
         console.error('Error listing memes:\n' + err)

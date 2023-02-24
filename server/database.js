@@ -68,9 +68,9 @@ const upload = multer({ storage })
 // These will then be exposed via exports and available to the API endpoints.
 
 // Builds a filter according to our retrieval design from parameters
-async function buildFilter(userId=null, lastId=null, sortBy='updateDate', sortDir=-1, filterBy=null, filterOperator=null, filterValue=null) {
+async function buildFilter(userId=null, lastId=null, sortBy='updateDate', sortDir=-1, filterBy=null, filterOperator=null, filterValue=null, published=false) {
     let filter = {}
-    if(userId){
+    if(userId && !published){
         // If a userId exists (i.e. the user is authenticated), we want all public memes AND all private und unlisted memes of this user.
         filter = {
             $or: [
@@ -117,12 +117,12 @@ async function buildFilter(userId=null, lastId=null, sortBy='updateDate', sortDi
  * @param filterOperator The operator to filter this list with
  * @param filterValue The value to apply the filter operator to
  */
-async function listMemes(userId=null, limit=null, lastId=null, sortBy='updateDate', sortDir=-1, filterBy=null, filterOperator=null, filterValue=null) {
+async function listMemes(userId=null, limit=null, lastId=null, sortBy='updateDate', sortDir=-1, filterBy=null, filterOperator=null, filterValue=null, published=false) {
     // Build the sorting
     const sort = {[sortBy]: sortDir}
 
     // Build the filter using our helperFunction
-    const filter = await buildFilter(userId, lastId, sortBy, sortDir, filterBy, filterOperator, filterValue)
+    const filter = await buildFilter(userId, lastId, sortBy, sortDir, filterBy, filterOperator, filterValue, published)
     // console.log(`
     // ${filterBy}
     // ${filterOperator}
