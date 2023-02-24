@@ -1,4 +1,4 @@
-# MemeMuc
+# MemeMuc (Group 33)
 
 ## ℹ️ About
 Meme generator (bonus project of LMU Munich course OMM WS22/23)
@@ -16,7 +16,8 @@ Meme generator (bonus project of LMU Munich course OMM WS22/23)
 1. In order for the [MemeMuc Template](https://github.com/mimuc/mememuc-template) to be able to run `mongorestore mongodb://127.0.0.1:65535 --db omm-ws2223 data` as specified within `./mongoserver/package.json` you need to have a local installation of MongoDB. The community edition suffices. It can be downloaded in the [MongoDB download center](https://www.mongodb.com/try/download/community).
 2. Finally you will just need to run `cd mememuc-launcher && npm run installall && npm start`
 
-## 📦 Used Packages
+## 📦 Used Packages (Client)
+### ↪ View the [Serverside README](server/README.md) for backend packages.
 ### Development
 | Package | License | Use |
 |:--- |:--- |:--- |
