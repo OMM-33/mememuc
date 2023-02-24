@@ -40,11 +40,13 @@
 		});
 
 		for (const element of elements) {
-			const name = element.dataset.sc;
+			const { sc: name, scDir: placement } = element.dataset;
 			commands.set(name, { element, callback: defaultCallback });
+			console.log(placement)
 
 			tippys.push(tippy(element, {
 				content: `“${name}”`,
+				placement,
 				hideOnClick: false,
 				showOnCreate: true,
 				trigger: "manual",
@@ -76,7 +78,7 @@
 			running = true;
 			updateCommands();
 			observer.observe(rootEl, {
-				subtree: true, childList: true, attributes: true, attributeFilter: ["data-sc"],
+				subtree: true, childList: true, attributes: true, attributeFilter: ["data-sc", "data-sc-dir"],
 			});
 		};
 		recognition.onend = () => {
