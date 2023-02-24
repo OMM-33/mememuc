@@ -108,17 +108,19 @@ async function adjacentMeme(req, res, direction) {
         // Get all possible memes for this user with the specified parameters
         const memes = await database.listMemes(userId, limit, lastId, sortBy, sortDir, filterBy, filterOperator, filterValue)
 
-        // Find the position of the current meme in the array
+        // Find the index of the current meme in the array
+        // Find the index of the meme with the specified _id
+        const currentMemeIndex = memes.findIndex(meme => meme._id.toString() === req.params.id)
         
         // Return a redirect of the next / previous meme in the array if it exists. 404 otherwise
-
-
-        if(!result) { // No adjacent meme in this direction was found. The current meme seems to be the last in the chain of these values.
-            console.log(`There are no further memes for ${sortBy} ${direction} ${req.params.id}`)
+        const adjacentMemeIndex = currentMemeIndex + 1 // Always +1 as decision if next / previous was already accounted for above
+        if(adjacentMemeIndex >= memes.length || adjacentMemeIndex < 0) {
+            // No adjacent meme in this direction exists for this user. The current meme seems to be the last in the chain for these parameters.
+            console.log(`There are no further memes for ${sortBy} ${direction} of ${req.params.id}`)
             res.status(404).send('No further memes in this direction.')
         } else {
-            const {_id: adjacentMemeId} = result
-            console.log(`Found the meme for ${sortBy} ${direction} ${req.params.id}: ${adjacentMemeId}`)
+            const adjacentMemeId = meme[adjacentMemeIndex]._id
+            console.log(`Found the meme for ${sortBy} ${direction} of ${req.params.id}: ${adjacentMemeId}`)
             res.redirect(`../${adjacentMemeId}?jwt=${req.query.jwt}`);
         }
     } catch (err) {
