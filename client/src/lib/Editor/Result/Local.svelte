@@ -1,6 +1,7 @@
 <script>
 	import { onDestroy, onMount, createEventDispatcher } from "svelte";
 	import { compressImage, mimeToFileType } from "../../../util";
+	import { user } from "../../../auth";
 	import Media from "../../../models/Media";
 
 	import Button from "../../Button.svelte";
@@ -46,14 +47,20 @@
 		<img src={media.src} />
 		<div class="controls">
 			<div class="row">
-				<Button
-					variant="primary"
-					style="flex-grow: 1"
-					on:click={() => dispatch("save")}
-					data-sc="save"
-				>
-					✔️ {media.id ? "Update in Profile" : "Save in Profile"}
-				</Button>
+				{#if $user.id}
+					<Button
+						variant="primary"
+						style="flex-grow: 1"
+						on:click={() => dispatch("save")}
+						data-sc="save"
+					>
+						✔️ {media.id ? "Update in Profile" : "Save in Profile"}
+					</Button>
+				{:else}
+					<p>
+						<i>You must be <a href="#/login">logged in</a> to upload this meme.</i>
+					</p>
+				{/if}
 			</div>
 			<div class="row">
 				<div>

@@ -29,6 +29,8 @@
 		uncompressedBlob = $meme.blob;
 		$meme.updateBlob(blob);
 		compressed = true;
+
+		console.log($meme)
 	});
 
 	onDestroy(() => {
@@ -64,7 +66,7 @@
 				<div class="row" style:flex-grow="3">
 					<fieldset style:margin-bottom="auto">
 						<legend>Visibility</legend>
-						{#each privacyLevels as { id, label, icon }}
+						{#each Object.values(privacyLevels) as { id, label, icon }}
 							<div>
 								<label>
 									<input

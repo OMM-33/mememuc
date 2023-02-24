@@ -10,7 +10,7 @@
 		<h3 class="title">{$meme.title}</h3>
 		<img src={$meme.src} />
 	</a>
-	<div class="info">
+	<div class="info" class:private={$meme.privacy === "private"}>
 		<Button
 			variant={$meme.vote === 1 && "primary"}
 			on:click={() => $meme.toggleVote(1)}
@@ -32,6 +32,10 @@
 		display: flex;
 		justify-content: space-evenly;
 		margin-top: 1em;
+	}
+
+	.info.private {
+		visibility: hidden;
 	}
 
 	img {

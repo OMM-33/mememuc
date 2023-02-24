@@ -1,7 +1,7 @@
 <script>
 	import Button from "../Button.svelte";
 	import { push } from "svelte-spa-router";
-	import { buildURL } from "../../api.js";
+	import { buildURL, jsonHeaders } from "../../api.js";
 	import Error from "../Error.svelte";
 
 	let password;
@@ -13,7 +13,7 @@
 
 	async function handleSignUp() {
 		if (!name){
-			onError("please enter your username");
+			onError("Please enter your username.");
 			return;
 		}
 		if (!password){
@@ -25,12 +25,12 @@
 			return;
 		}
 		if (password !== confirmPassword){
-			onError("Passwords must be same.");
+			onError("Passwords must be the same.");
 			return;
 		}
 
 		const res = await fetch(buildURL("/api/user/register"), {
-			headers: { "Content-Type": "application/json" },
+			headers: jsonHeaders,
 			method: "POST",
 			body: JSON.stringify({ name: name, password: password }),
 		});

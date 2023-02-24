@@ -2,7 +2,7 @@
 	import Button from "../Button.svelte";
 	import { push } from "svelte-spa-router";
 	import { buildURL } from "../../api.js";
-	import { jwt } from "../../auth.js";
+	import { loginUser } from "../../auth.js";
 	import Error from "../Error.svelte";
 
 	let username;
@@ -27,7 +27,8 @@
 			body: JSON.stringify({ name: username, password: password }),
 		});
 		if (res.ok){
-			jwt.set((await res.json()).token);
+			const { token: jwt, userId: id, userName: name } = await res.json();
+			loginUser({ jwt, id, name });
 			await push("#/user");
 		} else {
 			onError(`${await res.text()}` + ". Please try again.");
