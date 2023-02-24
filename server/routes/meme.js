@@ -117,7 +117,7 @@ async function adjacentMeme(req, res, direction) {
         
         // Return a redirect of the next / previous meme in the array if it exists. 404 otherwise
         const adjacentMemeIndex = currentMemeIndex + 1 // Always +1 as decision if next / previous was already accounted for above
-        if(adjacentMemeIndex >= memes.length || adjacentMemeIndex < 0) {
+        if(adjacentMemeIndex >= memes.length) {
             // No adjacent meme in this direction exists for this user. The current meme seems to be the last in the chain for these parameters.
             console.log(`There are no further memes for ${sortBy} ${direction} of ${req.params.id}`)
             res.status(404).send('No further memes in this direction.')

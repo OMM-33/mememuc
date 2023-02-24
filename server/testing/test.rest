@@ -30,8 +30,11 @@ GET http://localhost:3000/api/meme/list?limit=5&filterBy=viewCount&filterOperato
 
 ###
 
-GET http://localhost:3000/api/meme/list?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4MWYwNzhmMDdhZjY1MjRiYjlmMGUiLCJuYW1lIjoiQWxleGlpIiwiaWF0IjoxNjc3MjA1MjU5fQ.IqAIswTdJ1s0SE3ZxZBNjFuO6JSFiykn6cNTEASWEKU
+GET http://localhost:3000/api/meme/list?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4ZWRjZTMxYTA4ZDc1M2I4MDIwNjEiLCJuYW1lIjoiQWxleDIiLCJpYXQiOjE2NzcyNTgxOTh9.gi84vVzYAPhi-J5m5bn82jYSu0X7-mHjao0os1ZloPo
+###
+GET http://localhost:3000/api/meme/63f8ee4831a08d753b802067?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4ZWRjYTMxYTA4ZDc1M2I4MDIwNWYiLCJuYW1lIjoiQWxleCIsImlhdCI6MTY3NzI1ODI0NX0.mjcMMURc83bNymyCnRFKtZ2xVNfLsvQ24j-5_PPF7hw
 
+###
 
 
 ###
@@ -52,7 +55,7 @@ GET http://localhost:3000/api/meme/random
 
 
 ###
-GET http://localhost:3000/api/meme/63f8d3eb85cab9eeb72702cf/previous?sortBy=title?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4ZWRjZTMxYTA4ZDc1M2I4MDIwNjEiLCJuYW1lIjoiQWxleDIiLCJpYXQiOjE2NzcyNTgxOTh9.gi84vVzYAPhi-J5m5bn82jYSu0X7-mHjao0os1ZloPo
+GET http://localhost:3000/api/meme/63f8ee7931a08d753b802085/previous?sortBy=title&sortDir=1?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4ZWRjZTMxYTA4ZDc1M2I4MDIwNjEiLCJuYW1lIjoiQWxleDIiLCJpYXQiOjE2NzcyNTgxOTh9.gi84vVzYAPhi-J5m5bn82jYSu0X7-mHjao0os1ZloPo
 ###
 
 GET http://localhost:3000/api/meme/63f8d3eb85cab9eeb72702cf
@@ -82,7 +85,7 @@ POST http://localhost:3000/api/meme/63f8ee7931a08d753b802085/vote?jwt=eyJhbGciOi
 Content-Type: application/json
 
 {
-  "value": "1"
+  "value": "0"
 }
 
 ###
