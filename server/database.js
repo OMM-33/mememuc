@@ -142,10 +142,22 @@ async function listMemes(userId=null, limit=null, lastId=null, sortBy='updateDat
 
 
 
-// Returns the total count of memes
-// ToDo: Only count memes user has auth for
-async function countMemes(){
-    return await Meme.countDocuments()
+// Returns the total count of memes a user can see. If no user is specified, counts public memes.
+async function countMemes(userId=null){
+    let filter = {}
+    if(userId){
+        // If a userId exists (i.e. the user is authenticated), we want all public memes AND all private und unlisted memes of this user.
+        filter = {
+            $or: [
+                { creatorId: ObjectId(userId), privacy: { $in: ['private', 'unlisted'] } },
+                { privacy: 'public' }
+            ]
+        }
+    } else {
+        // If the userId doesn't exist we only want public memes.
+        filter = { privacy: 'public' }
+    }
+    return await Meme.countDocuments(filter)
 }
 
 // Function that fetches one meme from the database as specified by its unique ID and sends it to the client.

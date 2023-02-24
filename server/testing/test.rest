@@ -30,7 +30,7 @@ GET http://localhost:3000/api/meme/list?limit=5&filterBy=viewCount&filterOperato
 
 ###
 
-GET http://localhost:3000/api/meme/total
+GET http://localhost:3000/api/meme/total?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4MWYwNzhmMDdhZjY1MjRiYjlmMGUiLCJuYW1lIjoiQWxleGlpIiwiaWF0IjoxNjc3MjA1MjU5fQ.IqAIswTdJ1s0SE3ZxZBNjFuO6JSFiykn6cNTEASWEKU
 
 ###
 
