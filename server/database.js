@@ -67,18 +67,80 @@ const upload = multer({ storage })
 // Below are all the functions required to interact with the database.
 // These will then be exposed via exports and available to the API endpoints.
 
+// Builds a filter according to our retrieval design from parameters
+async function buildFilter(userId=null, lastId=null, sortBy='updateDate', sortDir=-1, filterBy=null, filterOperator=null, filterValue=null) {
+    let filter = {}
+    if(userId){
+        // If a userId exists (i.e. the user is authenticated), we want all public memes AND all private und unlisted memes of this user.
+        filter = {
+            $or: [
+                { creatorId: ObjectId(userId), privacy: { $in: ['private', 'unlisted'] } },
+                { privacy: 'public' }
+            ]
+        }
+    } else {
+        // If the userId doesn't exist we only want public memes.
+        filter = { privacy: 'public' }
+    }
+
+    // If all additional filter params were given, we want to add these to the filter object 
+    if(filterBy && filterOperator && filterValue){
+        filter[filterBy] = {[filterOperator]: filterValue}
+    }
+
+    // If a lastId is specified, we want only objects that come after this according to 'sortBy'
+    if (lastId) {
+        const previousMeme = await Meme.findById(ObjectId(lastId))
+        // ... so we filter by the sortBy field, where every object is either lesser or greater than the perviousMeme.
+        // ... With the ternary operator we achieve the mapping of -1 -> $lt and 1 -> $gt
+        filter[sortBy] = sortDir === -1 ? {$lt: previousMeme[sortBy]} : {$gt: previousMeme[sortBy]}
+    }
+
+    return filter
+}
+
 //     %%%%%%%%%%%%%%%%%%%
 // ... % for meme access %
 //     %%%%%%%%%%%%%%%%%%%
 
-// Function that lists all memes in the database, that fit the given parameters, in the given order.
-// No parameters means list ALL memes.
-// TODO: Offer parameter for objects returned per request and offer follow up requests (like pages). Set this to a reasonable default.
-// TODO: Limiting parameters
-// TODO: Sorting
-async function listMemes() {
-    return await Meme.find()
+/** Function that lists all memes in the database, that fit the given parameters, in the given order.
+ *  No parameters means list ALL memes.
+ *  PLEASE do error handling wherever you call this!
+ * 
+ * @param userId The ObjectId of the user doing the search OR null if unauthenticated
+ * @param limit The amount of results to receive. Null is all memes!
+ * @param lastId The ObjectId of the last previous meme after which this list shall begin according to the specified params
+ * @param sortBy The field to sort this list by
+ * @param sortDir The direction to sort this list by
+ * @param filterBy The field to filter this list by
+ * @param filterOperator The operator to filter this list with
+ * @param filterValue The value to apply the filter operator to
+ */
+async function listMemes(userId=null, limit=null, lastId=null, sortBy='updateDate', sortDir=-1, filterBy=null, filterOperator=null, filterValue=null) {
+    // Build the sorting
+    const sort = {[sortBy]: sortDir}
+
+    // Build the filter using our helperFunction
+    const filter = await buildFilter(userId, lastId, sortBy, sortDir, filterBy, filterOperator, filterValue)
+    console.log(`
+    ${filterBy}
+    ${filterOperator}
+    ${filterValue}
+    ${filter}
+    `)
+    // Build the query 
+    const query = Meme.find(filter).sort(sort)
+
+    // If a limit was assigned, add it to the query
+    if (limit) {
+        query.limit(limit)
+    }
+
+    // Finally execute the query and return its result(s)
+    return await query.exec()
 }
+
+
 
 // Returns the total count of memes
 // ToDo: Only count memes user has auth for
