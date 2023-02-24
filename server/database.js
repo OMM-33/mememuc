@@ -144,19 +144,9 @@ async function listMemes(userId=null, limit=null, lastId=null, sortBy='updateDat
 
 // Returns the total count of memes a user can see. If no user is specified, counts public memes.
 async function countMemes(userId=null){
-    let filter = {}
-    if(userId){
-        // If a userId exists (i.e. the user is authenticated), we want all public memes AND all private und unlisted memes of this user.
-        filter = {
-            $or: [
-                { creatorId: ObjectId(userId), privacy: { $in: ['private', 'unlisted'] } },
-                { privacy: 'public' }
-            ]
-        }
-    } else {
-        // If the userId doesn't exist we only want public memes.
-        filter = { privacy: 'public' }
-    }
+    // Build the filter using our helperFunction
+    const filter = await buildFilter(userId)
+    
     return await Meme.countDocuments(filter)
 }
 
@@ -182,7 +172,7 @@ async function getMemeById(id, res) {
 
 // Returns the Id of a random meme
 // TODO only return Ids out of the memes that the user is allowed to see.
-async function getRandomMemeId() {
+async function getRandomMemeId(userId=null) {
     // Here we receive a random meme Id by destructuring the object we get from Meme.aggregate
     // ... for the aggregate function, that allows to group, filter, transform, etc. data, we use the following operators:
     // ... $sample: returns random item(s) form the aggregation - amount specified by size object
