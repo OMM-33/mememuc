@@ -74,7 +74,7 @@ async function buildFilter(userId=null, lastId=null, sortBy='updateDate', sortDi
         // If a userId exists (i.e. the user is authenticated), we want all public memes AND all private und unlisted memes of this user.
         filter = {
             $or: [
-                { creatorId: ObjectId(userId), privacy: { $in: ['private', 'unlisted'] } },
+                { creatorID: ObjectId(userId), privacy: { $in: ['private', 'unlisted'] } },
                 { privacy: 'public' }
             ]
         }
@@ -96,6 +96,7 @@ async function buildFilter(userId=null, lastId=null, sortBy='updateDate', sortDi
         filter[sortBy] = sortDir === -1 ? {$lt: previousMeme[sortBy]} : {$gt: previousMeme[sortBy]}
     }
 
+    console.log(JSON.stringify(filter)) // Debugging
     return filter
 }
 
