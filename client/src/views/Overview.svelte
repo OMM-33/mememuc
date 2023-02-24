@@ -9,8 +9,6 @@
 
 	let sortBy = "updateDate";
 	const filter = { type: "viewCount", amount: 0 };
-	$: console.log("sortBy", sortBy);
-	$: console.log("filter", filter);
 
 	let memesArray = [];
 	let showingAll = false;
