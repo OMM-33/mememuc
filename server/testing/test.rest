@@ -76,7 +76,7 @@ POST http://localhost:3000/api/user/register
 Content-Type: application/json
 
 {
-  "name": "Alexii",
+  "name": "Alex",
   "password": "hunter123"
 }
 
@@ -86,13 +86,13 @@ POST http://localhost:3000/api/user/login
 Content-Type: application/json
 
 {
-  "name": "Alexii",
+  "name": "Alex",
   "password": "hunter123"
 }
 
 ###
 
-POST http://localhost:3000/api/meme
+POST http://localhost:3000/api/meme?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2Y4YmYyYzY5ZTVlMTczMzAwODc2MTEiLCJuYW1lIjoiQWxleGlpIiwiaWF0IjoxNjc3MjQ2MjU5fQ.ZnqoLCoR4tI3XFD2Ch9fPZnV9q4uZM5K-aD2QjxPhbk
 Content-Type: application/json
 
 {
