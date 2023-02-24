@@ -154,13 +154,30 @@ router.post('/:id/comment', async (req, res) => {
         res.status(401).send('You need to be logged in to comment.')
         return
     }
-    const {_id, name} = req.userData
     try {
+        const {_id, name} = req.userData
         const commentedMeme = await database.postComment(req.params.id, _id, name, req.body.content)
         res.status(201).json(commentedMeme)
     } catch (err) {
         console.error('Commenting failed:\n' + err)
         res.status(400).send('Commenting failed: ' + err.message)
+    }
+})
+
+// Casts a vote to the meme of the Id.
+router.post('/:id/vote', async (req, res) => {
+    // Abort if user unauthorized.
+    if (!req.userData) {
+        res.status(401).send('You need to be logged in to vote.')
+        return
+    }
+    try {
+        const {_id, name} = req.userData
+        const votedMeme = await database.castVote(req.params.id, _id, name, req.body.value)
+        res.status(200).json(votedMeme)
+    } catch (err) {
+        console.error('Voting failed:\n' + err)
+        res.status(400).send('Voting failed: ' + err.message)
     }
 })
 
