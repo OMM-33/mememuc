@@ -1,7 +1,10 @@
 <script>
 	import { push } from "svelte-spa-router";
+	import { buildURL } from "../api";
 	import { logoutUser, user } from "../auth";
 	import Button from "./Button.svelte";
+
+	const apiHref = buildURL("/api", { useAuth: false }).href;
 
 	const onLogout = () => {
 		logoutUser();
@@ -17,6 +20,7 @@
 		{#if $user.id}
 			<a href="#/user/" data-sc="profile">My Profile</a>
 		{/if}
+		<a href={apiHref} data-sc="API">API Docs</a>
 	</div>
 	<div class="right">
 		{#if !$user.id}
