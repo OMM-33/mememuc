@@ -221,6 +221,9 @@
 			<div class="comment-section">
 				<h2>Comments</h2>
 				<div class="comments">
+					{#if meme.comments.length < 1}
+						<i>No comments yet.</i>
+					{/if}
 					{#each meme.comments as comment}
 						<Comment text={comment.content} name={comment.creatorName} date={comment.creationDate} />
 					{/each}
