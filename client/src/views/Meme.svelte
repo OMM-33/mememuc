@@ -8,21 +8,17 @@
 	import Comment from "../lib/View/Comment.svelte";
 	import Graph from "../lib/Graph.svelte";
 	import { onDestroy } from "svelte";
+	import { user } from "../auth";
 
 	export let params = {};
 
-	// We need the other memes for the statistics, but cached should be fine.
-	// So fetch only if the cache is empty:
-	if ($memes.size === 0) {
-		updateMemes();
-	}
-
 	// We cannot use the $ syntax to auto-subscribe our store, as it may be asynchronously loaded.
 	let meme;
-	$: (async () => {
-		const memeStore = $memes.get(params.id) || await Meme.get({ id: params.id });
-		memeStore.subscribe(value => meme = value);
-	})();
+	let memeStoreUnsub = $memes.get(params.id)?.subscribe(value => meme = value);
+	Meme.get({ id: params.id }).then(memeStore => {
+		if (memeStoreUnsub) memeStoreUnsub();
+		memeStoreUnsub = memeStore.subscribe(value => meme = value);
+	});
 
 	const shareText = "📲 Share";
 	let shareButtonText = shareText;
@@ -72,6 +68,8 @@
 			return false;
 		}
 	}
+
+	updateMemes();
 
 	let memesArray = [];
 	$: {
@@ -204,12 +202,14 @@
 			<h2>Comments</h2>
 			<div class="comments">
 				{#each meme.comments as comment}
-					<Comment text={comment.text} name={comment.name} />
+					<Comment text={comment.content} name={comment.creatorName} date={comment.creationDate} />
 				{/each}
 			</div>
-			<h3>Post a comment</h3>
-			<textarea bind:value={commentText} />
-			<Button on:click={submitComment}>Post Comment</Button>
+			{#if $user.id}
+				<h3>Post a comment</h3>
+				<textarea bind:value={commentText} />
+				<Button on:click={submitComment}>Post Comment</Button>
+			{/if}
 		</div>
 
 		<div class="graph">

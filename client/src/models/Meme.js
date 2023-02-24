@@ -3,6 +3,10 @@ import Media from "./Media";
 import { arrayMove, stripHTML } from "../util";
 import { buildURL, jsonHeaders } from "../api";
 import { tts } from "../speech";
+import { user as userStore } from "../auth";
+
+let user;
+userStore.subscribe(value => user = value);
 
 export const privacyLevels = {
 	public: { id: "public", label: "Public", icon: "🌐", description: "Post to public overview" },
@@ -40,7 +44,7 @@ export default class Meme extends Media {
 		this.score = score;
 		/** @type {-1 | 0 | 1} */
 		this.vote = vote;
-		/**@type {array} */
+		/**@type {{ id: string, creatorID: string, creatorName: string, creationDate: Date }} */
 		this.comments = comments;
 
 		this.background = background;
@@ -97,17 +101,39 @@ export default class Meme extends Media {
 	}
 
 	/** @param {-1 | 0 | 1} vote */
-	toggleVote(vote) {
+	async toggleVote(vote) {
 		const prevVote = this.vote;
-		if (prevVote === vote) this.vote = 0;
-		else this.vote = (vote >= 0) ? 1 : -1;
+		let newVote;
+		if (prevVote === vote) newVote = 0;
+		else newVote = (vote >= 0) ? 1 : -1;
 
+		const res = await fetch(buildURL(`api/meme/${this.id}/vote`), {
+			headers: jsonHeaders,
+			method: "POST",
+			body: JSON.stringify({ value: newVote }),
+		});
+		if (!res.ok) throw new Error(`${res.status} (${res.statusText}): ${await res.text()}`);
+
+		this.vote = newVote;
 		this.score += this.vote - prevVote;
 		this.notify();
 	}
 
-	addComment(text) {
-		this.comments.push({ name: "[AUTHOR]", text });
+	async addComment(text) {
+		if (!this.id) throw new Error(
+			"Cannot comment Meme as it has no id specified. Make sure it has been uploaded previously.",
+		);
+
+		const res = await fetch(buildURL(`api/meme/${this.id}/comment`), {
+			headers: jsonHeaders,
+			method: "POST",
+			body: JSON.stringify({ content: text }),
+		});
+		if (!res.ok) throw new Error(`${res.status} (${res.statusText}): ${await res.text()}`);
+
+		this.comments.push({
+			creatorID: user.id, creatorName: user.name, creationDate: new Date(), content: text,
+		});
 		this.notify();
 	}
 
@@ -135,10 +161,13 @@ export default class Meme extends Media {
 	 * @override
 	 **/
 	static fromJSON(json) {
+		// console.log(json)
 		const props = {
 			...json,
 			id: json._id,
 			src: json.mediaURL,
+			views: json.viewCount,
+			vote: json.votes.filter(({ creatorID }) => creatorID === user.id)?.[0]?.value || 0,
 			background: {
 				color: json.background.color,
 				media: json.background.mediaSource
@@ -163,9 +192,20 @@ export default class Meme extends Media {
 
 				return layer;
 			}),
+			comments: json.comments.map(comment => {
+				comment.creationDate = new Date(comment.creationDate);
+				return comment;
+			}),
 			updateDate: new Date(json.updateDate),
 		};
 		return new this(props);
+	}
+
+	static async getCount({ publicOnly = true } = {}) {
+		const res = await fetch(buildURL("api/meme/total", { useAuth: !publicOnly }));
+		if (!res.ok) throw new Error(`${res.status} (${res.statusText}): ${await res.text()}`);
+
+		return (await res.json()).totalMemes;
 	}
 
 	/**

@@ -1,10 +1,11 @@
 <script>
 	export let name;
+	export let date;
 	export let text;
 </script>
 
 <div class="comment">
-	<div class="name">{name}</div>
+	<div class="name">{name} <small>({date.toLocaleDateString("en-GB")})</small></div>
 	<div class="text">{text}</div>
 </div>
 <style>
