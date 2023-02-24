@@ -67,7 +67,7 @@ POST http://localhost:3000/api/meme/63f81e15765e46f4127933be/vote?jwt=eyJhbGciOi
 Content-Type: application/json
 
 {
-  "value": "funy"
+  "value": "1"
 }
 
 ###
