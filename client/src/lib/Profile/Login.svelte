@@ -3,17 +3,21 @@
 	import { push } from "svelte-spa-router";
 	import { buildURL } from "../../api.js";
 	import { jwt } from "../../auth.js";
+	import Error from "../Error.svelte";
 
 	let username;
 	let password;
 
+	let error = null;
+	const onError = detail => error = detail;
+
 	async function handleLogin() {
 		if (!username) {
-			alert("please enter your username");
+			onError("Please enter your username.");
 			return;
 		}
 		if (!password){
-			alert("please enter your password");
+			onError("Please enter your password.");
 			return;
 		}
 
@@ -23,12 +27,10 @@
 			body: JSON.stringify({ name: username, password: password }),
 		});
 		if (res.ok){
-			jwt.set(await res.json());
-			alert("Your login has been successfully completed.");
+			jwt.set((await res.json()).token);
 			await push("#/user");
 		} else {
-			alert("A problem occurred during login. please try again");
-			throw new Error(`${res.status} (${res.statusText}): ${await res.text()}`);
+			onError(`${await res.text()}` + ". Please try again.");
 		}
 	}
 </script>
@@ -50,12 +52,13 @@
 	}
 </style>
 
+<Error {error} />
 <form method="post">
 	<input class="form-field" type="text" bind:value={username} placeholder="Username" />
 	<br />
 	<input class="form-field" type="password" bind:value={password} placeholder="Password" />
 	<br />
-	<Button class="form-field" data-sc="Login" variant="primary" on:click={handleLogin}>Login</Button>
+	<Button variant="primary" data-sc="Login"  on:click={handleLogin}>Login</Button>
 </form>
 <p>
 	Don't have an account?
