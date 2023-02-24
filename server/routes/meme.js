@@ -15,6 +15,7 @@ router.get('/list', async (req, res) => {
         const {limit=null, lastId=null, sortBy='updateDate', sortDir=-1, filterBy=null, filterOperator=null, filterValue=null} = req.query
         // Get userId if userData exists. Otherwise set it to null
         const userId = req.userData ? req.userData._id : null
+
         const memes = await database.listMemes(userId, limit, lastId, sortBy, sortDir, filterBy, filterOperator, filterValue)
         res.status(200).json(memes)
     } catch (err) {
@@ -38,7 +39,7 @@ router.get('/total', async (req, res) => {
     }
 })
 
-// Get a random meme
+// Get a random meme you are allowed to see
 router.get('/random', async (req, res) => {
     try{
         // Get possible query parameters to adapt this search or use defaults
@@ -55,7 +56,7 @@ router.get('/random', async (req, res) => {
         // Redirect towards the GET path for this meme. 
         // Theoretically we could also straight up send the meme, but found it better for system resilience if memes are always fetched the same way. (Because of stats etc.)
         res.redirect(`${randomMemeId}?jwt=${req.query.jwt}`)
-        
+
     } catch (err) {
         console.error('Error getting random meme:\n'+err)
         res.status(500).send('Error getting random meme: '+err.message)
@@ -85,20 +86,33 @@ router.get('/:id', async (req, res) => {
 
 // Get the meme after this one according to the specified query params
 router.get('/:id/next', async (req, res) => {
-    await adjacentMeme(req, res, '$lt')
+    await adjacentMeme(req, res, 1)
 })
 
 // Get the meme before this one according to the specified query params
 router.get('/:id/previous', async (req, res) => {
-    await adjacentMeme(req, res, '$gt')
+    await adjacentMeme(req, res, -1)
 })
 
 // Actual implementation of the above
-// ToDO Auth!
+// Future ToDo: There should be a more efficient implementation without fetching the entire list of memes.
 async function adjacentMeme(req, res, direction) {
-    const sortBy = req.query.sortBy || 'updateDate' // Either sort by the field specified in query params or per default by updateDate (which is equal to publish date since published memes can no longer be updated)
     try {
-        const result = await database.getAdjacentMemeId(req.params.id, sortBy, direction)
+        // Get possible query parameters to adapt this search or use defaults
+        const {limit=null, lastId=null, sortBy='updateDate', filterBy=null, filterOperator=null, filterValue=null} = req.query
+        // SortDir is received separately as it is also influenced by direction
+        const sortDir = (req.query.sortDir || -1) * direction
+        // Get userId if userData exists. Otherwise set it to null
+        const userId = req.userData ? req.userData._id : null
+        
+        // Get all possible memes for this user with the specified parameters
+        const memes = await database.listMemes(userId, limit, lastId, sortBy, sortDir, filterBy, filterOperator, filterValue)
+
+        // Find the position of the current meme in the array
+        
+        // Return a redirect of the next / previous meme in the array if it exists. 404 otherwise
+
+
         if(!result) { // No adjacent meme in this direction was found. The current meme seems to be the last in the chain of these values.
             console.log(`There are no further memes for ${sortBy} ${direction} ${req.params.id}`)
             res.status(404).send('No further memes in this direction.')
@@ -152,7 +166,7 @@ router.patch('/:id', async (req, res) => {
     }
     try {
         // Parse meme from frontend into database compatible format
-        const parsedMeme = parseMeme(userData, req.body, req.headers.host)
+        const parsedMeme = parseMeme(req.userData, req.body, req.headers.host)
         // Before updating save the Id of the old media representation of the meme
         const oldMediaId = await database.getMediaIdOfMemeId(req.params.id)
         // Save meme
