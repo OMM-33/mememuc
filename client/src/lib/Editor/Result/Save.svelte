@@ -29,8 +29,6 @@
 		uncompressedBlob = $meme.blob;
 		$meme.updateBlob(blob);
 		compressed = true;
-
-		console.log($meme)
 	});
 
 	onDestroy(() => {
@@ -40,7 +38,11 @@
 
 	const onSave = async () => {
 		if ($meme.id) { // Meme is being edited
-			await $meme.patch();
+			try {
+				await $meme.patch();
+			} catch (error) {
+				console.info(error);
+			}
 		} else { // Meme is new
 			await $meme.post();
 			$memes.set($meme.id, $meme);
