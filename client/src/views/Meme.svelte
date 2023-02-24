@@ -14,11 +14,19 @@
 
 	// We cannot use the $ syntax to auto-subscribe our store, as it may be asynchronously loaded.
 	let meme;
-	let memeStoreUnsub = $memes.get(params.id)?.subscribe(value => meme = value);
-	Meme.get({ id: params.id }).then(memeStore => {
+	let memeStoreUnsub;
+	$: (async () => {
+		updateMeme(params.id);
+	})();
+
+	const updateMeme = (id) => {
 		if (memeStoreUnsub) memeStoreUnsub();
-		memeStoreUnsub = memeStore.subscribe(value => meme = value);
-	});
+		memeStoreUnsub = $memes.get(id)?.subscribe(value => meme = value);
+		Meme.get({ id }).then(memeStore => {
+			if (memeStoreUnsub) memeStoreUnsub();
+			memeStoreUnsub = memeStore.subscribe(value => meme = value);
+		});
+	};
 
 	const shareText = "📲 Share";
 	let shareButtonText = shareText;
@@ -140,40 +148,44 @@
 			<img src={meme.src} />
 
 			<div class="details">
-				<div class="score">
-					<Button
-						variant={meme.vote === 1 && "primary"}
-						rounded={["tl", "bl"]}
-						on:click={() => meme.toggleVote(1)}
-					>
-						<span class="vote up">🔼</span>
+				{#if meme.privacy !== "private"}
+					<div class="score">
+						<Button
+							variant={meme.vote === 1 && "primary"}
+							rounded={["tl", "bl"]}
+							on:click={() => meme.toggleVote(1)}
+						>
+							<span class="vote up">🔼</span>
+						</Button>
+						<Button element="div" variant="noninteractive" rounded={[]}>
+							❤️ Score: {meme.score}
+						</Button>
+						<Button
+							variant={meme.vote === -1 && "primary"}
+							rounded={["tr", "br"]}
+							on:click={() => meme.toggleVote(-1)}
+						>
+							<span class="vote down">🔽</span>
+						</Button>
+					</div>
+					<Button element="div" variant="noninteractive">
+						👁️ Views: {meme.views}
 					</Button>
-					<Button element="div" variant="noninteractive" rounded={[]}>
-						❤️ Score: {meme.score}
+					<Button element="div" variant="noninteractive" style="margin-left: auto">
+						👤 {meme.creatorName}
 					</Button>
-					<Button
-						variant={meme.vote === -1 && "primary"}
-						rounded={["tr", "br"]}
-						on:click={() => meme.toggleVote(-1)}
-					>
-						<span class="vote down">🔽</span>
+					<Button element="div" variant="noninteractive">
+						📅 {meme.updateDate.toLocaleDateString("en-GB")}
 					</Button>
-				</div>
-				<Button element="div" variant="noninteractive">
-					👁️ Views: {meme.views}
-				</Button>
-				<Button element="div" variant="noninteractive" style="margin-left: auto">
-					👤 [CREATOR]
-				</Button>
-				<Button element="div" variant="noninteractive">
-					📅 {meme.updateDate.toLocaleDateString("en-GB")}
-				</Button>
-				<Button on:click={share}>
-					{shareButtonText}
-				</Button>
-				<Button on:click={() => push(`/meme/${meme.id}/edit`)}>
-					✏️ Edit
-				</Button>
+					<Button on:click={share}>
+						{shareButtonText}
+					</Button>
+				{/if}
+				{#if meme.privacy === "private" && meme.creatorID === $user.id}
+					<Button style="flex-grow: 1" on:click={() => push(`/meme/${meme.id}/edit`)}>
+						✏️ Edit
+					</Button>
+				{/if}
 			</div>
 			<div class="tts">
 				<Button on:click={() => meme.tts("title")}>
@@ -198,80 +210,82 @@
 			</div>
 		</div>
 
-		<div class="comment-section">
-			<h2>Comments</h2>
-			<div class="comments">
-				{#each meme.comments as comment}
-					<Comment text={comment.content} name={comment.creatorName} date={comment.creationDate} />
-				{/each}
+		{#if meme.privacy !== "private"}
+			<div class="comment-section">
+				<h2>Comments</h2>
+				<div class="comments">
+					{#each meme.comments as comment}
+						<Comment text={comment.content} name={comment.creatorName} date={comment.creationDate} />
+					{/each}
+				</div>
+				{#if $user.id}
+					<h3>Post a comment</h3>
+					<textarea bind:value={commentText} />
+					<Button on:click={submitComment}>Post Comment</Button>
+				{/if}
 			</div>
-			{#if $user.id}
-				<h3>Post a comment</h3>
-				<textarea bind:value={commentText} />
-				<Button on:click={submitComment}>Post Comment</Button>
-			{/if}
-		</div>
 
-		<div class="graph">
-			<h2>Statistics</h2>
-			<h3>Compared to other Memes</h3>
-			<div class="graph-controls">
-				<Button variant={selectedStat === "views" && "primary"} on:click={() => selectedStat = "views"}>
-					👁️ Views
-				</Button>
-				<Button variant={selectedStat === "score" && "primary"} on:click={() => selectedStat = "score"}>
-					❤️ Score
-				</Button>
-				<Button variant={selectedStat === "comments" && "primary"} on:click={() => selectedStat = "comments"}>
-					🗨️ Comments
-				</Button>
+			<div class="graph">
+				<h2>Statistics</h2>
+				<h3>Compared to other Memes</h3>
+				<div class="graph-controls">
+					<Button variant={selectedStat === "views" && "primary"} on:click={() => selectedStat = "views"}>
+						👁️ Views
+					</Button>
+					<Button variant={selectedStat === "score" && "primary"} on:click={() => selectedStat = "score"}>
+						❤️ Score
+					</Button>
+					<Button variant={selectedStat === "comments" && "primary"} on:click={() => selectedStat = "comments"}>
+						🗨️ Comments
+					</Button>
+				</div>
+				<Graph
+					type="scatter"
+					datasets={[{
+						label: meme.title,
+						data: [{
+							x: stats?.this.ageDays,
+							y: stats?.this[selectedStat],
+						}],
+						backgroundColor: "#26ba89",
+					}, {
+						label: "Public Memes",
+						data: stats?.other.map(({ ageDays, ...stats }) => ({ x: ageDays, y: stats[selectedStat] })),
+						backgroundColor: "hsl(0, 0%, 50%)",
+					}]}
+					options={{
+						scale: {
+							ticks: {
+								precision: 0,
+							},
+						},
+						scales: {
+							y: {
+								beginAtZero: true,
+								title: {
+									display: true,
+									text: selectedStat.charAt(0).toUpperCase() + selectedStat.slice(1),
+								},
+							},
+							x: {
+								title: {
+									display: true,
+									text: "Age (in days)",
+								},
+							},
+						},
+						plugins: {
+							legend: {
+								onClick: null,
+							},
+							tooltip: {
+								enabled: false,
+							},
+						},
+					}}
+				/>
 			</div>
-			<Graph
-				type="scatter"
-				datasets={[{
-					label: meme.title,
-					data: [{
-						x: stats?.this.ageDays,
-						y: stats?.this[selectedStat],
-					}],
-					backgroundColor: "#26ba89",
-				}, {
-					label: "Other Memes",
-					data: stats?.other.map(({ ageDays, ...stats }) => ({ x: ageDays, y: stats[selectedStat] })),
-					backgroundColor: "hsl(0, 0%, 50%)",
-				}]}
-				options={{
-					scale: {
-						ticks: {
-							precision: 0,
-						},
-					},
-					scales: {
-						y: {
-							beginAtZero: true,
-							title: {
-								display: true,
-								text: selectedStat.charAt(0).toUpperCase() + selectedStat.slice(1),
-							},
-						},
-						x: {
-							title: {
-								display: true,
-								text: "Age (in days)",
-							},
-						},
-					},
-					plugins: {
-						legend: {
-							onClick: null,
-						},
-						tooltip: {
-							enabled: false,
-						},
-					},
-				}}
-			/>
-		</div>
+		{/if}
 	</div>
 {/if}
 

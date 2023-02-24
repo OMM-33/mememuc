@@ -18,6 +18,7 @@ export default class Meme extends Media {
 	constructor({
 		id, src, blob, width, height, updateDate,
 		creatorID,
+		creatorName,
 		title = "",
 		description = "",
 		privacy = "public",
@@ -32,6 +33,8 @@ export default class Meme extends Media {
 
 		/** @type {string?} */
 		this.creatorID = creatorID;
+		/** @type {string?} */
+		this.creatorName = creatorName;
 		/** @type {string} */
 		this.title = title;
 		/** @type {string} */
@@ -161,7 +164,6 @@ export default class Meme extends Media {
 	 * @override
 	 **/
 	static fromJSON(json) {
-		// console.log(json)
 		const props = {
 			...json,
 			id: json._id,
