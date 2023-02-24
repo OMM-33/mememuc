@@ -40,7 +40,11 @@ router.post('/login', async (req, res) => {
 		
 		// We sign this also with the name, for ease of access. Might not be best practice?
 		const token = jwt.sign({_id: user._id, name: user.name}, process.env.JWT_SECRET_KEY) // ToDo: In the future this should expire, by handing it an options object, like { expiresIn: '12h' }.
-		res.status(200).json({token})
+		res.status(200).json({
+			userId: user._id,
+			userName: user.name,
+			token
+		})
 	} catch (err) {
         console.error(`User authentication failed, due to error:\n${err}`)
 		res.status(500).json({error: err.message})
