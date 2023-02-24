@@ -25,7 +25,9 @@ router.get('/list', async (req, res) => {
 // Get the total count of memes
 router.get('/total', async (req, res) => {
     try {
-        const totalCount = await database.countMemes()
+        // Get userId if userData exists. Otherwise set it to null
+        userId = req.userData ? req.userData._id : null
+        const totalCount = await database.countMemes(userId)
         res.status(200).json({
             totalMemes: totalCount
         })
