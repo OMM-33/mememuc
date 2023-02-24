@@ -5,6 +5,8 @@ const commentSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
+    // Future ToDo: Remove this field and replace it with a user._id -> user.name lookup where required.
+    // ... This removes redundancy and allows everything to listen to changes in user.name (Not possible for the current system though).
     creatorName: {
         type: String,
         required: true

@@ -210,7 +210,31 @@ async function saveMeme(meme) {
 
 // Update a meme that already exists in the database (if it does indeed exist)
 // This will throw an error if any validation (id, layer, meme) fails! We catch this during routing in order to return it to the client for debugging their request.
-async function updateMeme(id, meme) {
+async function updateMeme(userData, id, meme) {
+    const oid = ObjectId(id)
+
+    // Search database if a meme for this id exists AND if it is created by the current user. Otherwise no update is possible and it throws an error.
+    const existingMeme = await Meme.findOne({ _id: oid, creatorID: userData._id })
+    if (!existingMeme) {
+        throw new Error(`Meme ${id} not found or not created by user with ID ${userData._id}`)
+    }
+
+    // Replace layers in the meme with layers according to the layerSchema from models/layer.js
+    if(meme.layers){    
+        for (let i=0; i<meme.layers.length; i++) {
+            meme.layers[i] = new Layer(meme.layers[i])
+        }
+    }
+    // This options parameter tells Mongoose to return the updated object rather than the original object.
+    const options = { new: true }
+    
+    const updatedMeme = await Meme.findByIdAndUpdate(oid, { $set: meme }, options)
+    return updatedMeme
+}
+
+// Update a meme that already exists in the database (if it does indeed exist), REGARDLESS of creatorID. Should only be used by admins for content moderation.
+// This will throw an error if any validation (id, layer, meme) fails! We catch this during routing in order to return it to the client for debugging their request.
+async function updateMemeAdmin(id, meme) {
     const oid = ObjectId(id)
 
     // Replace layers in the meme with layers according to the layerSchema from models/layer.js
@@ -372,14 +396,16 @@ async function saveMediaMetadata(metadata){
     return newMedia
 }
 
-// Function that deletes one media object from the GridFS bucket as specified by its unique ID.
-// This ID can be found by searching the media database (instead of the GridFS bucket) or is saved wherever the media is used (e.g. within a meme).
-async function deleteMediaById(id) {
+/** Function that deletes one media object from the GridFS bucket as specified by its unique ID.
+ * This ID can be found by searching the media database (instead of the GridFS bucket) or is saved wherever the media is used (e.g. within a meme).
+ * @param {Boolean} metadata If metadata should be deleted as well. Default true. Mainly required to revoke a file upload before metadata was created.
+ */ 
+async function deleteMediaById(id, metadata=true) {
     try {
         // Delete the media file
         await gfs.delete(ObjectId(id))
         // Delete the media metadata
-        await Media.deleteOne({ _id: memeId });
+        if (metadata) { await Media.deleteOne({ _id: memeId }) }
         console.log(`Media file ${id} deleted.`)
     } catch (err) {
         console.error(`Could not delete media ${id}, due to error ${err}`)
