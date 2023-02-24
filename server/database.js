@@ -146,7 +146,7 @@ async function listMemes(userId=null, limit=null, lastId=null, sortBy='updateDat
 async function countMemes(userId=null){
     // Build the filter using our helperFunction
     const filter = await buildFilter(userId)
-    
+
     return await Meme.countDocuments(filter)
 }
 
@@ -171,13 +171,22 @@ async function getMemeById(id, res) {
 }
 
 // Returns the Id of a random meme
-// TODO only return Ids out of the memes that the user is allowed to see.
 async function getRandomMemeId(userId=null) {
+    console.log(userId)
+    // Build the filter using our helperFunction
+    const filter = await buildFilter(userId)
+    console.log(JSON.stringify(filter)) // Debugging
+
     // Here we receive a random meme Id by destructuring the object we get from Meme.aggregate
     // ... for the aggregate function, that allows to group, filter, transform, etc. data, we use the following operators:
+    // ... $match: applies a filter to this selection
     // ... $sample: returns random item(s) form the aggregation - amount specified by size object
     // ... $project: allows us to only receive the Id (as nothing else is needed). 
-    const [{_id: randomMemeId}] = await Meme.aggregate([{$sample: {size: 1}}, {$project: {_id: 1}}]);
+    const [{_id: randomMemeId}] = await Meme.aggregate([
+        {$match: filter},
+        {$project: {_id: 1}}
+    ])
+
     return randomMemeId
 }
 
